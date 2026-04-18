@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>商场导购</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #0c0c14;
+    --bg-card:     #15151f;
+    --bg-card-hover: #1c1c2a;
+    --bg-header:   #10101a;
+    --border:      rgba(201,169,110,0.15);
+    --border-hover:rgba(201,169,110,0.4);
+    --gold:        #c9a96e;
+    --gold-light:  #e8c98a;
+    --gold-dim:    rgba(201,169,110,0.12);
+    --gold-glow:   rgba(201,169,110,0.08);
+    --text:        #eee8df;
+    --text-secondary: #8a8a9e;
+    --text-dim:    #55556a;
+    --white:       #ffffff;
+    --shadow:      0 4px 24px rgba(0,0,0,0.5);
+    --shadow-gold: 0 4px 30px rgba(201,169,110,0.15);
+    --radius:      14px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Header ─────────────────────────────────────── */
+  .header {
+    background: var(--bg-header);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+  }
+
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0 0;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-logo-icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, var(--gold), #b8904e);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 12px rgba(201,169,110,0.3);
+  }
+
+  .header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: 2px;
+  }
+
+  .header-subtitle {
+    font-size: 10px;
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .header-deco {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .header-deco span {
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+
+  .header-deco em {
+    font-style: normal;
+    color: var(--gold);
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+
+  .floor-tabs {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-top: 16px;
+  }
+
+  .floor-tabs::-webkit-scrollbar { display: none; }
+
+  .floor-tab {
+    flex-shrink: 0;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    transition: all 0.25s;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .floor-tab:hover {
+    color: var(--gold-light);
+    background: var(--gold-glow);
+  }
+
+  .floor-tab.active {
+    color: var(--gold);
+    background: var(--gold-dim);
+    border-color: var(--border);
+    border-bottom-color: var(--bg-header);
+    font-weight: 700;
+  }
+
+  .floor-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--gold), transparent);
+  }
+
+  /* ── Service Bar ────────────────────────────────── */
+  .service-bar {
+    background: linear-gradient(135deg, #1a1520, #1c1830);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+  }
+
+  .service-bar-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .service-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .service-info svg { color: var(--gold); flex-shrink: 0; }
+
+  .service-phone {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--gold-light);
+    text-decoration: none;
+    letter-spacing: 1px;
+    font-family: "Courier New", Courier, monospace;
+    transition: color 0.2s;
+  }
+
+  .service-phone:hover { color: #fff; }
+
+  .vip-hotline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .vip-hotline strong {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── Search ─────────────────────────────────────── */
+  .search-wrap {
+    padding: 16px;
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 52px;
+    z-index: 99;
+  }
+
+  .search-box {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 10px 20px;
+    gap: 10px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .search-box:focus-within {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px var(--gold-glow), var(--shadow-gold);
+  }
+
+  .search-box svg { flex-shrink: 0; color: var(--gold); opacity: 0.7; }
+
+  .search-box input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    outline: none;
+    color: var(--text);
+  }
+
+  .search-box input::placeholder { color: var(--text-dim); }
+
+  .clear-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    display: none;
+    transition: color 0.2s;
+  }
+
+  .clear-btn:hover { color: var(--text-secondary); }
+  .clear-btn.visible { display: block; }
+
+  /* ── Category Filter ─────────────────────────────── */
+  .cat-filter {
+    padding: 10px 16px 8px;
+    background: var(--bg-header);
+    position: sticky;
+    top: 148px;
+    z-index: 98;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .cat-chips {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-bottom: 2px;
+  }
+
+  .cat-chips::-webkit-scrollbar { display: none; }
+
+  .cat-chip {
+    flex-shrink: 0;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.22s;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .cat-chip:hover {
+    border-color: var(--gold);
+    color: var(--gold-light);
+    background: var(--gold-dim);
+  }
+
+  .cat-chip.active {
+    background: linear-gradient(135deg, var(--gold), #b8904e);
+    border-color: var(--gold);
+    color: #0c0c14;
+    font-weight: 700;
+    box-shadow: 0 2px 12px rgba(201,169,110,0.3);
+  }
+
+  /* ── Content ─────────────────────────────────────── */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 16px 80px;
+  }
+
+  .floor-section { display: none; }
+  .floor-section.active { display: block; }
+
+  /* ── Stats Bar ───────────────────────────────────── */
+  .stats-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .stat-item { text-align: center; position: relative; }
+  .stat-item + .stat-item::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 28px;
+    background: var(--border);
+  }
+  .stat-num {
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+  .stat-label { font-size: 11px; color: var(--text-dim); margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ── VIP Section ─────────────────────────────────── */
+  .vip-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  .vip-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .vip-header-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--gold), #b8904e);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(201,169,110,0.3);
+  }
+
+  .vip-header-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .vip-header-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .vip-header-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  .vip-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .vip-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vip-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .vip-card.v-card::before { background: linear-gradient(to right, #5a5a6a, #7a7a8a); }
+  .vip-card.s-card::before { background: linear-gradient(to right, #a08050, #c9a96e); }
+  .vip-card.g-card::before { background: linear-gradient(to right, #c9a030, #e8c84a); }
+  .vip-card.d-card::before { background: linear-gradient(to right, #a0b8d0, #c8e0f8); }
+
+  .vip-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-gold);
+  }
+
+  .vip-card:hover.v-card { border-color: rgba(90,90,106,0.4); }
+  .vip-card:hover.s-card { border-color: rgba(201,169,110,0.4); }
+  .vip-card:hover.g-card { border-color: rgba(201,169,110,0.5); }
+  .vip-card:hover.d-card { border-color: rgba(160,184,208,0.5); }
+
+  .vip-tier {
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+  }
+
+  .v-card .vip-tier { color: #aaa8b8; }
+  .s-card .vip-tier { color: var(--gold); }
+  .g-card .vip-tier { color: #e8c84a; }
+  .d-card .vip-tier { color: #b8d4f0; }
+
+  .vip-divider {
+    width: 24px; height: 1px;
+    margin: 0 auto 10px;
+  }
+
+  .v-card .vip-divider { background: #3a3a4a; }
+  .s-card .vip-divider { background: rgba(201,169,110,0.3); }
+  .g-card .vip-divider { background: rgba(232,200,74,0.3); }
+  .d-card .vip-divider { background: rgba(184,212,240,0.3); }
+
+  .vip-benefit {
+    font-size: 11px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    text-align: left;
+  }
+
+  .vip-benefit li {
+    list-style: none;
+    padding-left: 10px;
+    position: relative;
+    margin-bottom: 3px;
+  }
+
+  .v-card .vip-benefit li::before { content: '·'; position: absolute; left: 0; color: #5a5a6a; }
+  .s-card .vip-benefit li::before { content: '·'; position: absolute; left: 0; color: var(--gold); opacity: 0.6; }
+  .g-card .vip-benefit li::before { content: '·'; position: absolute; left: 0; color: #e8c84a; opacity: 0.6; }
+  .d-card .vip-benefit li::before { content: '★'; position: absolute; left: 0; color: #b8d4f0; font-size: 8px; top: 3px; }
+
+  /* ── VIP Upgrade/Renewal Conditions ─────────────── */
+  .vip-cond {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(255,255,255,0.06);
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+  .vip-cond-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .vip-cond-row span:first-child {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+  }
+  .vip-cond-row span:last-child {
+    text-align: right;
+  }
+  .vip-tag-forever {
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ── Category Group ──────────────────────────────── */
+  .cat-group { margin-bottom: 28px; }
+
+  .cat-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+    padding-left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .cat-title::before {
+    content: '';
+    width: 20px;
+    height: 1px;
+    background: linear-gradient(to right, var(--gold), transparent);
+  }
+
+  .cat-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Brand Grid ──────────────────────────────────── */
+  .brand-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 10px;
+  }
+
+  .brand-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 14px 14px;
+    cursor: pointer;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brand-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--gold), var(--gold-light), var(--gold));
+    opacity: 0;
+    transition: opacity 0.28s;
+  }
+
+  .brand-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top, var(--gold-glow), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.28s;
+  }
+
+  .brand-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-gold);
+    background: var(--bg-card-hover);
+  }
+
+  .brand-card:hover::before { opacity: 1; }
+  .brand-card:hover::after { opacity: 1; }
+
+  .brand-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 5px;
+    line-height: 1.35;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand-code {
+    font-size: 10px;
+    color: var(--text-dim);
+    font-family: "Courier New", Courier, monospace;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .brand-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--gold-dim);
+    color: var(--gold-light);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 6px;
+    border: 1px solid rgba(201,169,110,0.2);
+    position: relative;
+    z-index: 1;
+    transition: all 0.22s;
+  }
+
+  .brand-card:hover .brand-location {
+    background: rgba(201,169,110,0.2);
+    border-color: rgba(201,169,110,0.4);
+  }
+
+  /* Highlighted card */
+  .brand-card.highlight {
+    border-color: rgba(201,169,110,0.3);
+    background: var(--bg-card-hover);
+  }
+
+  /* Renovating badge */
+  .badge-reno {
+    display: inline-block;
+    font-size: 10px;
+    background: rgba(255,100,100,0.12);
+    color: #e07070;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-left: 4px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+
+  /* ── Empty State ─────────────────────────────────── */
+  .empty-state {
+    text-align: center;
+    padding: 80px 20px;
+  }
+
+  .empty-state .icon { font-size: 52px; margin-bottom: 16px; opacity: 0.4; }
+  .empty-state p { font-size: 14px; color: var(--text-dim); letter-spacing: 1px; }
+
+  /* ── Modal ───────────────────────────────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,5,12,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: #1a1a28;
+    border: 1px solid var(--border);
+    border-radius: 22px 22px 0 0;
+    padding: 28px 24px 48px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 82vh;
+    overflow-y: auto;
+    animation: slideUp 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.6);
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(60px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-handle {
+    width: 44px; height: 4px;
+    background: rgba(201,169,110,0.3);
+    border-radius: 2px;
+    margin: 0 auto 24px;
+  }
+
+  .modal-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .modal-brand-icon {
+    width: 52px; height: 52px;
+    background: linear-gradient(135deg, var(--gold), #b8904e);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 24px;
+    color: #0c0c14;
+    font-weight: 900;
+    box-shadow: 0 4px 16px rgba(201,169,110,0.3);
+  }
+
+  .modal-brand-name {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  .modal-brand-code {
+    font-size: 11px;
+    color: var(--gold);
+    font-family: "Courier New", monospace;
+    margin-top: 4px;
+    letter-spacing: 1px;
+  }
+
+  .modal-divider {
+    height: 1px;
+    background: var(--border);
+    margin: 18px 0;
+  }
+
+  .modal-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .modal-row-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    width: 56px;
+    flex-shrink: 0;
+    padding-top: 3px;
+  }
+
+  .modal-row-value { font-size: 14px; color: var(--text); }
+
+  .modal-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+
+  .modal-tag {
+    background: var(--gold-dim);
+    color: var(--gold-light);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid rgba(201,169,110,0.25);
+  }
+
+  .modal-desc {
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    padding: 14px 16px;
+    background: var(--bg-card);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .modal-close {
+    width: 100%;
+    background: linear-gradient(135deg, var(--gold), #b8904e);
+    color: #0c0c14;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 20px;
+    letter-spacing: 1px;
+    transition: all 0.22s;
+    box-shadow: 0 4px 20px rgba(201,169,110,0.3);
+  }
+
+  .modal-close:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 28px rgba(201,169,110,0.45);
+  }
+
+  /* ── Responsive ─────────────────────────────────── */
+  @media (max-width: 440px) {
+    .brand-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stats-bar { padding: 12px 16px; }
+    .stat-num { font-size: 20px; }
+    .vip-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .vip-tier { font-size: 13px; }
+    .vip-benefit { font-size: 10px; }
+    .vip-section { padding: 16px 14px; }
+    .service-phone { font-size: 14px; }
+    .vip-hotline span { display: none; }
+  }
+
+  @media (max-width: 360px) {
+    .vip-cards { grid-template-columns: 1fr; }
+  }
+
+  @media (min-width: 680px) {
+    .brand-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  @media (min-width: 960px) {
+    .brand-grid { grid-template-columns: repeat(4, 1fr); }
+    .content { padding: 28px 24px 80px; }
+  }
+
+  @media (min-width: 1100px) {
+    .brand-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+
+  /* ── Scrollbar ─────────────────────────────────── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(201,169,110,0.3); border-radius: 2px; }
+
+  /* ── Activity Carousel Overlay ──────────────────── */
+  .carousel-overlay {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 80vh;
+    background: rgba(8,8,16,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 10vh;
+    transform: translateY(0);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+    border-bottom: 1px solid rgba(201,169,110,0.15);
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.6), 0 8px 40px rgba(0,0,0,0.6);
+  }
+  .carousel-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+  }
+  .carousel-close {
+    position: absolute;
+    top: 12px; left: 12px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(201,169,110,0.3);
+    color: var(--gold);
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 210;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    line-height: 1;
+  }
+  .carousel-close:hover { background: rgba(201,169,110,0.2); }
+  .carousel-track-wrap {
+    width: 85%;
+    max-width: 700px;
+    height: 80%;
+    overflow: hidden;
+    position: relative;
+    border-radius: 10px;
+  }
+  .carousel-track {
+    display: flex;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform;
+  }
+  .carousel-track.no-transition { transition: none; }
+  .carousel-slide {
+    flex: 0 0 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  .carousel-slide img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+  .carousel-dots {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 210;
+  }
+  .carousel-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+  }
+  .carousel-dot.active {
+    background: var(--gold);
+    transform: scale(1.3);
+  }
+
+  @media (max-width: 440px) {
+    .carousel-track-wrap { width: 92%; height: 78%; }
+    .carousel-close { width: 32px; height: 32px; font-size: 16px; top: 10px; left: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="header-logo-icon">🏬</div>
+      <div>
+        <div class="header-title">商场导购</div>
+        <div class="header-subtitle">MALL GUIDE</div>
+      </div>
+    </div>
+    <div class="header-deco">
+      <span></span>
+      <em>服务台</em>
+      <span></span>
+    </div>
+  </div>
+  <div class="floor-tabs" id="floorTabs"></div>
+</div>
+
+<div class="service-bar">
+  <div class="service-bar-inner">
+    <div class="service-info">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+      </svg>
+      <span>客服热线</span>
+      <a href="tel:075522233888" class="service-phone">0755-22233888</a>
+    </div>
+    <div class="vip-hotline">
+      <strong>★</strong>
+      <span>会员中心 · 积分兑换 · 专属礼遇</span>
+    </div>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="搜索品牌、品类或位置…">
+    <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
+  </div>
+</div>
+
+<div class="cat-filter">
+  <div class="cat-chips" id="catChips"></div>
+</div>
+
+<div class="content" id="content"></div>
+
+<!-- Brand Detail Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-top">
+      <div>
+        <div class="modal-brand-name" id="modalName"></div>
+        <div class="modal-brand-code" id="modalCode"></div>
+      </div>
+      <div class="modal-brand-icon" id="modalIcon"></div>
+    </div>
+    <div class="modal-divider"></div>
+    <div class="modal-row">
+      <div class="modal-row-label">楼层</div>
+      <div class="modal-tags"><span class="modal-tag" id="modalFloor"></span></div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-row-label">位置</div>
+      <div class="modal-tags"><span class="modal-tag" id="modalLoc"></span></div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-row-label">业态</div>
+      <div class="modal-tags"><span class="modal-tag" id="modalCat"></span></div>
+    </div>
+    <div class="modal-divider"></div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <button class="modal-close" onclick="closeModal()">确 定</button>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  "B1": {
+    "floorName": "B1层",
+    "categories": {
+      "生活配套": [
+        { "code": "B101N1", "name": "华润万家BLT", "location": "B101N1", "brands": ["华润万家BLT"] },
+        { "code": "B1154", "name": "WEKOME", "location": "B1154", "brands": ["WEKOME"] },
+        { "code": "B117N3", "name": "领克", "location": "B117N3", "brands": ["领克"] },
+        { "code": "B118A2", "name": "NITORI", "location": "B118A2", "brands": ["NITORI"] },
+        { "code": "B119N5", "name": "番茄口袋", "location": "B119N5", "brands": ["番茄口袋"] },
+        { "code": "B119A3", "name": "长城智选", "location": "B119A3", "brands": ["长城智选"] },
+        { "code": "B127N2", "name": "阿维塔", "location": "B127N2", "brands": ["阿维塔"] },
+        { "code": "B127B", "name": "7-Eleven", "location": "B127B", "brands": ["7-Eleven"] }
+      ],
+      "时尚综合": [
+        { "code": "B101E1", "name": "Aape", "location": "B101E1", "brands": ["Aape"] },
+        { "code": "B109N3", "name": "Beneunder 蕉下", "location": "B109N3", "brands": ["Beneunder 蕉下"] },
+        { "code": "B110N1", "name": "HOLLISTER+Gilly Hicks", "location": "B110N1", "brands": ["HOLLISTER", "Gilly Hicks"] },
+        { "code": "B113N2", "name": "i.t", "location": "B113N2", "brands": ["i.t"] },
+        { "code": "B116N1", "name": "UNIQLO优衣库", "location": "B116N1", "brands": ["UNIQLO优衣库"] },
+        { "code": "B120N4", "name": "Decathlon迪卡侬", "location": "B120N4", "brands": ["Decathlon迪卡侬"] },
+        { "code": "B121A2", "name": "KANGOL", "location": "B121A2", "brands": ["KANGOL"] },
+        { "code": "B121N3", "name": "THE NORTH FACE", "location": "B121N3", "brands": ["THE NORTH FACE"] }
+      ],
+      "轻食": [
+        { "code": "B101A5", "name": "雾鲜", "location": "B101A5", "brands": ["雾鲜"] },
+        { "code": "B101B5", "name": "爷爷不泡茶", "location": "B101B5", "brands": ["爷爷不泡茶"] },
+        { "code": "B101C5", "name": "港怀冰室", "location": "B101C5", "brands": ["港怀冰室"] },
+        { "code": "B104N2", "name": "奈雪的茶", "location": "B104N2", "brands": ["奈雪的茶"] },
+        { "code": "B124N3", "name": "野人先生", "location": "B124N3", "brands": ["野人先生"] },
+        { "code": "B126A3", "name": "Manner", "location": "B126A3", "brands": ["Manner"] },
+        { "code": "B126B3", "name": "喜荟萃", "location": "B126B3", "brands": ["喜荟萃"] }
+      ],
+      "正餐": [
+        { "code": "B102A1", "name": "胖哥俩肉蟹煲", "location": "B102A1", "brands": ["胖哥俩肉蟹煲"] },
+        { "code": "B102-03", "name": "太二酸菜鱼", "location": "B102-03", "brands": ["太二酸菜鱼"] },
+        { "code": "B105N4", "name": "敏华冰厅", "location": "B105N4", "brands": ["敏华冰厅"] },
+        { "code": "B106N5", "name": "肉祭烧肉一番", "location": "B106N5", "brands": ["肉祭烧肉一番"] },
+        { "code": "B108N3", "name": "星美乐", "location": "B108N3", "brands": ["星美乐"] },
+        { "code": "B125A1", "name": "麦当劳", "location": "B125A1", "brands": ["麦当劳"] }
+      ],
+      "彩妆护肤": [
+        { "code": "B108A4", "name": "毛戈平MAOGEPING", "location": "B108A4", "brands": ["毛戈平MAOGEPING"] },
+        { "code": "B120A3", "name": "橘朵 Judydoll", "location": "B120A3", "brands": ["橘朵 Judydoll"] },
+        { "code": "B127A3", "name": "安润适 ANRUZ", "location": "B127A3", "brands": ["安润适 ANRUZ"] }
+      ],
+      "精品饰品": [
+        { "code": "B111N1", "name": "POP MART泡泡玛特", "location": "B111N1", "brands": ["POP MART泡泡玛特"] },
+        { "code": "B112N3", "name": "SIMPLEMILL朴坊", "location": "B112N3", "brands": ["SIMPLEMILL朴坊"] }
+      ]
+    }
+  },
+  "L1": {
+    "floorName": "L1层",
+    "categories": {
+      "生活配套": [
+        { "code": "L101A4", "name": "智己", "location": "L101A4", "brands": ["智己"] },
+        { "code": "L108N5", "name": "DJI大疆", "location": "L108N5", "brands": ["DJI大疆"] },
+        { "code": "L112N5", "name": "特斯拉", "location": "L112N5", "brands": ["特斯拉"] },
+        { "code": "L115N3", "name": "HUAWEI华为", "location": "L115N3", "brands": ["HUAWEI华为"] },
+        { "code": "L115A2", "name": "小米之家", "location": "L115A2", "brands": ["小米之家"] },
+        { "code": "L1302", "name": "NESPRESSO（奈斯派索）", "location": "L1302", "brands": ["NESPRESSO奈斯派索"] },
+        { "code": "L135A1", "name": "ZEEKR极氪", "location": "L135A1", "brands": ["ZEEKR极氪"] },
+        { "code": "L138N1", "name": "碧海干洗", "location": "L138N1", "brands": ["碧海干洗"] },
+        { "code": "L139N4", "name": "全家FamilyMart", "location": "L139N4", "brands": ["全家FamilyMart"] },
+        { "code": "L139A1", "name": "果果园", "location": "L139A1", "brands": ["果果园"] }
+      ],
+      "时尚综合": [
+        { "code": "L101B2", "name": "lululemon", "location": "L101B2", "brands": ["lululemon"] },
+        { "code": "L101D3", "name": "NIKE kicks lounge", "location": "L101D3", "brands": ["NIKE kicks lounge"] },
+        { "code": "L103N3", "name": "BRAX", "location": "L103N3", "brands": ["BRAX"] },
+        { "code": "L105N2", "name": "TOMMY HILFIGER", "location": "L105N2", "brands": ["TOMMY HILFIGER"] },
+        { "code": "L118N1", "name": "PORTS", "location": "L118N1", "brands": ["PORTS"] },
+        { "code": "L122N3", "name": "Karin Viet集合店", "location": "L122N3", "brands": ["Karin Viet集合店"] },
+        { "code": "L125N4", "name": "ED HARDY", "location": "L125N4", "brands": ["ED HARDY"] }
+      ],
+      "女装": [
+        { "code": "L102N3", "name": "Sportalm", "location": "L102N3", "brands": ["Sportalm"] },
+        { "code": "L107N7", "name": "ANNA ABIGAL", "location": "L107N7", "brands": ["ANNA ABIGAL"] },
+        { "code": "L117N3", "name": "bebe", "location": "L117N3", "brands": ["bebe"] },
+        { "code": "L120N2", "name": "edition", "location": "L120N2", "brands": ["edition"] },
+        { "code": "L121N4", "name": "LK BENNETT", "location": "L121N4", "brands": ["LK BENNETT"] },
+        { "code": "L1241", "name": "INSUN", "location": "L1241", "brands": ["INSUN"] }
+      ],
+      "男装": [
+        { "code": "L109N4", "name": "Lynn Gong", "location": "L109N4", "brands": ["Lynn Gong"] },
+        { "code": "L123N3", "name": "ELLASSAY HOMME", "location": "L123N3", "brands": ["ELLASSAY HOMME"] }
+      ],
+      "皮鞋皮具": [
+        { "code": "L106N3", "name": "COLE HAAN", "location": "L106N3", "brands": ["COLE HAAN"] }
+      ],
+      "精品饰品": [
+        { "code": "L113N3", "name": "周大福", "location": "L113N3", "brands": ["周大福"] },
+        { "code": "L114N4", "name": "六福珠宝", "location": "L114N4", "brands": ["六福珠宝"] },
+        { "code": "L126N2", "name": "apm monaco", "location": "L126N2", "brands": ["apm monaco"] },
+        { "code": "L129N6", "name": "SEAGULL海鸥表", "location": "L129N6", "brands": ["SEAGULL海鸥表"] }
+      ],
+      "轻食": [
+        { "code": "L101G1", "name": "store by.jpg", "location": "L101G1", "brands": ["store by.jpg"] },
+        { "code": "L111N1", "name": "星巴克（STARBUCKS）", "location": "L111N1", "brands": ["星巴克"] },
+        { "code": "L127A1", "name": "GAGA鲜语", "location": "L127A1", "brands": ["GAGA鲜语"] },
+        { "code": "L128N4", "name": "Peet's Coffee", "location": "L128N4", "brands": ["Peet's Coffee"] },
+        { "code": "L1402", "name": "KOI", "location": "L1402", "brands": ["KOI"] }
+      ],
+      "正餐": [
+        { "code": "L119B2", "name": "厨曲·水城羊肉粉", "location": "L119B2", "brands": ["厨曲·水城羊肉粉"] },
+        { "code": "L123A3", "name": "费大厨辣椒炒肉", "location": "L123A3", "brands": ["费大厨辣椒炒肉"] },
+        { "code": "L132A2", "name": "陈鹏鹏", "location": "L132A2", "brands": ["陈鹏鹏"] },
+        { "code": "L133A2", "name": "喜家德虾仁水饺", "location": "L133A2", "brands": ["喜家德虾仁水饺"] }
+      ],
+      "美容美发": [
+        { "code": "L119A4", "name": "必瘦站医美", "location": "L119A4", "brands": ["必瘦站医美"] },
+        { "code": "L119C1", "name": "悟空", "location": "L119C1", "brands": ["悟空"] }
+      ]
+    }
+  },
+  "L2": {
+    "floorName": "L2层",
+    "categories": {
+      "生活配套": [
+        { "code": "L209A5", "name": "福刻", "location": "L209A5", "brands": ["福刻"] },
+        { "code": "L211N2", "name": "源氏木语", "location": "L211N2", "brands": ["源氏木语"] },
+        { "code": "L213N4", "name": "The Green Party（绿光派对）", "location": "L213N4", "brands": ["The Green Party"] },
+        { "code": "L222A2", "name": "脊美健", "location": "L222A2", "brands": ["脊美健"] },
+        { "code": "L226N4", "name": "Cheir 雪瑞尔头皮毛发专业管理", "location": "L226N4", "brands": ["雪瑞尔"] },
+        { "code": "L229N6", "name": "万仟堂", "location": "L229N6", "brands": ["万仟堂"] }
+      ],
+      "时尚综合": [
+        { "code": "L201A2", "name": "BOSIDENG波司登", "location": "L201A2", "brands": ["波司登"] },
+        { "code": "L201B4", "name": "ANTA", "location": "L201B4", "brands": ["ANTA"] },
+        { "code": "L201C2", "name": "LACOSTE", "location": "L201C2", "brands": ["LACOSTE"] },
+        { "code": "L202N4", "name": "TIMBERLAND", "location": "L202N4", "brands": ["TIMBERLAND"] },
+        { "code": "L204N7", "name": "LE SAUNDA", "location": "L204N7", "brands": ["LE SAUNDA"] },
+        { "code": "L205N7", "name": "RICK YOUNG", "location": "L205N7", "brands": ["RICK YOUNG"] },
+        { "code": "L217N3", "name": "FRED PERRY", "location": "L217N3", "brands": ["FRED PERRY"] },
+        { "code": "L218N2", "name": "FILA", "location": "L218N2", "brands": ["FILA"] },
+        { "code": "L222N1", "name": "EVISU", "location": "L222N1", "brands": ["EVISU"] },
+        { "code": "L224N1", "name": "CK Jeans/Calvin Klein Jeans", "location": "L224N1", "brands": ["Calvin Klein Jeans"] },
+        { "code": "L228N3", "name": "Calvin Klein Underwear", "location": "L228N3", "brands": ["Calvin Klein Underwear"] }
+      ],
+      "女装": [
+        { "code": "L206N5", "name": "ANNAKIKI", "location": "L206N5", "brands": ["ANNAKIKI"] },
+        { "code": "L225N2", "name": "MOUSSY", "location": "L225N2", "brands": ["MOUSSY"] },
+        { "code": "L2151", "name": "MAISON THER", "location": "L2151", "brands": ["MAISON THER"] }
+      ],
+      "男装": [
+        { "code": "L201N3", "name": "JDV", "location": "L201N3", "brands": ["JDV"] },
+        { "code": "L2084", "name": "VICUTU威可多、GORNIA", "location": "L2084", "brands": ["威可多", "GORNIA"] },
+        { "code": "L214N4", "name": "威可多", "location": "L214N4", "brands": ["威可多"] },
+        { "code": "L221N2", "name": "VJC", "location": "L221N2", "brands": ["VJC"] }
+      ],
+      "皮鞋皮具": [
+        { "code": "L220B3", "name": "MC.CHOICE", "location": "L220B3", "brands": ["MC.CHOICE"] }
+      ],
+      "正餐": [
+        { "code": "L207N4", "name": "渝月川", "location": "L207N4", "brands": ["渝月川"] },
+        { "code": "L210N1", "name": "羲和雅苑", "location": "L210N1", "brands": ["羲和雅苑"] }
+      ]
+    }
+  },
+  "L3": {
+    "floorName": "L3层",
+    "categories": {
+      "生活配套": [
+        { "code": "L301B1", "name": "DR.stretch", "location": "L301B1", "brands": ["DR.stretch"] },
+        { "code": "L302N2", "name": "24/7 FITNESS", "location": "L302N2", "brands": ["24/7 FITNESS"] },
+        { "code": "L302A1", "name": "PurCotton全棉时代", "location": "L302A1", "brands": ["全棉时代"] },
+        { "code": "L312N3", "name": "超级猩猩", "location": "L312N3", "brands": ["超级猩猩"] },
+        { "code": "L319N2", "name": "西西弗书店&矢量咖啡", "location": "L319N2", "brands": ["西西弗书店"] }
+      ],
+      "时尚综合": [
+        { "code": "L309N3", "name": "曼妮芬、MW1", "location": "L309N3", "brands": ["曼妮芬", "MW1"] },
+        { "code": "L316N1", "name": "雅戈尔YOUNGOR、HART MARX、MAYOR、HANP", "location": "L316N1", "brands": ["雅戈尔", "HART MARX", "MAYOR", "HANP"] },
+        { "code": "L319A3", "name": "MO&Co.union", "location": "L319A3", "brands": ["MO&Co.union"] }
+      ],
+      "女装": [
+        { "code": "L301N3", "name": "SUPIN", "location": "L301N3", "brands": ["SUPIN"] },
+        { "code": "L302B1", "name": "生活在左", "location": "L302B1", "brands": ["生活在左"] },
+        { "code": "L303N5", "name": "MAXRIENY", "location": "L303N5", "brands": ["MAXRIENY"] },
+        { "code": "L3（装修）", "name": "COVERINS", "location": "L3（装修）", "brands": ["COVERINS"], "renovating": true },
+        { "code": "L306N4", "name": "JNBY", "location": "L306N4", "brands": ["JNBY"] },
+        { "code": "L307N4", "name": "MIIDII 谜底", "location": "L307N4", "brands": ["MIIDII 谜底"] },
+        { "code": "L308N6", "name": "UPINSPIRED 阅上", "location": "L308N6", "brands": ["阅上"] },
+        { "code": "L311N5", "name": "未艺", "location": "L311N5", "brands": ["未艺"] },
+        { "code": "L312A3", "name": "华歌尔", "location": "L312A3", "brands": ["华歌尔"] },
+        { "code": "L314N6", "name": "初惟HATSUSIZU", "location": "L314N6", "brands": ["初惟HATSUSIZU"] },
+        { "code": "L315N4", "name": "RE-BLUE", "location": "L315N4", "brands": ["RE-BLUE"] },
+        { "code": "L318N5", "name": "SETIROM 西町村屋", "location": "L318N5", "brands": ["西町村屋"] },
+        { "code": "L321N3", "name": "ochirly", "location": "L321N3", "brands": ["ochirly"] },
+        { "code": "L3224", "name": "AMON AVIS 依我之见", "location": "L3224", "brands": ["依我之见"] },
+        { "code": "L323N5", "name": "Pan&Pitys", "location": "L323N5", "brands": ["Pan&Pitys"] },
+        { "code": "L327N5", "name": "晒道", "location": "L327N5", "brands": ["晒道"] },
+        { "code": "L328N3", "name": "Embry Form", "location": "L328N3", "brands": ["Embry Form"] }
+      ],
+      "皮鞋皮具": [
+        { "code": "L304N6", "name": "achette", "location": "L304N6", "brands": ["achette"] }
+      ],
+      "正餐": [
+        { "code": "L310N2", "name": "润园四季", "location": "L310N2", "brands": ["润园四季"] },
+        { "code": "L324N4", "name": "鑫泰", "location": "L324N4", "brands": ["鑫泰"] },
+        { "code": "L324A4", "name": "歌志轩", "location": "L324A4", "brands": ["歌志轩"] },
+        { "code": "L325N2", "name": "徐记海鲜", "location": "L325N2", "brands": ["徐记海鲜"] },
+        { "code": "L325A1", "name": "南京大牌档", "location": "L325A1", "brands": ["南京大牌档"] },
+        { "code": "L326N4", "name": "寿司処小志", "location": "L326N4", "brands": ["寿司処小志"] }
+      ],
+      "儿童配套": [
+        { "code": "L313A1", "name": "星际传奇", "location": "L313A1", "brands": ["星际传奇"] }
+      ],
+      "美容美发": [
+        { "code": "L301A3", "name": "皇家仙香", "location": "L301A3", "brands": ["皇家仙香"] }
+      ]
+    }
+  },
+  "L4": {
+    "floorName": "L4层",
+    "categories": {
+      "生活配套": [
+        { "code": "L401E3", "name": "黑白调", "location": "L401E3", "brands": ["黑白调"] },
+        { "code": "L402N4", "name": "联想", "location": "L402N4", "brands": ["联想"] },
+        { "code": "L403N4", "name": "西昊家具", "location": "L403N4", "brands": ["西昊家具"] },
+        { "code": "L401D3", "name": "荣耀", "location": "L401D3", "brands": ["荣耀"] },
+        { "code": "L408N4", "name": "利沃诺", "location": "L408N4", "brands": ["利沃诺"] },
+        { "code": "L410B6", "name": "谭木匠", "location": "L410B6", "brands": ["谭木匠"] },
+        { "code": "L418A1", "name": "酷乐潮玩", "location": "L418A1", "brands": ["酷乐潮玩"] },
+        { "code": "L419N5", "name": "常乐推拿", "location": "L419N5", "brands": ["常乐推拿"] },
+        { "code": "L421A4", "name": "海马体照相馆", "location": "L421A4", "brands": ["海马体照相馆"] },
+        { "code": "L423A4", "name": "星聚会", "location": "L423A4", "brands": ["星聚会"] },
+        { "code": "L424N4", "name": "科大讯飞", "location": "L424N4", "brands": ["科大讯飞"] },
+        { "code": "L425N3", "name": "VIVO", "location": "L425N3", "brands": ["VIVO"] },
+        { "code": "L425A5", "name": "SAMSUNG", "location": "L425A5", "brands": ["SAMSUNG"] },
+        { "code": "L426N4", "name": "OPPO", "location": "L426N4", "brands": ["OPPO"] },
+        { "code": "L428N8", "name": "茄世纪", "location": "L428N8", "brands": ["茄世纪"] }
+      ],
+      "主力店": [
+        { "code": "L427N1", "name": "UA院线", "location": "L427N1", "brands": ["UA院线"] }
+      ],
+      "精品饰品": [
+        { "code": "L415N7", "name": "九木杂物社", "location": "L415N7", "brands": ["九木杂物社"] },
+        { "code": "L420N3", "name": "zele", "location": "L420N3", "brands": ["zele"] }
+      ],
+      "轻食": [
+        { "code": "L412A5", "name": "煲珠公", "location": "L412A5", "brands": ["煲珠公"] },
+        { "code": "L413N5", "name": "DQ", "location": "L413N5", "brands": ["DQ"] },
+        { "code": "L413A1", "name": "瑞幸咖啡", "location": "L413A1", "brands": ["瑞幸咖啡"] },
+        { "code": "L414N5", "name": "古茗", "location": "L414N5", "brands": ["古茗"] },
+        { "code": "L414A1", "name": "茶救星球", "location": "L414A1", "brands": ["茶救星球"] },
+        { "code": "L418F2", "name": "云阿蛮", "location": "L418F2", "brands": ["云阿蛮"] },
+        { "code": "L418J1", "name": "喜乐柠檬茶", "location": "L418J1", "brands": ["喜乐柠檬茶"] },
+        { "code": "L418M3", "name": "夏都村", "location": "L418M3", "brands": ["夏都村"] },
+        { "code": "L418P2", "name": "喜识糖葫芦", "location": "L418P2", "brands": ["喜识糖葫芦"] }
+      ],
+      "正餐": [
+        { "code": "L401A1", "name": "外婆家、炉鱼", "location": "L401A1", "brands": ["外婆家", "炉鱼"] },
+        { "code": "L401B2", "name": "海门鱼仔店", "location": "L401B2", "brands": ["海门鱼仔店"] },
+        { "code": "L4（装修）", "name": "潮发潮汕牛肉店", "location": "L4（装修）", "brands": ["潮发潮汕牛肉店"], "renovating": true },
+        { "code": "L405N6", "name": "怂-重庆火锅厂", "location": "L405N6", "brands": ["怂-重庆火锅厂"] },
+        { "code": "L409N2", "name": "元气寿司", "location": "L409N2", "brands": ["元气寿司"] },
+        { "code": "L410N3", "name": "脆鲜生", "location": "L410N3", "brands": ["脆鲜生"] },
+        { "code": "L412N6", "name": "森林子", "location": "L412N6", "brands": ["森林子"] },
+        { "code": "L417N2", "name": "拾号牛排", "location": "L417N2", "brands": ["拾号牛排"] },
+        { "code": "L418B3", "name": "丘阿婆干蒸菜", "location": "L418B3", "brands": ["丘阿婆干蒸菜"] },
+        { "code": "L418D3", "name": "麺屋猪一", "location": "L418D3", "brands": ["麺屋猪一"] },
+        { "code": "L418E2", "name": "韩欢喜", "location": "L418E2", "brands": ["韩欢喜"] },
+        { "code": "L418G2", "name": "秋收里", "location": "L418G2", "brands": ["秋收里"] },
+        { "code": "L418H5", "name": "陈香贵", "location": "L418H5", "brands": ["陈香贵"] },
+        { "code": "L418I3", "name": "煲仔华", "location": "L418I3", "brands": ["煲仔华"] },
+        { "code": "L418K3", "name": "老碗会", "location": "L418K3", "brands": ["老碗会"] },
+        { "code": "L418O2", "name": "西小排", "location": "L418O2", "brands": ["西小排"] },
+        { "code": "L422N2", "name": "粤菜王府", "location": "L422N2", "brands": ["粤菜王府"] }
+      ],
+      "美容美发": [
+        { "code": "L411N3", "name": "IN STYLE", "location": "L411N3", "brands": ["IN STYLE"] },
+        { "code": "L424A3", "name": "指典艺术", "location": "L424A3", "brands": ["指典艺术"] }
+      ]
+    }
+  }
+};
+
+let currentFloor = 'B1';
+let currentCat = '全部';
+let searchQuery = '';
+
+function initFloorTabs() {
+  const container = document.getElementById('floorTabs');
+  container.innerHTML = '';
+  Object.keys(DATA).forEach(floor => {
+    const tab = document.createElement('div');
+    tab.className = 'floor-tab' + (floor === currentFloor ? ' active' : '');
+    tab.textContent = DATA[floor].floorName;
+    tab.onclick = () => switchFloor(floor);
+    container.appendChild(tab);
+  });
+}
+
+function initCatChips() {
+  const container = document.getElementById('catChips');
+  const allCats = new Set();
+  Object.values(DATA).forEach(f => Object.keys(f.categories).forEach(c => allCats.add(c)));
+  const cats = ['全部', ...Array.from(allCats)];
+  container.innerHTML = '';
+  cats.forEach(cat => {
+    const chip = document.createElement('div');
+    chip.className = 'cat-chip' + (cat === currentCat ? ' active' : '');
+    chip.textContent = cat;
+    chip.onclick = () => switchCat(cat);
+    container.appendChild(chip);
+  });
+}
+
+function switchFloor(floor) {
+  currentFloor = floor;
+  currentCat = '全部';
+  document.querySelectorAll('.floor-tab').forEach((t, i) => t.classList.toggle('active', Object.keys(DATA)[i] === floor));
+  document.querySelectorAll('.cat-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+  render();
+}
+
+function switchCat(cat) {
+  currentCat = cat;
+  const chips = document.querySelectorAll('.cat-chip');
+  const catIndex = cat === '全部' ? 0 : Array.from(chips).findIndex(c => c.textContent === cat);
+  chips.forEach((c, i) => c.classList.toggle('active', i === catIndex));
+  render();
+}
+
+function clearSearch() {
+  searchQuery = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('clearBtn').classList.remove('visible');
+  render();
+}
+
+document.getElementById('searchInput').addEventListener('input', function () {
+  searchQuery = this.value.trim().toLowerCase();
+  document.getElementById('clearBtn').classList.toggle('visible', searchQuery.length > 0);
+  render();
+});
+
+function render() {
+  const content = document.getElementById('content');
+  const floor = DATA[currentFloor];
+  let totalBrands = 0;
+
+  const cats = Object.entries(floor.categories);
+  cats.forEach(([catName, shops]) => {
+    if (currentCat !== '全部' && catName !== currentCat) return;
+    totalBrands += shops.length;
+  });
+
+  let html = `<div class="floor-section active">
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">${floor.floorName}</div>
+      <div class="stat-label">当前楼层</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">${Object.keys(floor.categories).length}</div>
+      <div class="stat-label">业态品类</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">${totalBrands}</div>
+      <div class="stat-label">品牌数量</div>
+    </div>
+  </div>
+
+  <!-- VIP Member Section -->
+  <div class="vip-section">
+    <div class="vip-header">
+      <div class="vip-header-icon">👑</div>
+      <div>
+        <div class="vip-header-text">会员权益</div>
+        <div class="vip-header-sub">VIP MEMBERSHIP BENEFITS</div>
+      </div>
+      <div class="vip-header-line"></div>
+    </div>
+    <div class="vip-cards">
+      <div class="vip-card v-card">
+        <div class="vip-tier">V 卡</div>
+        <div class="vip-divider"></div>
+        <ul class="vip-benefit">
+          <li>消费积分</li>
+          <li>积分当钱花</li>
+        </ul>
+        <div class="vip-cond">
+          <div class="vip-cond-row"><span>升级条件</span><span>扫码注册</span></div>
+          <div class="vip-cond-row"><span>有效期</span><span class="vip-tag-forever">永久有效</span></div>
+        </div>
+      </div>
+      <div class="vip-card s-card">
+        <div class="vip-tier">银 卡</div>
+        <div class="vip-divider"></div>
+        <ul class="vip-benefit">
+          <li>V卡全部权益</li>
+          <li>双倍积分日</li>
+          <li>免费停车2h</li>
+          <li>免费礼品包装×1</li>
+        </ul>
+        <div class="vip-cond">
+          <div class="vip-cond-row"><span>升级条件</span><span>日消费满¥1k / 年消费满¥3k</span></div>
+          <div class="vip-cond-row"><span>保级条件</span><span>年消费满¥3k</span></div>
+          <div class="vip-cond-row"><span>有效期</span><span>1年</span></div>
+        </div>
+      </div>
+      <div class="vip-card g-card">
+        <div class="vip-tier">金 卡</div>
+        <div class="vip-divider"></div>
+        <ul class="vip-benefit">
+          <li>银卡全部权益</li>
+          <li>免费停车2h</li>
+          <li>高端活动邀请</li>
+          <li>生日礼遇</li>
+          <li>免费礼品包装×3</li>
+        </ul>
+        <div class="vip-cond">
+          <div class="vip-cond-row"><span>升级条件</span><span>日消费满¥1w / 年消费满¥3w</span></div>
+          <div class="vip-cond-row"><span>保级条件</span><span>年消费满¥3w</span></div>
+          <div class="vip-cond-row"><span>有效期</span><span>1年</span></div>
+        </div>
+      </div>
+      <div class="vip-card d-card">
+        <div class="vip-tier">钻石卡</div>
+        <div class="vip-divider"></div>
+        <ul class="vip-benefit">
+          <li>金卡全部权益</li>
+          <li>全年免费停车</li>
+          <li style="font-size:10px;color:var(--text-dim)">(单店消费满¥8w)</li>
+          <li>一对一定制服务</li>
+          <li>LED大屏使用</li>
+          <li style="font-size:10px;color:var(--text-dim)">(需申请)</li>
+          <li>免费礼品包装×5</li>
+        </ul>
+        <div class="vip-cond">
+          <div class="vip-cond-row"><span>升级条件</span><span>日消费满¥5w / 年消费满¥10w</span></div>
+          <div class="vip-cond-row"><span>保级条件</span><span>年消费满¥8w</span></div>
+          <div class="vip-cond-row"><span>有效期</span><span>1年</span></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  cats.forEach(([catName, shops]) => {
+    if (currentCat !== '全部' && catName !== currentCat) return;
+
+    const filtered = searchQuery
+      ? shops.filter(s =>
+          s.name.toLowerCase().includes(searchQuery) ||
+          s.code.toLowerCase().includes(searchQuery) ||
+          s.location.toLowerCase().includes(searchQuery) ||
+          s.brands.some(b => b.toLowerCase().includes(searchQuery))
+        )
+      : shops;
+
+    if (filtered.length === 0) return;
+
+    html += `<div class="cat-group">
+      <div class="cat-title">${catName}</div>
+      <div class="brand-grid">`;
+
+    filtered.forEach(shop => {
+      const isHighlight = searchQuery && shop.name.toLowerCase().includes(searchQuery);
+      const isRenovating = shop.renovating;
+      html += `<div class="brand-card${isHighlight ? ' highlight' : ''}" onclick="openModal(${JSON.stringify(shop).replace(/"/g, '&quot;')}, '${floor.floorName}', '${catName.replace(/'/g, "\\'")}')">
+        <div class="brand-name">${shop.name}${isRenovating ? '<span class="badge-reno">装修中</span>' : ''}</div>
+        <div class="brand-code">${shop.code}</div>
+        <div class="brand-location">📍 ${shop.location}</div>
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  if (html.split('brand-card').length <= 1) {
+    html += `<div class="empty-state">
+      <div class="icon">🔍</div>
+      <p>未找到匹配的品牌</p>
+    </div>`;
+  }
+
+  html += `</div>`;
+  content.innerHTML = html;
+}
+
+function openModal(shop, floorName, catName) {
+  document.getElementById('modalName').textContent = shop.name;
+  document.getElementById('modalCode').textContent = shop.code;
+  document.getElementById('modalFloor').textContent = floorName;
+  document.getElementById('modalLoc').textContent = shop.location;
+  document.getElementById('modalCat').textContent = catName;
+  document.getElementById('modalIcon').textContent = shop.name.charAt(0);
+  const brandsInfo = shop.brands.length > 1 ? '集合品牌包括：' + shop.brands.join('、') + '。' : '';
+  document.getElementById('modalDesc').innerHTML = `${shop.name} 位于 ${floorName} ${shop.location}，属于 ${catName} 业态。${brandsInfo}`;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modalOverlay')) return;
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+initFloorTabs();
+initCatChips();
+render();
+
+/* ── Activity Carousel ──────────────────────────── */
+(function() {
+  const slides = [
+    'activity1.png',
+    'activity2.jpg',
+    'activity3.jpg'
+  ];
+  const total = slides.length;
+  let idx = 0;
+  let timer = null;
+  let resumeTimer = null;
+  const INTERVAL = 4000;
+  const RESUME_DELAY = 10000;
+
+  // Build DOM
+  const overlay = document.createElement('div');
+  overlay.className = 'carousel-overlay';
+  overlay.id = 'carouselOverlay';
+
+  let dotsHTML = '';
+  for (let i = 0; i < total; i++) {
+    dotsHTML += '<div class="carousel-dot' + (i === 0 ? ' active' : '') + '" data-i="' + i + '"></div>';
+  }
+
+  overlay.innerHTML =
+    '<button class="carousel-close" id="carouselClose">✕</button>' +
+    '<div class="carousel-track-wrap">' +
+      '<div class="carousel-track" id="carouselTrack">' +
+        slides.map(function(s) { return '<div class="carousel-slide"><img src="' + s + '" draggable="false"></div>'; }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="carousel-dots" id="carouselDots">' + dotsHTML + '</div>';
+
+  document.body.appendChild(overlay);
+
+  var track = document.getElementById('carouselTrack');
+  var dots = document.getElementById('carouselDots').children;
+  var closeBtn = document.getElementById('carouselClose');
+
+  function goTo(i) {
+    if (i < 0) i = total - 1;
+    if (i >= total) i = 0;
+    idx = i;
+    track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+    for (var d = 0; d < dots.length; d++) {
+      dots[d].classList.toggle('active', d === idx);
+    }
+  }
+
+  function startAuto() {
+    stopAuto();
+    timer = setInterval(function() { goTo(idx + 1); }, INTERVAL);
+  }
+
+  function stopAuto() {
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+
+  function scheduleResume() {
+    clearResume();
+    resumeTimer = setTimeout(function() {
+      showCarousel();
+      goTo(0);
+      goHome();
+      startAuto();
+    }, RESUME_DELAY);
+  }
+
+  function clearResume() {
+    if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
+  }
+
+  function showCarousel() {
+    overlay.classList.remove('hidden');
+  }
+
+  function hideCarousel() {
+    overlay.classList.add('hidden');
+    stopAuto();
+    scheduleResume();
+  }
+
+  function goHome() {
+    currentFloor = 'B1';
+    currentCat = '全部';
+    searchQuery = '';
+    var si = document.getElementById('searchInput');
+    if (si) si.value = '';
+    var cb = document.getElementById('clearBtn');
+    if (cb) cb.classList.remove('visible');
+    initFloorTabs();
+    initCatChips();
+    render();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Close button
+  closeBtn.addEventListener('click', function() {
+    hideCarousel();
+  });
+
+  // Dot clicks
+  for (var d = 0; d < dots.length; d++) {
+    dots[d].addEventListener('click', (function(i) {
+      return function() { stopAuto(); goTo(i); scheduleResume(); };
+    })(d));
+  }
+
+  // Touch / swipe — only pause on real horizontal swipe (>10px)
+  var startX = 0, startY = 0, swiping = false, dx = 0;
+  var touchMoved = false;
+
+  track.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX;
+    startY = e.touches[0].clientY;
+    swiping = false;
+    dx = 0;
+    touchMoved = false;
+    track.classList.add('no-transition');
+  }, { passive: true });
+
+  track.addEventListener('touchmove', function(e) {
+    touchMoved = true;
+    var cx = e.touches[0].clientX;
+    dx = cx - startX;
+    var cy = e.touches[0].clientY;
+    if (Math.abs(cy - startY) > Math.abs(dx)) return;
+    if (Math.abs(dx) > 10 && !swiping) {
+      swiping = true;
+      stopAuto();
+      clearResume();
+    }
+    if (swiping) {
+      track.style.transform = 'translateX(' + (-idx * 100 + dx / track.parentElement.offsetWidth * 100) + '%)';
+    }
+  }, { passive: true });
+
+  track.addEventListener('touchend', function() {
+    track.classList.remove('no-transition');
+    if (swiping) {
+      if (Math.abs(dx) > 50) {
+        goTo(dx < 0 ? idx + 1 : idx - 1);
+      } else {
+        goTo(idx);
+      }
+      scheduleResume();
+    }
+    swiping = false;
+  });
+
+  // Mouse drag (desktop)
+  var mDown = false, mStartX = 0, mDx = 0;
+  track.addEventListener('mousedown', function(e) {
+    mDown = true;
+    mStartX = e.clientX;
+    mDx = 0;
+    track.classList.add('no-transition');
+    e.preventDefault();
+  });
+  document.addEventListener('mousemove', function(e) {
+    if (!mDown) return;
+    mDx = e.clientX - mStartX;
+    if (Math.abs(mDx) > 10) {
+      stopAuto();
+      clearResume();
+    }
+    track.style.transform = 'translateX(' + (-idx * 100 + mDx / track.parentElement.offsetWidth * 100) + '%)';
+  });
+  document.addEventListener('mouseup', function() {
+    if (!mDown) return;
+    mDown = false;
+    track.classList.remove('no-transition');
+    if (Math.abs(mDx) > 50) {
+      goTo(mDx < 0 ? idx + 1 : idx - 1);
+    } else {
+      goTo(idx);
+    }
+    if (Math.abs(mDx) > 10) scheduleResume();
+  });
+
+  // Auto show on load
+  showCarousel();
+  startAuto();
+})();
+</script>
+</body>
+</html>
