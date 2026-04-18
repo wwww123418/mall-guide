@@ -1542,6 +1542,7 @@ render();
   let resumeTimer = null;
   const INTERVAL = 4000;
   const RESUME_DELAY = 10000;
+  let userClosed = false; // 用户是否手动关闭了弹窗
 
   // Build DOM
   const overlay = document.createElement('div');
@@ -1590,6 +1591,7 @@ render();
   function scheduleResume() {
     clearResume();
     resumeTimer = setTimeout(function() {
+      if (userClosed) return; // 用户手动关闭了，不再弹出
       showCarousel();
       goTo(0);
       goHome();
@@ -1627,6 +1629,7 @@ render();
 
   // Close button
   closeBtn.addEventListener('click', function() {
+    userClosed = true; // 用户手动关闭
     hideCarousel();
   });
 
