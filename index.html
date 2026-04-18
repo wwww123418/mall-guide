@@ -1539,10 +1539,9 @@ render();
   const total = slides.length;
   let idx = 0;
   let timer = null;
-  let resumeTimer = null;
+  let idleTimer = null; // 空闲计时器：用户无操作10秒后弹窗
   const INTERVAL = 4000;
-  const RESUME_DELAY = 10000;
-  let userClosed = false; // 用户是否手动关闭了弹窗
+  const IDLE_DELAY = 10000; // 10秒无操作后弹出
 
   // Build DOM
   const overlay = document.createElement('div');
@@ -1588,19 +1587,27 @@ render();
     if (timer) { clearInterval(timer); timer = null; }
   }
 
-  function scheduleResume() {
-    clearResume();
-    resumeTimer = setTimeout(function() {
-      if (userClosed) return; // 用户手动关闭了，不再弹出
+  function startIdleTimer() {
+    clearIdleTimer();
+    idleTimer = setTimeout(function() {
       showCarousel();
       goTo(0);
       goHome();
       startAuto();
-    }, RESUME_DELAY);
+    }, IDLE_DELAY);
   }
 
-  function clearResume() {
-    if (resumeTimer) { clearTimeout(resumeTimer); resumeTimer = null; }
+  function clearIdleTimer() {
+    if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; }
+  }
+
+  // 用户活动检测：重置空闲计时器
+  function onUserActivity() {
+    // 只有弹窗隐藏时才重置计时器
+    if (overlay.classList.contains('hidden')) {
+      clearIdleTimer();
+      startIdleTimer();
+    }
   }
 
   function showCarousel() {
@@ -1610,7 +1617,7 @@ render();
   function hideCarousel() {
     overlay.classList.add('hidden');
     stopAuto();
-    scheduleResume();
+    startIdleTimer(); // 开始空闲计时器，10秒无操作后弹窗
   }
 
   function goHome() {
@@ -1629,14 +1636,13 @@ render();
 
   // Close button
   closeBtn.addEventListener('click', function() {
-    userClosed = true; // 用户手动关闭
     hideCarousel();
   });
 
   // Dot clicks
   for (var d = 0; d < dots.length; d++) {
     dots[d].addEventListener('click', (function(i) {
-      return function() { stopAuto(); goTo(i); scheduleResume(); };
+      return function() { stopAuto(); goTo(i); };
     })(d));
   }
 
@@ -1662,7 +1668,6 @@ render();
     if (Math.abs(dx) > 10 && !swiping) {
       swiping = true;
       stopAuto();
-      clearResume();
     }
     if (swiping) {
       track.style.transform = 'translateX(' + (-idx * 100 + dx / track.parentElement.offsetWidth * 100) + '%)';
@@ -1677,7 +1682,6 @@ render();
       } else {
         goTo(idx);
       }
-      scheduleResume();
     }
     swiping = false;
   });
@@ -1696,7 +1700,6 @@ render();
     mDx = e.clientX - mStartX;
     if (Math.abs(mDx) > 10) {
       stopAuto();
-      clearResume();
     }
     track.style.transform = 'translateX(' + (-idx * 100 + mDx / track.parentElement.offsetWidth * 100) + '%)';
   });
@@ -1709,8 +1712,13 @@ render();
     } else {
       goTo(idx);
     }
-    if (Math.abs(mDx) > 10) scheduleResume();
   });
+
+  // 监听用户活动：滑动、点击、滚动等操作重置空闲计时器
+  document.addEventListener('touchstart', onUserActivity, { passive: true });
+  document.addEventListener('click', onUserActivity);
+  document.addEventListener('scroll', onUserActivity, { passive: true });
+  document.addEventListener('keydown', onUserActivity);
 
   // Auto show on load
   showCarousel();
