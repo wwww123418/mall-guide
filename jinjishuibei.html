@@ -5,87 +5,118 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>京基水贝城市广场</title>
 <style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #060e1a;
+  --bg-card: #0b1829;
+  --bg-card-hover: #0f2040;
+  --bg-header: #070f1e;
+  --border: rgba(34,197,94,0.15);
+  --border-hover: rgba(34,197,94,0.4);
+  --green: #22c55e;
+  --green-light: #4ade80;
+  --green-dim: rgba(34,197,94,0.12);
+  --text: #e8f0ff;
+  --text-secondary: #7a9cc4;
+  --text-dim: #3a5278;
+  --white: #ffffff;
+  --shadow: 0 4px 24px rgba(0,0,0,0.6);
+  --shadow-g: 0 4px 30px rgba(34,197,94,0.15);
+  --radius: 14px;
+}
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased; }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  :root { --bg:#060e1a;--bg-card:#0b1829;--bg-card-hover:#0f2040;--bg-header:#070f1e;--border:rgba(64,156,255,0.15);--border-hover:rgba(64,156,255,0.4);--blue:#409eff;--blue-light:#79bbff;--blue-dim:rgba(64,156,255,0.12);--text:#e8f0ff;--text-secondary:#7a9cc4;--text-dim:#3a5278;--white:#fff;--shadow:0 4px 24px rgba(0,0,0,0.6);--shadow-blue:0 4px 30px rgba(64,156,255,0.15);--radius:14px; }
-  body { font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); min-height:100vh; -webkit-font-smoothing:antialiased; }
-  .header { background:var(--bg-header); padding:0 20px; position:sticky; top:0; z-index:100; border-bottom:1px solid var(--border); backdrop-filter:blur(20px); }
-  .header-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; padding:18px 0 0; }
-  .header-logo { display:flex; align-items:center; gap:10px; }
-  .header-logo-icon { width:36px;height:36px;background:linear-gradient(135deg,var(--blue),#1d7fff);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 12px rgba(64,156,255,0.3); }
-  .header-title { font-size:18px;font-weight:700;color:#409eff;letter-spacing:2px; }
-  .header-subtitle { font-size:11px;color:var(--text-secondary);letter-spacing:1px;margin-top:1px; }
-  .header-right { font-size:12px;color:var(--text-dim); }
-  .carousel { max-width:1100px;margin:16px auto 0;padding:0 20px;position:relative;overflow:hidden;border-radius:var(--radius);height:140px; }
-  .carousel-track { display:flex;transition:transform 0.4s ease;height:100%; }
-  .carousel-slide { min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0b1829 0%,#0f2a50 50%,#0b1829 100%);border-radius:var(--radius);flex-direction:column;gap:6px; }
-  .carousel-slide-icon { font-size:32px; }
-  .carousel-slide-title { font-size:20px;font-weight:700;color:var(--blue-light); }
-  .carousel-slide-sub { font-size:12px;color:var(--text-secondary); }
-  .carousel-dot { position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px; }
-  .carousel-dot span { width:6px;height:6px;border-radius:50%;background:var(--text-dim);cursor:pointer;transition:all 0.3s; }
-  .carousel-dot span.active { background:var(--blue);width:20px;border-radius:3px; }
-  .search-bar { max-width:1100px;margin:16px auto 0;padding:0 20px; }
-  .search-bar input { width:100%;padding:14px 20px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);color:var(--text);font-size:15px;outline:none;transition:border-color 0.3s; }
-  .search-bar input:focus { border-color:var(--blue); }
-  .search-bar input::placeholder { color:var(--text-dim); }
-  .zone-tabs { max-width:1100px;margin:14px auto 0;padding:0 20px;display:flex;gap:8px;flex-wrap:wrap; }
-  .zone-tab { padding:8px 16px;border-radius:20px;background:var(--bg-card);border:1px solid var(--border);color:var(--text-secondary);font-size:13px;cursor:pointer;transition:all 0.2s; }
-  .zone-tab:hover { border-color:var(--blue);color:var(--blue-light); }
-  .zone-tab.active { background:var(--blue-dim);border-color:var(--blue);color:var(--blue-light); }
-  .floor-tabs { max-width:1100px;margin:10px auto 0;padding:0 20px;display:flex;gap:6px; }
-  .floor-tab { padding:7px 14px;border-radius:8px;background:var(--bg-card);border:1px solid var(--border);color:var(--text-secondary);font-size:13px;cursor:pointer;transition:all 0.2s; }
-  .floor-tab:hover { border-color:var(--blue);color:var(--blue-light); }
-  .floor-tab.active { background:var(--blue);border-color:var(--blue);color:var(--white); }
-  #content { max-width:1100px;margin:16px auto 40px;padding:0 20px; }
-  .stats-bar { display:flex;gap:12px;margin-bottom:16px; }
-  .stat-item { flex:1;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 16px;text-align:center; }
-  .stat-num { font-size:20px;font-weight:700;color:var(--blue-light); }
-  .stat-label { font-size:11px;color:var(--text-secondary);margin-top:2px; }
-  .vip-section { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px; }
-  .vip-header { display:flex;align-items:center;gap:12px;margin-bottom:16px; }
-  .vip-header-icon { font-size:28px; }
-  .vip-header-text { font-size:16px;font-weight:700;color:var(--blue-light); }
-  .vip-header-sub { font-size:10px;color:var(--text-dim);letter-spacing:1px; }
-  .vip-header-line { flex:1;height:1px;background:var(--border); }
-  .vip-cards { display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px; }
-  .vip-card { background:var(--bg);border-radius:10px;padding:14px;border:1px solid var(--border); }
-  .vip-tier { font-size:15px;font-weight:700;color:var(--blue-light);text-align:center; }
-  .vip-divider { height:1px;background:var(--border);margin:8px 0; }
-  .vip-benefit { list-style:none;font-size:11px;color:var(--text-secondary);padding:0 4px; }
-  .vip-benefit li { padding:2px 0; }
-  .vip-cond { margin-top:8px;font-size:10px;color:var(--text-dim); }
-  .vip-cond-row { display:flex;justify-content:space-between;padding:2px 0; }
-  .vip-tag-forever { color:var(--blue); }
-  .brand-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px; }
-  .brand-card { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 12px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden; }
-  .brand-card:hover { border-color:var(--blue);background:var(--bg-card-hover);box-shadow:var(--shadow-blue);transform:translateY(-2px); }
-  .brand-card.highlight { border-color:var(--blue); }
-  .brand-name { font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:6px; }
-  .badge-reno { font-size:9px;background:#ff6b6b;color:white;padding:1px 5px;border-radius:3px;font-weight:400; }
-  .brand-code { font-size:11px;color:var(--blue);margin-bottom:6px;font-family:monospace; }
-  .brand-location { font-size:11px;color:var(--text-secondary); }
-  .brand-tags { font-size:10px;color:var(--text-dim);margin-top:4px; }
-  .empty-state { text-align:center;padding:60px 20px;color:var(--text-dim); }
-  .empty-state .icon { font-size:48px;margin-bottom:12px; }
-  .empty-state p { font-size:15px; }
-  .modal-overlay { position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.75);display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(8px); }
-  .modal-overlay.active { display:flex; }
-  .modal { background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;width:100%;max-width:440px;box-shadow:var(--shadow); }
-  .modal-name { font-size:22px;font-weight:700;color:var(--blue-light);margin-bottom:8px; }
-  .modal-code { font-size:12px;color:var(--blue);font-family:monospace;margin-bottom:14px; }
-  .modal-row { display:flex;gap:16px;margin-bottom:10px;flex-wrap:wrap; }
-  .modal-tag { background:var(--blue-dim);border:1px solid var(--border);border-radius:6px;padding:8px 14px;font-size:13px;display:flex;align-items:center;gap:6px; }
-  .modal-tag-label { color:var(--text-dim); }
-  .modal-tag-val { color:var(--text); }
-  .modal-subloc { background:rgba(64,156,255,0.06);border:1px solid var(--border);border-radius:6px;padding:10px 14px;font-size:13px;color:var(--text-secondary);margin-top:6px; }
-  .modal-divider { height:1px;background:var(--border);margin:14px 0; }
-  .modal-section-title { font-size:12px;color:var(--text-dim);margin-bottom:8px;letter-spacing:1px; }
-  .modal-brands { font-size:14px;color:var(--text); }
-  .modal-tags-list { display:flex;flex-wrap:wrap;gap:6px;margin-top:8px; }
-  .modal-tag-chip { background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:4px 10px;font-size:12px;color:var(--text-secondary); }
-  @media(max-width:600px){.brand-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}.vip-cards{grid-template-columns:repeat(2,1fr);}.modal-row{flex-direction:column;gap:8px;}}
+.header { background: var(--bg-header); padding: 0 20px; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--border); backdrop-filter: blur(20px); }
+.header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 18px 0 0; }
+.header-logo { display: flex; align-items: center; gap: 10px; }
+.header-logo-icon { width: 36px; height: 36px; background: linear-gradient(135deg, var(--green), #16a34a); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 2px 12px rgba(34,197,94,0.3); }
+.header-title { font-size: 18px; font-weight: 700; color: var(--green); letter-spacing: 2px; }
+.header-subtitle { font-size: 11px; color: var(--text-secondary); letter-spacing: 1px; margin-top: 1px; }
+.header-right { font-size: 12px; color: var(--text-dim); }
 
+.carousel { max-width: 1100px; margin: 16px auto 0; padding: 0 20px; position: relative; overflow: hidden; border-radius: var(--radius); height: 140px; }
+.carousel-track { display: flex; transition: transform 0.4s ease; height: 100%; }
+.carousel-slide { min-width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0b1829 0%, #0a2418 50%, #0b1829 100%); border-radius: var(--radius); flex-direction: column; gap: 6px; }
+.carousel-slide-icon { font-size: 32px; }
+.carousel-slide-title { font-size: 20px; font-weight: 700; color: var(--green-light); }
+.carousel-slide-sub { font-size: 12px; color: var(--text-secondary); }
+.carousel-dot { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; }
+.carousel-dot span { width: 6px; height: 6px; border-radius: 50%; background: var(--text-dim); cursor: pointer; transition: all 0.3s; }
+.carousel-dot span.active { background: var(--green); width: 20px; border-radius: 3px; }
+
+.search-bar { max-width: 1100px; margin: 16px auto 0; padding: 0 20px; }
+.search-bar input { width: 100%; padding: 14px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text); font-size: 15px; outline: none; transition: border-color 0.3s; }
+.search-bar input:focus { border-color: var(--green); }
+.search-bar input::placeholder { color: var(--text-dim); }
+
+.zone-tabs { max-width: 1100px; margin: 14px auto 0; padding: 0 20px; display: flex; gap: 8px; flex-wrap: wrap; }
+.zone-tab { padding: 8px 16px; border-radius: 20px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.zone-tab:hover { border-color: var(--green); color: var(--green-light); }
+.zone-tab.active { background: var(--green-dim); border-color: var(--green); color: var(--green-light); }
+
+.floor-tabs { max-width: 1100px; margin: 10px auto 0; padding: 0 20px; display: flex; gap: 6px; }
+.floor-tab { padding: 7px 14px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border); color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.floor-tab:hover { border-color: var(--green); color: var(--green-light); }
+.floor-tab.active { background: var(--green); border-color: var(--green); color: var(--white); }
+
+#content { max-width: 1100px; margin: 16px auto 40px; padding: 0 20px; }
+
+.stats-bar { display: flex; gap: 12px; margin-bottom: 16px; }
+.stat-item { flex: 1; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 16px; text-align: center; }
+.stat-num { font-size: 20px; font-weight: 700; color: var(--green-light); }
+.stat-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+
+.vip-section { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; margin-bottom: 20px; }
+.vip-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.vip-header-icon { font-size: 28px; }
+.vip-header-text { font-size: 16px; font-weight: 700; color: var(--green-light); }
+.vip-header-sub { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; }
+.vip-header-line { flex: 1; height: 1px; background: var(--border); }
+.vip-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.vip-card { background: var(--bg); border-radius: 10px; padding: 14px; border: 1px solid var(--border); display: flex; flex-direction: column; }
+.vip-tier { font-size: 15px; font-weight: 700; color: var(--green-light); text-align: center; margin-bottom: 8px; }
+.vip-divider { height: 1px; background: var(--border); margin-bottom: 8px; }
+.vip-benefit { list-style: none; font-size: 11px; color: var(--text-secondary); flex: 1; }
+.vip-benefit li { padding: 2px 0; }
+.vip-cond { margin-top: 10px; font-size: 10px; color: var(--text-dim); border-top: 1px solid var(--border); padding-top: 8px; }
+.vip-cond-row { display: flex; justify-content: space-between; padding: 2px 0; }
+.vip-tag-forever { color: var(--green); }
+
+.brand-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+.brand-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 12px; cursor: pointer; transition: all 0.2s; }
+.brand-card:hover { border-color: var(--green); background: var(--bg-card-hover); box-shadow: var(--shadow-g); transform: translateY(-2px); }
+.brand-card.highlight { border-color: var(--green); }
+.brand-name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.badge-reno { font-size: 9px; background: #ff6b6b; color: white; padding: 1px 5px; border-radius: 3px; font-weight: 400; }
+.brand-code { font-size: 11px; color: var(--green); margin-bottom: 6px; font-family: monospace; }
+.brand-location { font-size: 11px; color: var(--text-secondary); }
+.brand-tags { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 15px; }
+
+.modal-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75); display: none; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(8px); }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; width: 100%; max-width: 440px; box-shadow: var(--shadow); }
+.modal-name { font-size: 22px; font-weight: 700; color: var(--green-light); margin-bottom: 8px; }
+.modal-code { font-size: 12px; color: var(--green); font-family: monospace; margin-bottom: 14px; }
+.modal-row { display: flex; gap: 16px; margin-bottom: 10px; flex-wrap: wrap; }
+.modal-tag { background: var(--green-dim); border: 1px solid var(--border); border-radius: 6px; padding: 8px 14px; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+.modal-tag-label { color: var(--text-dim); }
+.modal-tag-val { color: var(--text); }
+.modal-subloc { background: rgba(34,197,94,0.06); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; font-size: 13px; color: var(--text-secondary); margin-top: 6px; }
+.modal-divider { height: 1px; background: var(--border); margin: 14px 0; }
+.modal-section-title { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; letter-spacing: 1px; }
+.modal-brands { font-size: 14px; color: var(--text); }
+.modal-tags-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.modal-tag-chip { background: var(--bg); border: 1px solid var(--border); border-radius: 4px; padding: 4px 10px; font-size: 12px; color: var(--text-secondary); }
+
+@media (max-width: 600px) {
+  .brand-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+  .vip-cards { grid-template-columns: repeat(2, 1fr); }
+  .modal-row { flex-direction: column; gap: 8px; }
+}
 </style>
 </head>
 <body>
@@ -154,25 +185,24 @@
 </div>
 
 <script>
-
 const DATA = {
   "B2": {
     "floorName": "B2层",
     "categories": {
       "南区": [
-        {"code":"B201A","name":"\u4e16\u5bb6\u5802","location":"B201A","brands":["\u4e16\u5bb6\u5802"],"tags":"\u51c9\u8336 \u7cd6\u6c34 \u751c\u54c1","renovating":false,"subloc":""},
-        {"code":"B204A","name":"\u62cc\u7c89\u541b","location":"B204A","brands":["\u62cc\u7c89\u541b"],"tags":"\u5357\u660c\u62cc\u7c89","renovating":false,"subloc":""},
-        {"code":"B204B","name":"\u798f\u5ba2","location":"B204B","brands":["\u798f\u5ba2"],"tags":"\u9ebb\u8fa3\u70eb","renovating":false,"subloc":""},
-        {"code":"B204C","name":"\u6728\u6cbb\u5173\u4e1c\u716e","location":"B204C","brands":["\u6728\u6cbb\u5173\u4e1c\u716e", "\u559c\u8bc6"],"tags":"\u5173\u4e1c\u716e \u5df2\u64a4\u573a","renovating":true,"subloc":""},
-        {"code":"B205A","name":"\u8336\u6551\u661f\u7403","location":"B205A","brands":["\u8336\u6551\u661f\u7403"],"tags":"\u852c\u679c\u8336 \u67e0\u6aac\u8336","renovating":false,"subloc":""},
-        {"code":"B206","name":"\u82cf\u6653\u73a5","location":"B206","brands":["\u82cf\u6653\u73a5"],"tags":"\u9e2d\u8840\u7c89\u4e1d","renovating":false,"subloc":""},
-        {"code":"B208","name":"\u4e07\u5229\u8bb0","location":"B208","brands":["\u4e07\u5229\u8bb0"],"tags":"\u957f\u6c99\u5c0f\u5403 \u81ed\u8c46\u8150","renovating":false,"subloc":""},
-        {"code":"B209","name":"\u76db\u9999\u4ead","location":"B209","brands":["\u76db\u9999\u4ead"],"tags":"\u70ed\u5364 \u6e56\u5357\u7c89\u9762 \u5c0f\u5403","renovating":false,"subloc":"D\u533a\u505c\u8f66\u573a\u5165\u53e3"},
-        {"code":"B210","name":"\u79be\u82b1\u865e","location":"B210","brands":["\u79be\u82b1\u865e"],"tags":"\u6e56\u5317\u5c0f\u5403 \u85d5\u6c64","renovating":false,"subloc":""},
-        {"code":"B211","name":"\u6f6e\u6709\u53cb","location":"B211","brands":["\u6f6e\u6709\u53cb"],"tags":"\u6f6e\u6c55\u98ce\u5473 \u7cbf\u6761","renovating":false,"subloc":""},
-        {"code":"B212","name":"\u9eba\u5c4b\u732a\u4e00","location":"B212","brands":["\u9eba\u5c4b\u732a\u4e00"],"tags":"\u65e5\u5f0f\u62c9\u9762","renovating":false,"subloc":""},
-        {"code":"B213","name":"\u548c\u5e9c\u635e\u9762","location":"B213","brands":["\u548c\u5e9c\u635e\u9762"],"tags":"\u517b\u751f\u8349\u672c\u6c64\u9762","renovating":false,"subloc":""},
-        {"code":"B214","name":"\u54c1\u8d28\u4f18\u5065\u8eab","location":"B214","brands":["\u54c1\u8d28\u4f18\u5065\u8eab"],"tags":"\u5065\u8eab\u623f","renovating":false,"subloc":""}
+        {"code":"B201A","name":"世家堂","location":"B201A","brands":["世家堂"],"tags":"凉茶 糖水 甜品"},
+        {"code":"B204A","name":"拌粉君","location":"B204A","brands":["拌粉君"],"tags":"南昌拌粉"},
+        {"code":"B204B","name":"福客","location":"B204B","brands":["福客"],"tags":"麻辣烫"},
+        {"code":"B204C","name":"木治关东煮","location":"B204C","brands":["木治关东煮","喜识"],"tags":"关东煮 已撤场","renovating":true},
+        {"code":"B205A","name":"茶救星球","location":"B205A","brands":["茶救星球"],"tags":"蔬果茶 柠檬茶"},
+        {"code":"B206","name":"苏晓玥","location":"B206","brands":["苏晓玥"],"tags":"鸭血粉丝"},
+        {"code":"B208","name":"万利记","location":"B208","brands":["万利记"],"tags":"长沙小吃 臭豆腐"},
+        {"code":"B209","name":"盛香亭","location":"B209","brands":["盛香亭"],"tags":"热卤 湖南粉面 小吃","subloc":"D区停车场入口"},
+        {"code":"B210","name":"禾花虞","location":"B210","brands":["禾花虞"],"tags":"湖北小吃 藕汤"},
+        {"code":"B211","name":"潮有友","location":"B211","brands":["潮有友"],"tags":"潮汕风味 粿条"},
+        {"code":"B212","name":"麺屋猪一","location":"B212","brands":["麺屋猪一"],"tags":"日式拉面"},
+        {"code":"B213","name":"和府捞面","location":"B213","brands":["和府捞面"],"tags":"养生草本汤面"},
+        {"code":"B214","name":"品质优健身","location":"B214","brands":["品质优健身"],"tags":"健身房"}
       ]
     }
   },
@@ -180,68 +210,48 @@ const DATA = {
     "floorName": "B1层",
     "categories": {
       "中庭": [
-        {"code":"B101","name":"\u81fb\u9009\u73e0\u5b9d","location":"B101","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"\u65f6\u5c1a","renovating":false,"subloc":"A\u533a"},
-        {"code":"B130","name":"\u4e1c\u829d","location":"B130","brands":["\u4e1c\u829d"],"tags":"\u5bb6\u7535","renovating":false,"subloc":""},
-        {"code":"B163","name":"JR\u539f\u521b\u54c1\u724c","location":"B163","brands":["JR\u539f\u521b\u54c1\u724c"],"tags":"\u5a5a\u5e86","renovating":false,"subloc":"K\u533a"}
+        {"code":"B101","name":"臻选珠宝","location":"B101","brands":["臻选珠宝"],"tags":"时尚","subloc":"A区"},
+        {"code":"B130","name":"东芝","location":"B130","brands":["东芝"],"tags":"家电"},
+        {"code":"B163","name":"JR原创品牌","location":"B163","brands":["JR原创品牌"],"tags":"婚庆","subloc":"K区"}
       ],
       "北区": [
-        {"code":"B105","name":"\u81fb\u9009\u73e0\u5b9d","location":"B105","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"B122","name":"\u81fb\u9009\u73e0\u5b9d","location":"B122","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"\u6f6e\u54c1 \u7389\u77f3","renovating":false,"subloc":"F\u533a"},
-        {"code":"B128","name":"\u81fb\u9009\u73e0\u5b9d","location":"B128","brands":["\u81fb\u9009\u73e0\u5b9d", "\u663e\u798f", "\u94f6\u9f99", "\u73e0\u5b9d\u4fee\u7406"],"tags":"\u56fd\u6f6e","renovating":false,"subloc":"G\u533a"},
-        {"code":"B129","name":"\u9f0e\u793c\u73e0\u5b9d","location":"B129","brands":["\u9f0e\u793c\u73e0\u5b9d"],"tags":"\u9ec4\u91d1","renovating":false,"subloc":""},
-        {"code":"B134","name":"\u81fb\u9009\u73e0\u5b9d","location":"B134","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"\u5a5a\u5e86","renovating":false,"subloc":"I\u533a"},
-        {"code":"B135","name":"\u81fb\u9009\u73e0\u5b9d","location":"B135","brands":["\u81fb\u9009\u73e0\u5b9d", "\u946b\u742a", "\u7231\u4e50"],"tags":"\u5a5a\u5e86","renovating":false,"subloc":"J\u533a"}
+        {"code":"B105","name":"臻选珠宝","location":"B105","brands":["臻选珠宝"],"tags":""},
+        {"code":"B122","name":"臻选珠宝","location":"B122","brands":["臻选珠宝"],"tags":"潮品 玉石","subloc":"F区"},
+        {"code":"B128","name":"臻选珠宝","location":"B128","brands":["臻选珠宝","显福","银龙","珠宝修理"],"tags":"国潮","subloc":"G区"},
+        {"code":"B129","name":"鼎礼珠宝","location":"B129","brands":["鼎选珠宝"],"tags":"黄金"},
+        {"code":"B134","name":"臻选珠宝","location":"B134","brands":["臻选珠宝"],"tags":"婚庆","subloc":"I区"},
+        {"code":"B135","name":"臻选珠宝","location":"B135","brands":["臻选珠宝","鑫琪","爱乐"],"tags":"婚庆","subloc":"J区"}
       ],
       "南区": [
-        {"code":"B137","name":"\u5c0f\u6797\u84dd\u9cc4","location":"B137","brands":["\u5c0f\u6797\u84dd\u9cc4"],"tags":"\u7cbe\u54c1\u9970\u54c1","renovating":false,"subloc":""},
-        {"code":"B137A","name":"\u6df7\u679c\u6c41","location":"B137A","brands":["\u6df7\u679c\u6c41"],"tags":"\u9c9c\u69a8\u679c\u6c41","renovating":false,"subloc":""},
-        {"code":"B137B","name":"SKG","location":"B137B","brands":["SKG"],"tags":"\u6309\u6469\u4eea","renovating":false,"subloc":""},
-        {"code":"B137C","name":"\u8f6c\u8f6c","location":"B137C","brands":["\u8f6c\u8f6c"],"tags":"\u4e8c\u624b\u624b\u673a\u56de\u6536","renovating":false,"subloc":"\u6bcd\u5a74\u5ba4\u65c1"},
-        {"code":"B137C2","name":"\u73a9\u523b","location":"B137C2","brands":["\u73a9\u523b"],"tags":"\u81ea\u52a9Switch","renovating":false,"subloc":""},
-        {"code":"B138","name":"\u745e\u5e78\u5496\u5561","location":"B138","brands":["\u745e\u5e78\u5496\u5561"],"tags":"\u5496\u5561","renovating":false,"subloc":""},
-        {"code":"B139","name":"\u8309\u8389\u5976\u767d","location":"B139","brands":["\u8309\u8389\u5976\u767d"],"tags":"\u5976\u8336","renovating":false,"subloc":""},
-        {"code":"B140","name":"\u6de1\u9a6c\u8336\u574a","location":"B140","brands":["\u6de1\u9a6c\u8336\u574a"],"tags":"\u5976\u8336","renovating":false,"subloc":""},
-        {"code":"B141","name":"\u826f\u54c1\u94fa\u5b50","location":"B141","brands":["\u826f\u54c1\u94fa\u5b50"],"tags":"\u96f6\u98df","renovating":false,"subloc":""},
-        {"code":"B142","name":"\u540d\u521b\u4f18\u54c1","location":"B142","brands":["\u540d\u521b\u4f18\u54c1"],"tags":"\u751f\u6d3b\u767e\u8d27","renovating":false,"subloc":""},
-        {"code":"B143A","name":"\u56fd\u6d0b\u70df\u9152\u884c","location":"B143A","brands":["\u56fd\u6d0b\u70df\u9152\u884c"],"tags":"\u70df\u9152","renovating":false,"subloc":""},
-        {"code":"B143","name":"\u5143\u521d\u98df\u54c1","location":"B143","brands":["\u5143\u521d\u98df\u54c1"],"tags":"\u8d85\u5e02","renovating":false,"subloc":"B143/B144"},
-        {"code":"B143C","name":"\u4e50\u6c99\u513f","location":"B143C","brands":["\u4e50\u6c99\u513f"],"tags":"\u5f69\u5986 \u62a4\u80a4","renovating":false,"subloc":""},
-        {"code":"B148","name":"\u5473\u5343\u62c9\u9762","location":"B148","brands":["\u5473\u5343\u62c9\u9762"],"tags":"\u65e5\u5f0f\u62c9\u9762","renovating":false,"subloc":""},
-        {"code":"B148A","name":"\u8001\u5e7f\u8bb0\u7ec6\u84c9","location":"B148A","brands":["\u8001\u5e7f\u8bb0\u7ec6\u84c9"],"tags":"\u5e7f\u5f0f\u5c0f\u5403 \u4e91\u541e\u9762","renovating":false,"subloc":""},
-        {"code":"B153","name":"\u6e2f\u7a76\u8336","location":"B153","brands":["\u6e2f\u7a76\u8336"],"tags":"\u4e1d\u889c\u5976\u8336","renovating":false,"subloc":""},
-        {"code":"B154","name":"\u767d\u7389\u4e32\u57ce","location":"B154","brands":["\u767d\u7389\u4e32\u57ce"],"tags":"\u671d\u9c9c\u65cf\u70e4\u4e32","renovating":false,"subloc":""},
-        {"code":"B155","name":"\u63a2\u7089","location":"B155","brands":["\u63a2\u7089"],"tags":"\u70e4\u9c7c","renovating":false,"subloc":""},
-        {"code":"B156","name":"\u519c\u8015\u8bb0","location":"B156","brands":["\u519c\u8015\u8bb0"],"tags":"\u6e56\u5357\u571f\u83dc","renovating":false,"subloc":""},
-        {"code":"B157","name":"\u51ef\u4e50\u91cc\u51b0\u5ba4","location":"B157","brands":["\u51ef\u4e50\u91cc\u51b0\u5ba4"],"tags":"\u9999\u6e2f\u8336\u9910\u5385","renovating":false,"subloc":""},
-        {"code":"B158","name":"\u68ee\u5d0e\u9762\u5305","location":"B158","brands":["\u68ee\u5d0e\u9762\u5305"],"tags":"\u9762\u5305 \u5496\u5561","renovating":false,"subloc":""},
-        {"code":"B158A","name":"\u6ee1\u8bb0\u751c\u54c1","location":"B158A","brands":["\u6ee1\u8bb0\u751c\u54c1"],"tags":"\u751c\u54c1","renovating":false,"subloc":""},
-        {"code":"B159","name":"Lenovo\u8054\u60f3","location":"B159","brands":["Lenovo"],"tags":"\u7535\u8111 \u6570\u7801","renovating":false,"subloc":""},
-        {"code":"B160","name":"\u6c90\u7eaf","location":"B160","brands":["\u6c90\u7eaf"],"tags":"\u5185\u8863 \u5e8a\u54c1","renovating":false,"subloc":""},
-        {"code":"B161","name":"XUKOU\u5e8f\u853b","location":"B161","brands":["XUKOU\u5e8f\u853b"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"B162","name":"\u8c61\u5c71\u9165\u9662","location":"B162","brands":["\u8c61\u5c71\u9165\u9662"],"tags":"\u7cd5\u70b9 \u9762\u5305","renovating":false,"subloc":""},
-        {"code":"B166","name":"\u8ffd\u89c5","location":"B166","brands":["\u8ffd\u89c5", "\u53e4\u68b5\u73e0\u5b9d"],"tags":"\u73e0\u5b9d","renovating":false,"subloc":""},
-        {"code":"B166-B","name":"\u51ef\u8fea\u4ed5","location":"B166-B","brands":["\u51ef\u8fea\u4ed5"],"tags":"\u667a\u80fd\u9501","renovating":false,"subloc":""},
-        {"code":"B167","name":"\u65e5\u7acb\u4e2d\u592e\u7a7a\u8c03/\u53f2\u5bc6\u65af","location":"B167","brands":["\u65e5\u7acb", "A.O.\u53f2\u5bc6\u65af"],"tags":"\u4e2d\u592e\u7a7a\u8c03","renovating":false,"subloc":""}
-      ],
-      "其他": [
-        {"code":"B102","name":"\u7f8e\u7684\u667a\u6167\u5bb6\u4f53\u9a8c\u9986","location":"B102","brands":["\u7f8e\u7684"],"tags":"\u5bb6\u7535","renovating":false,"subloc":""},
-        {"code":"B103","name":"\u5c0f\u7c73","location":"B103","brands":["\u5c0f\u7c73"],"tags":"\u624b\u673a \u6570\u7801","renovating":false,"subloc":""},
-        {"code":"B104","name":"VIVO","location":"B104","brands":["VIVO"],"tags":"\u624b\u673a","renovating":false,"subloc":""},
-        {"code":"B106","name":"\u5468\u745e\u7965\u73e0\u5b9d","location":"B106","brands":["\u5468\u745e\u7965\u73e0\u5b9d"],"tags":"\u9ec4\u91d1","renovating":false,"subloc":""},
-        {"code":"B107","name":"\u81fb\u9009\u73e0\u5b9d","location":"B107","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"B108","name":"\u81fb\u9009\u73e0\u5b9d","location":"B108","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"B123","name":"\u81fb\u9009\u73e0\u5b9d","location":"B123","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"B124","name":"\u81fb\u9009\u73e0\u5b9d","location":"B124","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"B125","name":"\u81fb\u9009\u73e0\u5b9d","location":"B125","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"B126","name":"\u81fb\u9009\u73e0\u5b9d","location":"B126","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"B128A","name":"\u81fb\u9009\u73e0\u5b9d","location":"B128A","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"B128B","name":"\u4e1c\u829d","location":"B128B","brands":["\u4e1c\u829d"],"tags":"\u5bb6\u7535","renovating":false,"subloc":""},
-        {"code":"B130a","name":"\u4e1c\u829d","location":"B130a","brands":["\u4e1c\u829d"],"tags":"\u5bb6\u7535","renovating":false,"subloc":""},
-        {"code":"B131","name":"6IXTY 8IGHT","location":"B131","brands":["6IXTY 8IGHT"],"tags":"\u5185\u8863","renovating":false,"subloc":""},
-        {"code":"B132","name":"6IXTY 8IGHT","location":"B132","brands":["6IXTY 8IGHT"],"tags":"\u5185\u8863","renovating":false,"subloc":""},
-        {"code":"B133","name":"6IXTY 8IGHT","location":"B133","brands":["6IXTY 8IGHT"],"tags":"\u5185\u8863","renovating":false,"subloc":""},
-        {"code":"B164","name":"\u81fb\u9009\u73e0\u5b9d","location":"B164","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"B165","name":"\u81fb\u9009\u73e0\u5b9d","location":"B165","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""}
+        {"code":"B137","name":"小林蓝鳄","location":"B137","brands":["小林蓝鳄"],"tags":"精品饰品"},
+        {"code":"B137A","name":"混果汁","location":"B137A","brands":["混果汁"],"tags":"鲜榨果汁"},
+        {"code":"B137B","name":"SKG","location":"B137B","brands":["SKG"],"tags":"按摩仪"},
+        {"code":"B137C","name":"转转","location":"B137C","brands":["转转"],"tags":"二手手机回收","subloc":"母婴室旁"},
+        {"code":"B137C2","name":"玩刻","location":"B137C2","brands":["玩刻"],"tags":"自助Switch"},
+        {"code":"B138","name":"瑞幸咖啡","location":"B138","brands":["瑞幸咖啡"],"tags":"咖啡"},
+        {"code":"B139","name":"茉莉奶白","location":"B139","brands":["茉莉奶白"],"tags":"奶茶"},
+        {"code":"B140","name":"淡马茶坊","location":"B140","brands":["淡马茶坊"],"tags":"奶茶"},
+        {"code":"B141","name":"良品铺子","location":"B141","brands":["良品铺子"],"tags":"零食"},
+        {"code":"B142","name":"名创优品","location":"B142","brands":["名创优品"],"tags":"生活百货"},
+        {"code":"B143A","name":"国洋烟酒行","location":"B143A","brands":["国洋烟酒行"],"tags":"烟酒"},
+        {"code":"B143","name":"元初食品","location":"B143","brands":["元初食品"],"tags":"超市","subloc":"B143/B144"},
+        {"code":"B143C","name":"乐沙儿","location":"B143C","brands":["乐沙儿"],"tags":"彩妆 护肤"},
+        {"code":"B148","name":"味千拉面","location":"B148","brands":["味千拉面"],"tags":"日式拉面"},
+        {"code":"B148A","name":"老广记细蓉","location":"B148A","brands":["老广记细蓉"],"tags":"广式小吃 云吞面"},
+        {"code":"B153","name":"港究茶","location":"B153","brands":["港究茶"],"tags":"丝袜奶茶"},
+        {"code":"B154","name":"白玉串城","location":"B154","brands":["白玉串城"],"tags":"朝鲜族烤串"},
+        {"code":"B155","name":"探炉","location":"B155","brands":["探炉"],"tags":"烤鱼"},
+        {"code":"B156","name":"农耕记","location":"B156","brands":["农耕记"],"tags":"湖南土菜"},
+        {"code":"B157","name":"凯乐里冰室","location":"B157","brands":["凯乐里冰室"],"tags":"香港茶餐厅"},
+        {"code":"B158","name":"森崎面包","location":"B158","brands":["森崎面包"],"tags":"面包 咖啡"},
+        {"code":"B158A","name":"满记甜品","location":"B158A","brands":["满记甜品"],"tags":"甜品"},
+        {"code":"B159","name":"Lenovo联想","location":"B159","brands":["Lenovo"],"tags":"电脑 数码"},
+        {"code":"B160","name":"沐纯","location":"B160","brands":["沐纯"],"tags":"内衣 床品"},
+        {"code":"B161","name":"XUKOU序蔻","location":"B161","brands":["XUKOU序蔻"],"tags":"女装"},
+        {"code":"B162","name":"象山酥院","location":"B162","brands":["象山酥院"],"tags":"糕点 面包"},
+        {"code":"B166","name":"追觅","location":"B166","brands":["追觅","古梵珠宝"],"tags":"珠宝"},
+        {"code":"B166-B","name":"凯迪仕","location":"B166-B","brands":["凯迪仕"],"tags":"智能锁"},
+        {"code":"B167","name":"日立中央空调/史密斯","location":"B167","brands":["日立","A.O.史密斯"],"tags":"中央空调"}
       ]
     }
   },
@@ -249,43 +259,43 @@ const DATA = {
     "floorName": "L1层",
     "categories": {
       "北区": [
-        {"code":"L101A","name":"\u519c\u4e1a\u94f6\u884c","location":"L101A","brands":["\u519c\u4e1a\u94f6\u884c"],"tags":"\u94f6\u884c","renovating":false,"subloc":""},
-        {"code":"L102","name":"\u81fb\u9009\u73e0\u5b9d","location":"L102","brands":["\u81fb\u9009\u73e0\u5b9d", "\u53e4\u68b5", "\u6b23\u5b8f\u94bb\u77f3", "\u91d1\u5730\u4e1a\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":"N\u533a"},
-        {"code":"L103","name":"\u5468\u5927\u798f","location":"L103","brands":["\u5468\u5927\u798f"],"tags":"\u9ec4\u91d1 \u73e0\u5b9d","renovating":false,"subloc":""},
-        {"code":"L105","name":"\u65af\u51ef\u5947SKECHERS","location":"L105","brands":["SKECHERS"],"tags":"\u8fd0\u52a8\u978b","renovating":false,"subloc":""},
-        {"code":"L105B","name":"\u732b\u5458\u5916\u7cbe\u917f\u5564\u9152\u9986","location":"L105B","brands":["\u732b\u5458\u5916"],"tags":"\u7cbe\u917f\u5564\u9152","renovating":false,"subloc":"\u5916\u56f4"},
-        {"code":"L106","name":"\u8bfa\u8d1d\u8fbe","location":"L106","brands":["\u8bfa\u8d1d\u8fbe"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L107","name":"\u4e5d\u7267\u738b","location":"L107","brands":["\u4e5d\u7267\u738b"],"tags":"\u7537\u88c5","renovating":false,"subloc":""},
-        {"code":"L108","name":"\u535a\u58eb\u773c\u955c","location":"L108","brands":["\u535a\u58eb\u773c\u955c"],"tags":"\u773c\u955c","renovating":false,"subloc":""},
-        {"code":"L108A","name":"M Stand","location":"L108A","brands":["M Stand"],"tags":"\u5496\u5561","renovating":false,"subloc":""},
-        {"code":"L122","name":"\u7237\u7237\u4e0d\u6ce1\u8336","location":"L122","brands":["\u7237\u7237\u4e0d\u6ce1\u8336"],"tags":"\u5976\u8336","renovating":false,"subloc":""},
-        {"code":"L123","name":"\u6bd4\u534e\u5229\u4fdd\u7f57","location":"L123","brands":["\u6bd4\u534e\u5229\u4fdd\u7f57"],"tags":"\u7537\u88c5","renovating":false,"subloc":"\u4e09\u697c\u53e6\u6709"},
-        {"code":"L124","name":"\u6ce2\u53f8\u767b","location":"L124","brands":["\u6ce2\u53f8\u767b"],"tags":"\u7fbd\u7ed2\u670d","renovating":false,"subloc":"L124/L125/L126"},
-        {"code":"L127A","name":"\u534e\u4e3a","location":"L127A","brands":["\u534e\u4e3a"],"tags":"\u624b\u673a \u6570\u7801","renovating":false,"subloc":""},
-        {"code":"L128","name":"MC CHOICE","location":"L128","brands":["MC CHOICE"],"tags":"\u5973\u88c5 \u978b\u9774","renovating":false,"subloc":""}
+        {"code":"L101A","name":"农业银行","location":"L101A","brands":["农业银行"],"tags":"银行"},
+        {"code":"L102","name":"臻选珠宝","location":"L102","brands":["臻选珠宝","古梵","欣宏钻石","金地业珠宝"],"tags":"","subloc":"N区"},
+        {"code":"L103","name":"周大福","location":"L103","brands":["周大福"],"tags":"黄金 珠宝"},
+        {"code":"L105","name":"斯凯奇SKECHERS","location":"L105","brands":["SKECHERS"],"tags":"运动鞋"},
+        {"code":"L105B","name":"猫员外精酿啤酒馆","location":"L105B","brands":["猫员外"],"tags":"精酿啤酒","subloc":"外围"},
+        {"code":"L106","name":"诺贝达","location":"L106","brands":["诺贝达"],"tags":"女装"},
+        {"code":"L107","name":"九牧王","location":"L107","brands":["九牧王"],"tags":"男装"},
+        {"code":"L108","name":"博士眼镜","location":"L108","brands":["博士眼镜"],"tags":"眼镜"},
+        {"code":"L108A","name":"M Stand","location":"L108A","brands":["M Stand"],"tags":"咖啡"},
+        {"code":"L122","name":"爷爷不泡茶","location":"L122","brands":["爷爷不泡茶"],"tags":"奶茶"},
+        {"code":"L123","name":"比华利保罗","location":"L123","brands":["比华利保罗"],"tags":"男装","subloc":"三楼另有"},
+        {"code":"L124","name":"波司登","location":"L124","brands":["波司登"],"tags":"羽绒服","subloc":"L124/L125/L126"},
+        {"code":"L127A","name":"华为","location":"L127A","brands":["华为"],"tags":"手机 数码"},
+        {"code":"L128","name":"MC CHOICE","location":"L128","brands":["MC CHOICE"],"tags":"女装 鞋靴"}
       ],
       "南区": [
-        {"code":"L109","name":"\u5948\u96ea\u7684\u8336","location":"L109","brands":["\u5948\u96ea\u7684\u8336"],"tags":"\u8336\u996e \u9762\u5305","renovating":false,"subloc":""},
-        {"code":"L116","name":"\u4e50\u51ef\u6492","location":"L116","brands":["\u4e50\u51ef\u6492"],"tags":"\u62ab\u8428","renovating":false,"subloc":"L116A \u9ea6\u5f53\u52b3\uff08\u5916\u56f4\uff09"},
-        {"code":"L116C","name":"\u4f20\u57ce\u8001\u6811\u65e5\u8336","location":"L116C","brands":["\u4f20\u57ce\u8001\u6811\u65e5\u8336"],"tags":"\u8336\u996e","renovating":false,"subloc":"\u5916\u56f4"},
-        {"code":"L116D","name":"\u9738\u738b\u8336\u59ec","location":"L116D","brands":["\u9738\u738b\u8336\u59ec"],"tags":"\u5976\u8336","renovating":false,"subloc":""},
-        {"code":"L117","name":"\u661f\u5df4\u514b","location":"L117","brands":["\u661f\u5df4\u514b"],"tags":"\u5496\u5561","renovating":false,"subloc":""},
-        {"code":"L117A","name":"\u5168\u5bb6","location":"L117A","brands":["\u5168\u5bb6"],"tags":"\u4fbf\u5229\u5e97","renovating":false,"subloc":""},
-        {"code":"L113A","name":"711\u4fbf\u5229\u5e97","location":"L113A","brands":["7-ELEVEN"],"tags":"\u4fbf\u5229\u5e97","renovating":false,"subloc":"\u5916\u56f4"}
+        {"code":"L109","name":"奈雪的茶","location":"L109","brands":["奈雪的茶"],"tags":"茶饮 面包"},
+        {"code":"L116","name":"乐凯撒","location":"L116","brands":["乐凯撒"],"tags":"披萨","subloc":"L116A 麦当劳（外围）"},
+        {"code":"L116C","name":"传城老树日茶","location":"L116C","brands":["传城老树日茶"],"tags":"茶饮","subloc":"外围"},
+        {"code":"L116D","name":"霸王茶姬","location":"L116D","brands":["霸王茶姬"],"tags":"奶茶"},
+        {"code":"L117","name":"星巴克","location":"L117","brands":["星巴克"],"tags":"咖啡"},
+        {"code":"L117A","name":"全家","location":"L117A","brands":["全家"],"tags":"便利店"},
+        {"code":"L113A","name":"711便利店","location":"L113A","brands":["7-ELEVEN"],"tags":"便利店","subloc":"外围"}
       ],
       "S区": [
-        {"code":"L110","name":"\u81fb\u9009\u73e0\u5b9d","location":"L110","brands":["\u81fb\u9009\u73e0\u5b9d", "\u534e\u7965", "\u6e05\u91d1\u798f", "\u65b0\u8363\u9ec4\u91d1"],"tags":"","renovating":false,"subloc":""},
-        {"code":"L112","name":"\u81fb\u9009\u73e0\u5b9d","location":"L112","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"L113","name":"\u81fb\u9009\u73e0\u5b9d","location":"L113","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"L114","name":"\u81fb\u9009\u73e0\u5b9d","location":"L114","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"L115","name":"\u81fb\u9009\u73e0\u5b9d","location":"L115","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"L118","name":"\u81fb\u9009\u73e0\u5b9d","location":"L118","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"L119","name":"\u81fb\u9009\u73e0\u5b9d","location":"L119","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"L120","name":"\u81fb\u9009\u73e0\u5b9d","location":"L120","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"L121","name":"\u81fb\u9009\u73e0\u5b9d","location":"L121","brands":["\u81fb\u9009\u73e0\u5b9d"],"tags":"","renovating":false,"subloc":""},
-        {"code":"L121A","name":"labaker\u4e50\u7119","location":"L121A","brands":["labaker\u4e50\u7119"],"tags":"\u9762\u5305","renovating":false,"subloc":""},
-        {"code":"L121B","name":"\u8d64\u77ff\u5496\u5561","location":"L121B","brands":["\u8d64\u77ff\u5496\u5561"],"tags":"\u8f7b\u98df \u5496\u5561","renovating":false,"subloc":""},
-        {"code":"L121C","name":"\u7965\u5b81\u798f\u661f","location":"L121C","brands":["\u7965\u5b81\u798f\u661f"],"tags":"","renovating":false,"subloc":""}
+        {"code":"L110","name":"臻选珠宝","location":"L110","brands":["臻选珠宝","华祥","清金福","新荣黄金"],"tags":""},
+        {"code":"L112","name":"臻选珠宝","location":"L112","brands":["臻选珠宝"],"tags":""},
+        {"code":"L113","name":"臻选珠宝","location":"L113","brands":["臻选珠宝"],"tags":""},
+        {"code":"L114","name":"臻选珠宝","location":"L114","brands":["臻选珠宝"],"tags":""},
+        {"code":"L115","name":"臻选珠宝","location":"L115","brands":["臻选珠宝"],"tags":""},
+        {"code":"L118","name":"臻选珠宝","location":"L118","brands":["臻选珠宝"],"tags":""},
+        {"code":"L119","name":"臻选珠宝","location":"L119","brands":["臻选珠宝"],"tags":""},
+        {"code":"L120","name":"臻选珠宝","location":"L120","brands":["臻选珠宝"],"tags":""},
+        {"code":"L121","name":"臻选珠宝","location":"L121","brands":["臻选珠宝"],"tags":""},
+        {"code":"L121A","name":"labaker乐焙","location":"L121A","brands":["labaker乐焙"],"tags":"面包"},
+        {"code":"L121B","name":"赤矿咖啡","location":"L121B","brands":["赤矿咖啡"],"tags":"轻食 咖啡"},
+        {"code":"L121C","name":"祥宁福星","location":"L121C","brands":["祥宁福星"],"tags":""}
       ]
     }
   },
@@ -293,36 +303,36 @@ const DATA = {
     "floorName": "L2层",
     "categories": {
       "北区": [
-        {"code":"L201A","name":"\u519c\u4e1a\u94f6\u884c","location":"L201A","brands":["\u519c\u4e1a\u94f6\u884c"],"tags":"\u94f6\u884c","renovating":false,"subloc":""},
-        {"code":"L202","name":"\u5708\u5b50\u91cc\u6e58\u83dc","location":"L202","brands":["\u5708\u5b50\u91cc"],"tags":"\u6e58\u83dc","renovating":false,"subloc":""},
-        {"code":"L203","name":"\u4f20\u4e16\u91d1\u7389","location":"L203","brands":["\u4f20\u4e16\u91d1\u7389"],"tags":"\u73e0\u5b9d \u9ec4\u91d1","renovating":false,"subloc":""},
-        {"code":"L204","name":"GIRDEAR\u54e5\u5f1f","location":"L204","brands":["\u54e5\u5f1f", "GIRDEAR"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L205","name":"SIEGO\u897f\u853b","location":"L205","brands":["SIEGO\u897f\u853b"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L206","name":"\u9ea6\u8389\u96c5MAILIYA","location":"L206","brands":["\u9ea6\u8389\u96c5"],"tags":"\u5973\u88c5","renovating":false,"subloc":"L206/L207"},
-        {"code":"L208","name":"SETIROM\u897f\u753a\u6751\u5c4b","location":"L208","brands":["\u897f\u753a\u6751\u5c4b"],"tags":"\u590d\u53e4\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L209","name":"PRICH","location":"L209","brands":["PRICH"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L211","name":"\u64ad\u5143\u7d20","location":"L211","brands":["\u64ad\u5143\u7d20"],"tags":"\u6f6e\u9177\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L212","name":"G2000","location":"L212","brands":["G2000"],"tags":"\u7537\u88c5 \u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L213","name":"\u7ef5\u68c9\u9ebb\u8bd1","location":"L213","brands":["\u7ef5\u68c9\u9ebb\u8bd1"],"tags":"\u68ee\u7cfb\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L214A","name":"lagogo","location":"L214A","brands":["lagogo"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L215","name":"\u6b27\u5a05\u9882","location":"L215","brands":["\u6b27\u5a05\u9882"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L216","name":"\u831c\u65bd\u5c14","location":"L216","brands":["\u831c\u65bd\u5c14"],"tags":"\u5185\u8863","renovating":false,"subloc":""},
-        {"code":"L231A","name":"\u8309\u8587\u5bc7","location":"L231A","brands":["\u8309\u8587\u5bc7"],"tags":"\u6587\u827a\u7b80\u7ea6\u5973\u88c5","renovating":false,"subloc":""}
+        {"code":"L201A","name":"农业银行","location":"L201A","brands":["农业银行"],"tags":"银行"},
+        {"code":"L202","name":"圈子里湘菜","location":"L202","brands":["圈子里"],"tags":"湘菜"},
+        {"code":"L203","name":"传世金玉","location":"L203","brands":["传世金玉"],"tags":"珠宝 黄金"},
+        {"code":"L204","name":"GIRDEAR哥弟","location":"L204","brands":["哥弟","GIRDEAR"],"tags":"女装"},
+        {"code":"L205","name":"SIEGO西蔻","location":"L205","brands":["SIEGO西蔻"],"tags":"女装"},
+        {"code":"L206","name":"麦莉雅MAILIYA","location":"L206","brands":["麦莉雅"],"tags":"女装","subloc":"L206/L207"},
+        {"code":"L208","name":"SETIROM西町村屋","location":"L208","brands":["西町村屋"],"tags":"复古女装"},
+        {"code":"L209","name":"PRICH","location":"L209","brands":["PRICH"],"tags":"女装"},
+        {"code":"L211","name":"播元素","location":"L211","brands":["播元素"],"tags":"潮酷女装"},
+        {"code":"L212","name":"G2000","location":"L212","brands":["G2000"],"tags":"男装 女装"},
+        {"code":"L213","name":"绵棉麻译","location":"L213","brands":["绵棉麻译"],"tags":"森系女装"},
+        {"code":"L214A","name":"lagogo","location":"L214A","brands":["lagogo"],"tags":"女装"},
+        {"code":"L215","name":"欧娅颂","location":"L215","brands":["欧娅颂"],"tags":"女装"},
+        {"code":"L216","name":"茜施尔","location":"L216","brands":["茜施尔"],"tags":"内衣"},
+        {"code":"L231A","name":"茉薇寇","location":"L231A","brands":["茉薇寇"],"tags":"文艺简约女装"}
       ],
       "南区": [
-        {"code":"L214","name":"\u9f99\u864e\u5bfb\u9690\u9601","location":"L214","brands":["\u9f99\u864e\u5bfb\u9690\u9601"],"tags":"\u7cbe\u54c1\u9970\u54c1","renovating":false,"subloc":"\u6bcd\u5a74\u5ba4\u65c1"},
-        {"code":"L218","name":"\u5143\u6c14\u5bff\u53f8","location":"L218","brands":["\u5143\u6c14\u5bff\u53f8"],"tags":"\u65e5\u6599\u5bff\u53f8","renovating":false,"subloc":""},
-        {"code":"L221","name":"\u4e50\u5bb4","location":"L221","brands":["\u4e50\u5bb4"],"tags":"\u8001\u5317\u4eac\u94dc\u706b\u9505","renovating":false,"subloc":""},
-        {"code":"L222","name":"Meland club","location":"L222","brands":["Meland club"],"tags":"\u513f\u7ae5\u4e50\u56ed","renovating":false,"subloc":"\u5165\u53e3"},
-        {"code":"L222A","name":"\u7d2b\u6db5","location":"L222A","brands":["\u7d2b\u6db5"],"tags":"\u68ee\u7cfb\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L223","name":"\u8bfa\u66fc\u9713NOMIN","location":"L223","brands":["\u8bfa\u66fc\u9713"],"tags":"\u5973\u88c5","renovating":false,"subloc":"\u8fd1\u4e2d\u5ead"},
-        {"code":"L226","name":"\u677e\u6797\u4e4b\u6708","location":"L226","brands":["\u677e\u6797\u4e4b\u6708"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L227","name":"josiny\u5353\u8bd7\u5c3c","location":"L227","brands":["\u5353\u8bd7\u5c3c", "josiny"],"tags":"\u978b \u5305","renovating":false,"subloc":""},
-        {"code":"L227A","name":"\u4e09\u683c","location":"L227A","brands":["\u4e09\u683c"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L228","name":"yindiao\u5f15\u8c03","location":"L228","brands":["\u5f15\u8c03", "yindiao"],"tags":"\u5973\u88c5","renovating":false,"subloc":""},
-        {"code":"L229","name":"\u8c2d\u6728\u5320","location":"L229","brands":["\u8c2d\u6728\u5320"],"tags":"\u6728\u68b3","renovating":false,"subloc":""},
-        {"code":"L230","name":"\u62c9\u4f3d\u745c\u4f3d","location":"L230","brands":["\u62c9\u4f3d\u745c\u4f3d"],"tags":"\u745c\u4f3d \u5065\u8eab","renovating":false,"subloc":""},
-        {"code":"L219B","name":"\u9ea6\u5f53\u52b3\u4e8c\u697c","location":"L219B","brands":["\u9ea6\u5f53\u52b3"],"tags":"\u5feb\u9910","renovating":false,"subloc":""}
+        {"code":"L214","name":"龙虎寻隐阁","location":"L214","brands":["龙虎寻隐阁"],"tags":"精品饰品","subloc":"母婴室旁"},
+        {"code":"L218","name":"元气寿司","location":"L218","brands":["元气寿司"],"tags":"日料寿司"},
+        {"code":"L221","name":"乐宴","location":"L221","brands":["乐宴"],"tags":"老北京铜火锅"},
+        {"code":"L222","name":"Meland club","location":"L222","brands":["Meland club"],"tags":"儿童乐园","subloc":"入口"},
+        {"code":"L222A","name":"紫涵","location":"L222A","brands":["紫涵"],"tags":"森系女装"},
+        {"code":"L223","name":"诺曼霓NOMIN","location":"L223","brands":["诺曼霓"],"tags":"女装","subloc":"近中庭"},
+        {"code":"L226","name":"松林之月","location":"L226","brands":["松林之月"],"tags":"女装"},
+        {"code":"L227","name":"josiny卓诗尼","location":"L227","brands":["卓诗尼","josiny"],"tags":"鞋 包"},
+        {"code":"L227A","name":"三格","location":"L227A","brands":["三格"],"tags":"女装"},
+        {"code":"L228","name":"yindiao引调","location":"L228","brands":["引调","yindiao"],"tags":"女装"},
+        {"code":"L229","name":"谭木匠","location":"L229","brands":["谭木匠"],"tags":"木梳"},
+        {"code":"L230","name":"拉伽瑜伽","location":"L230","brands":["拉伽瑜伽"],"tags":"瑜伽 健身"},
+        {"code":"L219B","name":"麦当劳二楼","location":"L219B","brands":["麦当劳"],"tags":"快餐"}
       ]
     }
   },
@@ -330,39 +340,37 @@ const DATA = {
     "floorName": "L3层",
     "categories": {
       "北区": [
-        {"code":"L301","name":"\u6da6\u56ed\u56db\u5b63\u6930\u5b50\u9e21","location":"L301","brands":["\u6da6\u56ed\u56db\u5b63"],"tags":"\u6930\u5b50\u9e21","renovating":false,"subloc":""},
-        {"code":"L302","name":"SlimeGOGO\u53f2\u83b1\u59c6\u5b66\u9662","location":"L302","brands":["\u53f2\u83b1\u59c6\u5b66\u9662"],"tags":"\u53f2\u83b1\u59c6 \u73a9\u5177","renovating":false,"subloc":""},
-        {"code":"L303","name":"\u661f\u9645\u4f20\u5947","location":"L303","brands":["\u661f\u9645\u4f20\u5947"],"tags":"\u7535\u73a9 \u6e38\u620f\u673a","renovating":false,"subloc":""},
-        {"code":"L304","name":"\u674e\u5b81","location":"L304","brands":["\u674e\u5b81"],"tags":"\u8fd0\u52a8","renovating":false,"subloc":""},
-        {"code":"L304A","name":"\u963f\u8fea\u8fbe\u65af","location":"L304A","brands":["adidas"],"tags":"\u8fd0\u52a8","renovating":false,"subloc":""},
-        {"code":"L305","name":"\u9e3f\u661f\u5c14\u514b","location":"L305","brands":["\u9e3f\u661f\u5c14\u514b"],"tags":"\u8fd0\u52a8","renovating":false,"subloc":"L305A/L306"},
-        {"code":"L307","name":"\u56de\u529b","location":"L307","brands":["\u56de\u529b"],"tags":"\u8fd0\u52a8\u978b","renovating":false,"subloc":""},
-        {"code":"L309","name":"ROOKIE","location":"L309","brands":["ROOKIE"],"tags":"\u7ae5\u88c5","renovating":false,"subloc":""},
-        {"code":"L310","name":"NB\u65b0\u767e\u4f26\u513f\u7ae5","location":"L310","brands":["New Balance Kids"],"tags":"\u7ae5\u88c5\u978b","renovating":false,"subloc":""},
-        {"code":"L311","name":"pawinpaw\u5b9d\u82f1\u5b9d","location":"L311","brands":["\u5b9d\u82f1\u5b9d"],"tags":"\u7ae5\u88c5","renovating":false,"subloc":"L311A \u84ec\u7eb1\u9986\uff08\u513f\u7ae5\u516c\u4e3b\u88d9\uff09"},
-        {"code":"L327A","name":"\u6d17\u8138\u732b","location":"L327A","brands":["\u6d17\u8138\u732b"],"tags":"\u62a4\u80a4 \u6e05\u6d01","renovating":false,"subloc":""},
-        {"code":"L327","name":"\u963f\u8d5e\u62f3\u9986","location":"L327","brands":["\u963f\u8d5e\u62f3\u9986"],"tags":"\u62f3\u51fb \u5065\u8eab","renovating":false,"subloc":""},
-        {"code":"L327B","name":"\u5c0f\u5929\u624d","location":"L327B","brands":["\u5c0f\u5929\u624d"],"tags":"\u513f\u7ae5\u7535\u5b50","renovating":false,"subloc":""},
-        {"code":"L328","name":"POLP WALK","location":"L328","brands":["POLP WALK", "poloclub\u5e74\u8f7b\u6b3e"],"tags":"\u7537\u88c5","renovating":false,"subloc":""},
-        {"code":"L328A","name":"K-BOXING\u52b2\u9738","location":"L328A","brands":["\u52b2\u9738"],"tags":"\u7537\u88c5","renovating":false,"subloc":""},
-        {"code":"L329","name":"GOGOPONI\u5065\u8eab\u5c0f\u9a6c","location":"L329","brands":["\u5065\u8eab\u5c0f\u9a6c"],"tags":"\u5065\u8eab","renovating":false,"subloc":""},
-        {"code":"L330","name":"\u6da6\u4eca\u751f","location":"L330","brands":["\u6da6\u4eca\u751f"],"tags":"\u9910\u996e","renovating":false,"subloc":""}
+        {"code":"L301","name":"润园四季椰子鸡","location":"L301","brands":["润园四季"],"tags":"椰子鸡"},
+        {"code":"L302","name":"SlimeGOGO史莱姆学院","location":"L302","brands":["史莱姆学院"],"tags":"史莱姆 玩具"},
+        {"code":"L303","name":"星际传奇","location":"L303","brands":["星际传奇"],"tags":"电玩 游戏机"},
+        {"code":"L304","name":"李宁","location":"L304","brands":["李宁"],"tags":"运动"},
+        {"code":"L304A","name":"阿迪达斯","location":"L304A","brands":["adidas"],"tags":"运动"},
+        {"code":"L305","name":"鸿星尔克","location":"L305","brands":["鸿星尔克"],"tags":"运动","subloc":"L305A/L306"},
+        {"code":"L307","name":"回力","location":"L307","brands":["回力"],"tags":"运动鞋"},
+        {"code":"L309","name":"ROOKIE","location":"L309","brands":["ROOKIE"],"tags":"童装"},
+        {"code":"L310","name":"NB新百伦儿童","location":"L310","brands":["New Balance Kids"],"tags":"童装鞋"},
+        {"code":"L311","name":"pawinpaw宝英宝","location":"L311","brands":["宝英宝"],"tags":"童装","subloc":"L311A 蓬纱馆（儿童公主裙）"},
+        {"code":"L327A","name":"洗脸猫","location":"L327A","brands":["洗脸猫"],"tags":"护肤 清洁"},
+        {"code":"L327","name":"阿赞拳馆","location":"L327","brands":["阿赞拳馆"],"tags":"拳击 健身"},
+        {"code":"L327B","name":"小天才","location":"L327B","brands":["小天才"],"tags":"儿童电子"},
+        {"code":"L328","name":"POLP WALK","location":"L328","brands":["POLP WALK","poloclub年轻款"],"tags":"男装"},
+        {"code":"L328A","name":"K-BOXING劲霸","location":"L328A","brands":["劲霸"],"tags":"男装"},
+        {"code":"L329","name":"GOGOPONI健身小马","location":"L329","brands":["健身小马"],"tags":"健身"},
+        {"code":"L330","name":"润今生","location":"L330","brands":["润今生"],"tags":"餐饮"}
       ],
       "南区": [
-        {"code":"L312","name":"\u9ed1\u7a7aVR","location":"L312","brands":["\u9ed1\u7a7aVR"],"tags":"VR\u4f53\u9a8c","renovating":false,"subloc":""},
-        {"code":"L313","name":"\u805a\u4e50\u9a7f\u7ad9","location":"L313","brands":["\u805a\u4e50\u9a7f\u7ad9"],"tags":"\u5939\u5a03\u5a03","renovating":false,"subloc":""},
-        {"code":"L314","name":"\u5916\u5a46\u5bb6","location":"L314","brands":["\u5916\u5a46\u5bb6"],"tags":"\u6d59\u6c5f\u83dc","renovating":false,"subloc":"L314/L315 \u7089\u9c7c"},
-        {"code":"L315","name":"\u7089\u9c7c","location":"L315","brands":["\u7089\u9c7c"],"tags":"\u70e4\u9c7c","renovating":false,"subloc":""},
-        {"code":"L317","name":"\u4eac\u5473\u5f20\u5317\u4eac\u83dc","location":"L317","brands":["\u4eac\u5473\u5f20"],"tags":"\u5317\u4eac\u83dc \u70e4\u9e2d","renovating":false,"subloc":""},
-        {"code":"L318","name":"ICD\u80fd\u821e","location":"L318","brands":["ICD\u80fd\u821e"],"tags":"\u8857\u821e \u57f9\u8bad","renovating":false,"subloc":"L318A Meland club\u4e09\u5c42"},
-        {"code":"L319","name":"the entertainer","location":"L319","brands":["the entertainer"],"tags":"\u6f6e\u73a9","renovating":false,"subloc":""},
-        {"code":"L320","name":"\u864e\u82bd\u4e50","location":"L320","brands":["\u864e\u82bd\u4e50"],"tags":"\u513f\u7ae5\u624b\u5de5 \u4eb2\u5b50","renovating":false,"subloc":"L320/L321 \u8fd1\u4e2d\u5ead"},
-        {"code":"L321","name":"\u864e\u82bd\u4e50","location":"L321","brands":["\u864e\u82bd\u4e50"],"tags":"\u513f\u7ae5\u624b\u5de5 \u4eb2\u5b50","renovating":false,"subloc":""},
-        {"code":"L322","name":"\u563b\u9e2d\u6d82","location":"L322","brands":["\u563b\u9e2d\u6d82"],"tags":"\u513f\u7ae5\u624b\u5de5","renovating":false,"subloc":""},
-        {"code":"L323A","name":"\u82f1\u6c0fYeeHoo","location":"L323A","brands":["\u82f1\u6c0f"],"tags":"\u5a74\u7ae5","renovating":false,"subloc":""},
-        {"code":"L324","name":"Dandy","location":"L324","brands":["Dandy"],"tags":"\u7ae5\u88c5","renovating":false,"subloc":""},
-        {"code":"L325","name":"TARANIS\u6cf0\u5170\u5c3c\u65af","location":"L325","brands":["\u6cf0\u5170\u5c3c\u65af"],"tags":"\u7ae5\u88c5 \u7ae5\u978b","renovating":false,"subloc":""},
-        {"code":"L326","name":"\u4f18\u526a","location":"L326","brands":["\u4f18\u526a"],"tags":"\u7406\u53d1","renovating":false,"subloc":""}
+        {"code":"L312","name":"黑空VR","location":"L312","brands":["黑空VR"],"tags":"VR体验"},
+        {"code":"L313","name":"聚乐驿站","location":"L313","brands":["聚乐驿站"],"tags":"夹娃娃"},
+        {"code":"L314","name":"外婆家+炉鱼","location":"L314","brands":["外婆家","炉鱼"],"tags":"浙江菜 烤鱼","subloc":"L314/L315"},
+        {"code":"L317","name":"京味张北京菜","location":"L317","brands":["京味张"],"tags":"北京菜 烤鸭"},
+        {"code":"L318","name":"ICD能舞","location":"L318","brands":["ICD能舞"],"tags":"街舞 培训","subloc":"L318A Meland club三层"},
+        {"code":"L319","name":"the entertainer","location":"L319","brands":["the entertainer"],"tags":"潮玩"},
+        {"code":"L320","name":"虎芽乐","location":"L320","brands":["虎芽乐"],"tags":"儿童手工 亲子","subloc":"L320/L321 近中庭"},
+        {"code":"L322","name":"嘻鸭涂","location":"L322","brands":["嘻鸭涂"],"tags":"儿童手工"},
+        {"code":"L323A","name":"英氏YeeHoo","location":"L323A","brands":["英氏"],"tags":"婴童"},
+        {"code":"L324","name":"Dandy","location":"L324","brands":["Dandy"],"tags":"童装"},
+        {"code":"L325","name":"TARANIS泰兰尼斯","location":"L325","brands":["泰兰尼斯"],"tags":"童装 童鞋"},
+        {"code":"L326","name":"优剪","location":"L326","brands":["优剪"],"tags":"理发"}
       ]
     }
   },
@@ -370,48 +378,59 @@ const DATA = {
     "floorName": "L4层",
     "categories": {
       "北区": [
-        {"code":"L401","name":"\u6653\u6587\u5ba2\u5bb6\u672c\u8272","location":"L401","brands":["\u6653\u6587\u5ba2\u5bb6\u672c\u8272"],"tags":"\u5ba2\u5bb6\u83dc","renovating":false,"subloc":""},
-        {"code":"L402","name":"79\u53f7\u6e14\u8239","location":"L402","brands":["79\u53f7\u6e14\u8239"],"tags":"\u6d77\u9c9c","renovating":false,"subloc":"L402/L402A"},
-        {"code":"L403","name":"\u82b8\u5c71\u5b63","location":"L403","brands":["\u82b8\u5c71\u5b63"],"tags":"\u4e91\u5357\u91ce\u5c71\u83cc\u706b\u9505","renovating":false,"subloc":""},
-        {"code":"L404","name":"\u8089\u796d","location":"L404","brands":["\u8089\u796d"],"tags":"\u70e4\u8089","renovating":false,"subloc":""},
-        {"code":"L405","name":"\u5c0f\u987a\u5929\u987a\u5fb7\u83dc","location":"L405","brands":["\u5c0f\u987a\u5929"],"tags":"\u987a\u5fb7\u83dc \u70e7\u9e45","renovating":false,"subloc":"L405A \u5408\u5174\u725b\u5e84"},
-        {"code":"L406","name":"\u5e38\u4e50\u63a8\u62ff","location":"L406","brands":["\u5e38\u4e50\u63a8\u62ff"],"tags":"\u6309\u6469 \u63a8\u62ff","renovating":false,"subloc":""},
-        {"code":"L407","name":"\u6590\u65af\u91cc\u8096\u50cf","location":"L407","brands":["\u6590\u65af\u91cc"],"tags":"\u7167\u76f8\u9986","renovating":false,"subloc":"L407A \u66fc\u5c3c\u835f\uff08\u5934\u7597SPA\uff09"},
-        {"code":"L408","name":"\u592a\u4e8c\u9178\u83dc\u9c7c","location":"L408","brands":["\u592a\u4e8c\u9178\u83dc\u9c7c"],"tags":"\u5ddd\u83dc \u9178\u83dc\u9c7c","renovating":false,"subloc":"L408/L409 \u8fd1\u4e2d\u5ead"},
-        {"code":"L409","name":"\u592a\u4e8c\u9178\u83dc\u9c7c","location":"L409","brands":["\u592a\u4e8c\u9178\u83dc\u9c7c"],"tags":"\u5ddd\u83dc \u9178\u83dc\u9c7c","renovating":false,"subloc":""},
-        {"code":"L411","name":"IN STYLE","location":"L411","brands":["IN STYLE"],"tags":"\u7f8e\u53d1","renovating":false,"subloc":""},
-        {"code":"L412","name":"\u749e\u6590\u7f07","location":"L412","brands":["\u749e\u6590\u7f07"],"tags":"\u7f8e\u53d1 \u76ae\u80a4\u7ba1\u7406 \u7f8e\u7532","renovating":false,"subloc":""},
-        {"code":"L426","name":"\u5c0f\u79cb\u914d\u955c","location":"L426","brands":["\u5c0f\u79cb\u914d\u955c"],"tags":"\u773c\u955c \u5df2\u64a4\u573a","renovating":true,"subloc":""}
+        {"code":"L401","name":"晓文客家本色","location":"L401","brands":["晓文客家本色"],"tags":"客家菜"},
+        {"code":"L402","name":"79号渔船","location":"L402","brands":["79号渔船"],"tags":"海鲜","subloc":"L402/L402A"},
+        {"code":"L403","name":"芸山季","location":"L403","brands":["芸山季"],"tags":"云南野山菌火锅"},
+        {"code":"L404","name":"肉祭","location":"L404","brands":["肉祭"],"tags":"烤肉"},
+        {"code":"L405","name":"小顺天顺德菜","location":"L405","brands":["小顺天"],"tags":"顺德菜 烧鹅","subloc":"L405A 合兴牛庄"},
+        {"code":"L406","name":"常乐推拿","location":"L406","brands":["常乐推拿"],"tags":"按摩 推拿"},
+        {"code":"L407","name":"斐斯里肖像","location":"L407","brands":["斐斯里"],"tags":"照相馆","subloc":"L407A 曼尼荟（头疗SPA）"},
+        {"code":"L408","name":"太二酸菜鱼","location":"L408","brands":["太二酸菜鱼"],"tags":"川菜 酸菜鱼","subloc":"L408/L409 近中庭"},
+        {"code":"L411","name":"IN STYLE","location":"L411","brands":["IN STYLE"],"tags":"美发"},
+        {"code":"L412","name":"璞斐缇","location":"L412","brands":["璞斐缇"],"tags":"美发 皮肤管理 美甲"},
+        {"code":"L426","name":"小秋配镜","location":"L426","brands":["小秋配镜"],"tags":"眼镜 已撤场","renovating":true}
       ],
       "南区": [
-        {"code":"L413","name":"ARTEASE\u554aT","location":"L413","brands":["\u554aT"],"tags":"\u5976\u8336","renovating":false,"subloc":""},
-        {"code":"L413A","name":"\u88ad\u5154\u661f\u7403","location":"L413A","brands":["\u88ad\u5154\u661f\u7403"],"tags":"\u5f39\u73e0 \u73a9\u5177","renovating":false,"subloc":""},
-        {"code":"L414","name":"\u5c45\u7af9\u6f6e\u6c55\u83dc","location":"L414","brands":["\u5c45\u7af9\u6f6e\u6c55\u83dc"],"tags":"\u6f6e\u6c55\u83dc","renovating":false,"subloc":""},
-        {"code":"L415","name":"\u6dd8\u7c73\u635e\u4e2d\u5c71\u8106\u8089\u9ca9","location":"L415","brands":["\u6dd8\u7c73\u635e"],"tags":"\u4e2d\u5c71\u8106\u8089\u9ca9","renovating":false,"subloc":""},
-        {"code":"L416","name":"\u60a6\u5f97\u95f2","location":"L416","brands":["\u60a6\u5f97\u95f2"],"tags":"\u5e7f\u5f0f\u8336\u70b9","renovating":false,"subloc":""},
-        {"code":"L417B","name":"\u60a6\u523b","location":"L417B","brands":["\u60a6\u523b"],"tags":"\u7535\u5b50\u70df","renovating":false,"subloc":""},
-        {"code":"L418","name":"\u4e2d\u5f71\u5929\u5ddd\u56fd\u9645\u5f71\u57ce","location":"L418","brands":["\u4e2d\u5f71\u5929\u5ddd"],"tags":"\u7535\u5f71\u9662","renovating":false,"subloc":"L418/L419"},
-        {"code":"L419A","name":"\u9ba8\u5320\u9f99","location":"L419A","brands":["\u9ba8\u5320\u9f99"],"tags":"\u65e5\u6599","renovating":false,"subloc":""},
-        {"code":"L420","name":"\u86d9\u6765\u54d2","location":"L420","brands":["\u86d9\u6765\u54d2"],"tags":"\u725b\u86d9\u706b\u9505","renovating":false,"subloc":"L420/L421 \u8fd1\u4e2d\u5ead \u6bcd\u5a74\u5ba4"},
-        {"code":"L421","name":"\u86d9\u6765\u54d2","location":"L421","brands":["\u86d9\u6765\u54d2"],"tags":"\u725b\u86d9\u706b\u9505","renovating":false,"subloc":""},
-        {"code":"L423","name":"\u987a\u5fb7\u516c","location":"L423","brands":["\u987a\u5fb7\u516c"],"tags":"\u732a\u809a\u9e21","renovating":false,"subloc":""},
-        {"code":"L424A","name":"\u8bb8\u4ed9\u5802\u6b63\u9aa8","location":"L424A","brands":["\u8bb8\u4ed9\u5802\u6b63\u9aa8"],"tags":"\u6b63\u9aa8 \u6309\u6469","renovating":false,"subloc":""},
-        {"code":"L425","name":"\u4e1d\u57df\u517b\u53d1","location":"L425","brands":["\u4e1d\u57df\u517b\u53d1"],"tags":"\u517b\u53d1","renovating":false,"subloc":""},
-        {"code":"L427","name":"\u516b\u5408\u91cc","location":"L427","brands":["\u516b\u5408\u91cc"],"tags":"\u725b\u8089\u706b\u9505","renovating":false,"subloc":""},
-        {"code":"L428","name":"\u556b\u706b\u556b\u556b\u7172","location":"L428","brands":["\u556b\u706b"],"tags":"\u556b\u556b\u7172","renovating":false,"subloc":""},
-        {"code":"L430","name":"\u7c73\u4e50\u4e56\u4e56","location":"L430","brands":["\u7c73\u4e50\u4e56\u4e56"],"tags":"\u5ba0\u7269\u6d17\u62a4 \u732b\u5496","renovating":false,"subloc":""}
+        {"code":"L413","name":"ARTEASE啊T","location":"L413","brands":["啊T"],"tags":"奶茶"},
+        {"code":"L413A","name":"袭兔星球","location":"L413A","brands":["袭兔星球"],"tags":"弹珠 玩具"},
+        {"code":"L414","name":"居竹潮汕菜","location":"L414","brands":["居竹潮汕菜"],"tags":"潮汕菜"},
+        {"code":"L415","name":"淘米捞中山脆肉鲩","location":"L415","brands":["淘米捞"],"tags":"中山脆肉鲩"},
+        {"code":"L416","name":"悦得闲","location":"L416","brands":["悦得闲"],"tags":"广式茶点"},
+        {"code":"L417B","name":"悦刻","location":"L417B","brands":["悦刻"],"tags":"电子烟"},
+        {"code":"L418","name":"中影天川国际影城","location":"L418","brands":["中影天川"],"tags":"电影院","subloc":"L418/L419"},
+        {"code":"L419A","name":"鮨匠龙","location":"L419A","brands":["鮨匠龙"],"tags":"日料"},
+        {"code":"L420","name":"蛙来哒","location":"L420","brands":["蛙来哒"],"tags":"牛蛙火锅","subloc":"L420/L421 近中庭 母婴室"},
+        {"code":"L423","name":"顺德公","location":"L423","brands":["顺德公"],"tags":"猪肚鸡"},
+        {"code":"L424A","name":"许仙堂正骨","location":"L424A","brands":["许仙堂正骨"],"tags":"正骨 按摩"},
+        {"code":"L425","name":"丝域养发","location":"L425","brands":["丝域养发"],"tags":"养发"},
+        {"code":"L427","name":"八合里","location":"L427","brands":["八合里"],"tags":"牛肉火锅"},
+        {"code":"L428","name":"啫火啫啫煲","location":"L428","brands":["啫火"],"tags":"啫啫煲"},
+        {"code":"L430","name":"米乐乖乖","location":"L430","brands":["米乐乖乖"],"tags":"宠物洗护 猫咖"}
       ]
     }
   }
 };
 
+var searchQuery='';
+var currentZone='';
+var currentFloor='';
+var slideIdx=0;
+var slideTimer;
 
-
-var searchQuery='';var currentZone='';var currentFloor='';var slideIdx=0;var slideTimer;
-function goSlide(n){slideIdx=n;document.getElementById('carousel-track').style.transform='translateX(-'+(n*100)+'%)';document.querySelectorAll('.carousel-dot span').forEach(function(s,i){s.classList.toggle('active',i===n);});}
+function goSlide(n){
+  slideIdx=n;
+  document.getElementById('carousel-track').style.transform='translateX(-'+(n*100)+'%)';
+  document.querySelectorAll('.carousel-dot span').forEach(function(s,i){s.classList.toggle('active',i===n);});
+}
 function nextSlide(){goSlide((slideIdx+1)%3);}
-function startCarousel(){slideTimer=setInterval(nextSlide,4000);var c=document.querySelector('.carousel');c.addEventListener('mouseenter',function(){clearInterval(slideTimer);});c.addEventListener('mouseleave',function(){clearInterval(slideTimer);slideTimer=setInterval(nextSlide,4000);});}
+function startCarousel(){
+  slideTimer=setInterval(nextSlide,4000);
+  var c=document.querySelector('.carousel');
+  c.addEventListener('mouseenter',function(){clearInterval(slideTimer);});
+  c.addEventListener('mouseleave',function(){clearInterval(slideTimer);slideTimer=setInterval(nextSlide,4000);});
+}
 startCarousel();
+
 function openModal(shop,floorName,zoneName){
   document.getElementById('modalName').textContent=shop.name;
   document.getElementById('modalCode').textContent=shop.code;
@@ -420,26 +439,39 @@ function openModal(shop,floorName,zoneName){
   document.getElementById('modalBrands').textContent=(shop.brands||[]).join(' / ');
   var tagsEl=document.getElementById('modalTags');
   var tagText=shop.tags||'';
-  if(tagText){tagsEl.innerHTML=tagText.split(/[\s\/，,]+/).filter(Boolean).map(function(t){return'<span class="modal-tag-chip">'+t+'</span>';}).join('');}else{tagsEl.innerHTML='';}
+  if(tagText){
+    tagsEl.innerHTML=tagText.split(/[s\/，,]+/).filter(Boolean).map(function(t){return'<span class="modal-tag-chip">'+t+'</span>';}).join('');
+  }else{tagsEl.innerHTML='';}
   var sublocEl=document.getElementById('modalSubloc');
   if(shop.subloc){sublocEl.textContent='📍 '+shop.subloc;sublocEl.style.display='';}else{sublocEl.style.display='none';}
   document.getElementById('modalOverlay').classList.add('active');
 }
 function closeModal(){document.getElementById('modalOverlay').classList.remove('active');}
-function getAllZones(){var zones=[];Object.values(DATA).forEach(function(f){Object.keys(f.categories||{}).forEach(function(z){if(!zones.includes(z))zones.push(z);});});return zones;}
+
+function getAllZones(){
+  var zones=[];
+  Object.values(DATA).forEach(function(f){
+    Object.keys(f.categories||{}).forEach(function(z){if(!zones.includes(z))zones.push(z);});
+  });
+  return zones;
+}
+
 function initZoneTabs(zones){
   var container=document.getElementById('zone-tabs');
   var html='';
   zones.forEach(function(z,i){html+='<div class="zone-tab'+(i===0?' active':'')+'" data-zone="'+z+'">'+z+'</div>';});
   container.innerHTML=html;
-  container.querySelectorAll('.zone-tab').forEach(function(tab){tab.addEventListener('click',function(){
-    container.querySelectorAll('.zone-tab').forEach(function(t){t.classList.remove('active');});
-    tab.classList.add('active');
-    currentZone=tab.dataset.zone;
-    initFloorTabs();
-    render();
-  });});
+  container.querySelectorAll('.zone-tab').forEach(function(tab){
+    tab.addEventListener('click',function(){
+      container.querySelectorAll('.zone-tab').forEach(function(t){t.classList.remove('active');});
+      tab.classList.add('active');
+      currentZone=tab.dataset.zone;
+      initFloorTabs();
+      render();
+    });
+  });
 }
+
 function initFloorTabs(){
   var container=document.getElementById('floor-tabs');
   var floors=Object.keys(DATA);
@@ -452,17 +484,20 @@ function initFloorTabs(){
     html+='<div class="floor-tab'+(f===first?' active':'')+'" data-floor="'+f+'">'+floor.floorName+'</div>';
   });
   container.innerHTML=html;
-  container.querySelectorAll('.floor-tab').forEach(function(tab){tab.addEventListener('click',function(){
-    container.querySelectorAll('.floor-tab').forEach(function(t){t.classList.remove('active');});
-    tab.classList.add('active');
-    currentFloor=tab.dataset.floor;
-    render();
-  });});
+  container.querySelectorAll('.floor-tab').forEach(function(tab){
+    tab.addEventListener('click',function(){
+      container.querySelectorAll('.floor-tab').forEach(function(t){t.classList.remove('active');});
+      tab.classList.add('active');
+      currentFloor=tab.dataset.floor;
+      render();
+    });
+  });
   if(!currentFloor&&first){
     currentFloor=first;
     container.querySelectorAll('.floor-tab').forEach(function(tab){tab.classList.toggle('active',tab.dataset.floor===first);});
   }
 }
+
 function render(){
   var content=document.getElementById('content');
   if(!currentZone||!currentFloor){content.innerHTML='';return;}
@@ -470,11 +505,36 @@ function render(){
   if(!floor)return;
   var shops=floor.categories[currentZone]||[];
   var q=searchQuery.trim().toLowerCase();
-  var filtered=q?shops.filter(function(s){return s.name.toLowerCase().includes(q)||s.code.toLowerCase().includes(q)||(s.brands||[]).some(function(b){return b.toLowerCase().includes(q);})||(s.tags&&s.tags.toLowerCase().includes(q));}):shops;
+  var filtered=q?shops.filter(function(s){
+    return s.name.toLowerCase().includes(q)||s.code.toLowerCase().includes(q)||(s.brands||[]).some(function(b){return b.toLowerCase().includes(q);})||(s.tags&&s.tags.toLowerCase().includes(q));
+  }):shops;
   var escFloor=(floor.floorName||'').replace(/'/g,"\\'");
   var escZone=(currentZone||'').replace(/'/g,"\\'");
   var html='<div class="stats-bar"><div class="stat-item"><div class="stat-num">'+currentZone+'</div><div class="stat-label">当前区位</div></div><div class="stat-item"><div class="stat-num">'+floor.floorName+'</div><div class="stat-label">当前楼层</div></div><div class="stat-item"><div class="stat-num">'+filtered.length+'</div><div class="stat-label">品牌数量</div></div></div>';
-  html+='<div class="vip-section"><div class="vip-header"><div class="vip-header-icon">👑</div><div><div class="vip-header-text">会员权益</div><div class="vip-header-sub">VIP MEMBERSHIP BENEFITS</div></div><div class="vip-header-line"></div></div><div class="vip-cards"><div class="vip-card"><div class="vip-tier">V 卡</div><div class="vip-divider"></div><ul class="vip-benefit"><li>消费积分</li><li>积分当钱花</li><li>积分兑礼</li></ul><div class="vip-cond"><div class="vip-cond-row"><span>升级条件</span><span>扫码注册</span></div><div class="vip-cond-row"><span>有效期</span><span class="vip-tag-forever">永久有效</span></div></div></div><div class="vip-card"><div class="vip-tier">银 卡</div><div class="vip-divider"></div><ul class="vip-benefit"><li>V卡全部权益</li><li>双倍积分日</li><li>免费停车2h</li><li>积分兑礼</li><li>免费礼品包装×1</li></ul><div class="vip-cond"><div class="vip-cond-row"><span>升级条件</span><span>日消费满¥1k / 年消费满¥3k</span></div><div class="vip-cond-row"><span>有效期</span><span>1年</span></div></div></div><div class="vip-card"><div class="vip-tier">金 卡</div><div class="vip-divider"></div><ul class="vip-benefit"><li>银卡全部权益</li><li>免费停车2h</li><li>高端活动邀请</li><li>生日礼遇（倒推1年满1w）</li><li>积分兑礼</li><li>免费礼品包装×3</li></ul><div class="vip-cond"><div class="vip-cond-row"><span>升级条件</span><span>日消费满¥1w / 年消费满¥3w</span></div><div class="vip-cond-row"><span>有效期</span><span>1年</span></div></div></div><div class="vip-card"><div class="vip-tier">钻石卡</div><div class="vip-divider"></div><ul class="vip-benefit"><li>金卡全部权益</li><li>免费停车（单店消费满8w）</li><li>一对一定制服务</li><li>LED大屏使用</li><li>生日礼遇（倒推1年满3w）</li><li>积分兑礼</li><li>免费礼品包装×5</li></ul><div class="vip-cond"><div class="vip-cond-row"><span>升级条件</span><span>日消费满¥5w / 年消费满¥10w</span></div><div class="vip-cond-row"><span>有效期</span><span>1年</span></div></div></div></div></div>';
+
+  // VIP section
+  html+='<div class="vip-section"><div class="vip-header"><div class="vip-header-icon">👑</div><div><div class="vip-header-text">会员权益</div><div class="vip-header-sub">VIP MEMBERSHIP BENEFITS</div></div><div class="vip-header-line"></div></div><div class="vip-cards">';
+
+  var vipCards=[
+    {tier:'V 卡',items:['消费积分','积分当钱花','积分兑礼'],cond:[['升级条件','扫码注册'],['有效期','永久有效']],forever:true},
+    {tier:'银 卡',items:['V卡全部权益','双倍积分日','免费停车2h','积分兑礼','免费礼品包装×1'],cond:[['升级条件','日消费满¥1k / 年消费满¥3k'],['保级条件','年消费满¥3k'],['有效期','1年']]},
+    {tier:'金 卡',items:['银卡全部权益','免费停车2h','高端活动邀请','生日礼遇（倒推1年满1w）','积分兑礼','免费礼品包装×3'],cond:[['升级条件','日消费满¥1w / 年消费满¥3w'],['保级条件','年消费满¥3w'],['有效期','1年']]},
+    {tier:'钻石卡',items:['金卡全部权益','免费停车（单店满8w）','一对一定制服务','LED大屏使用','生日礼遇（倒推1年满3w）','积分兑礼','免费礼品包装×5'],cond:[['升级条件','日消费满¥5w / 年消费满¥10w'],['保级条件','年消费满¥8w'],['有效期','1年']]}
+  ];
+
+  vipCards.forEach(function(v){
+    html+='<div class="vip-card"><div class="vip-tier">'+v.tier+'</div><div class="vip-divider"></div><ul class="vip-benefit">';
+    v.items.forEach(function(item){html+='<li>'+item+'</li>';});
+    html+='</ul><div class="vip-cond">';
+    v.cond.forEach(function(row){
+      var forever=v.forever&&row[1]==='永久有效'?'<span class="vip-tag-forever">'+row[1]+'</span>':row[1];
+      html+='<div class="vip-cond-row"><span>'+row[0]+'</span><span>'+forever+'</span></div>';
+    });
+    html+='</div></div>';
+  });
+
+  html+='</div></div>';
+
   if(filtered.length===0){
     html+='<div class="empty-state"><div class="icon">🔍</div><p>'+(q?'未找到匹配的品牌':'该区位暂无品牌信息')+'</p></div>';
   }else{
@@ -484,8 +544,8 @@ function render(){
       var renov=shop.renovating;
       var tags=shop.tags||'';
       var subloc=shop.subloc?' · '+shop.subloc:'';
-      var shopJson=JSON.stringify(shop).replace(/"/g,'&quot;');
-      html+='<div class="brand-card'+(hi?' highlight':'')+'" onclick="openModal('+shopJson+',\''+escFloor+'\',\''+escZone+'\')">'+
+      var sj=JSON.stringify(shop).replace(/"/g,'&quot;');
+      html+='<div class="brand-card'+(hi?' highlight':'')+'" onclick="openModal('+sj+',\''+escFloor+'\',\''+escZone+'\')">'+
         '<div class="brand-name">'+shop.name+(renov?'<span class="badge-reno">已撤场</span>':'')+'</div>'+
         '<div class="brand-code">'+shop.code+'</div>'+
         '<div class="brand-location">📍 '+(shop.location||'')+'</div>'+
@@ -495,6 +555,7 @@ function render(){
   }
   content.innerHTML=html;
 }
+
 (function(){
   var zones=getAllZones();
   currentZone=zones[0]||'';
@@ -504,7 +565,6 @@ function render(){
   var si=document.getElementById('search-input');
   if(si){var t;si.addEventListener('input',function(){clearTimeout(t);t=setTimeout(function(){searchQuery=si.value;render();},200);});}
 })();
-
 
 </script>
 </body>
