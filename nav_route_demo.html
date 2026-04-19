@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KK MALL B1 路线导航Demo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0c0c14;color:#e8e6e3;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;min-height:100vh;overflow-x:hidden}
+.header{background:linear-gradient(135deg,#1a1520,#1c1830);border-bottom:1px solid rgba(201,169,110,.3);padding:14px 16px;text-align:center}
+.header h1{font-size:18px;color:#e91e63;letter-spacing:2px}
+.header p{font-size:11px;color:#c9a96e;margin-top:3px}
+.store-list{padding:12px 16px;max-width:600px;margin:0 auto}
+.store-list h2{font-size:13px;color:#c9a96e;margin-bottom:10px}
+.store-card{background:#15151f;border:1px solid rgba(201,169,110,.15);border-radius:10px;padding:12px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;transition:all .25s}
+.store-card:hover,.store-card:active{border-color:#e91e63;transform:translateY(-1px);box-shadow:0 4px 20px rgba(233,30,99,.15)}
+.store-info .name{font-size:14px;font-weight:600;color:#fff}
+.store-info .loc{font-size:10px;color:#888;margin-top:2px}
+.store-info .entry-hint{font-size:9px;color:#4caf50;margin-top:2px}
+.store-floor{background:rgba(233,30,99,.15);color:#e91e63;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+
+.nav-overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.9);z-index:9999;display:none;flex-direction:column;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.nav-overlay.active{display:flex}
+.nav-bar{display:flex;justify-content:space-between;align-items:center;padding:12px 16px;background:#10101a;border-bottom:1px solid rgba(201,169,110,.2)}
+.nav-bar h2{font-size:15px;color:#e91e63}
+.close-btn{width:34px;height:34px;border-radius:50%;border:none;background:rgba(255,255,255,.1);color:#fff;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+
+.map-area{flex:1;overflow:auto;display:flex;align-items:flex-start;justify-content:center;padding:8px;position:relative}
+.map-box{position:relative;display:inline-block;width:100%}
+.floor-img{width:100%;display:block;border-radius:4px}
+
+/* SVG路线覆盖层 */
+.route-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:5}
+.route-line{fill:none;stroke:#00e5ff;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:12 6;filter:drop-shadow(0 0 6px rgba(0,229,255,.6))}
+.route-line-anim{animation:dashFlow 1s linear infinite}
+@keyframes dashFlow{to{stroke-dashoffset:-18}}
+.route-arrow{fill:#00e5ff;filter:drop-shadow(0 0 4px rgba(0,229,255,.8))}
+
+/* 起点/终点标记 */
+.start-dot{position:absolute;width:18px;height:18px;border-radius:50%;background:#4caf50;border:2px solid #fff;box-shadow:0 0 8px rgba(76,175,80,.7);z-index:8;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;font-size:9px}
+.start-label{position:absolute;top:20px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:9px;color:#4caf50;font-weight:600;pointer-events:none}
+.end-dot{position:absolute;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle,#ff1744,#e91e63);border:3px solid #fff;box-shadow:0 0 10px rgba(233,30,99,.7),0 0 22px rgba(255,23,68,.4);z-index:10;animation:pulse 1.5s infinite;transform:translate(-50%,-50%)}
+@keyframes pulse{0%{box-shadow:0 0 10px rgba(233,30,99,.7),0 0 22px rgba(255,23,68,.4)}50%{box-shadow:0 0 16px rgba(233,30,99,.9),0 0 34px rgba(255,23,68,.5)}100%{box-shadow:0 0 10px rgba(233,30,99,.7),0 0 22px rgba(255,23,68,.4)}}
+.end-dot::after{content:"";position:absolute;bottom:-14px;left:50%;transform:translateX(-50%);border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid #e91e63}
+.end-label{position:absolute;top:28px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:10px;font-weight:700;background:#e91e63;color:#fff;padding:2px 7px;border-radius:7px;pointer-events:none}
+
+/* 图例 */
+.legend{position:absolute;top:8px;right:8px;background:rgba(16,16,26,.85);border:1px solid rgba(201,169,110,.2);border-radius:8px;padding:8px 12px;z-index:20;font-size:10px}
+.legend-item{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.legend-item:last-child{margin-bottom:0}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+
+/* 导航步骤 */
+.nav-steps{background:linear-gradient(135deg,#1a1520,#1c1830);border-top:1px solid rgba(201,169,110,.3);padding:14px 16px;max-height:30vh;overflow-y:auto}
+.nav-steps h3{font-size:13px;color:#c9a96e;margin-bottom:8px}
+.step{display:flex;gap:10px;margin-bottom:7px;align-items:flex-start}
+.step-n{width:20px;height:20px;border-radius:50%;background:#e91e63;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-t{font-size:12px;line-height:1.5;color:#ccc}
+.step-t strong{color:#00e5ff}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>🧭 KK MALL B1 路线导航Demo</h1>
+  <p>点击店铺查看导航路线</p>
+</div>
+
+<div class="store-list" id="sl"></div>
+
+<div class="nav-overlay" id="ov">
+  <div class="nav-bar">
+    <h2 id="nt">导航</h2>
+    <button class="close-btn" id="cb">✕</button>
+  </div>
+  <div class="map-area" id="ma"></div>
+  <div class="nav-steps" id="ns"></div>
+</div>
+
+<script>
+// ===== 数据 =====
+// route: 从最近入口到店铺的折线拐点坐标 [x%, y%]
+var S=[
+  {
+    name:"华润万家BLT", loc:"B1 主力店",
+    endX:28, endY:68,
+    entry:"北门", startX:33, startY:72,
+    route:[[33,72],[30,70],[28,68]],
+    tips:["从<strong>北门</strong>进入B1层","沿主通道向左前方步行约20米","到达目标：<strong>华润万家BLT</strong>在左侧大区域"]
+  },
+  {
+    name:"奈雪的茶", loc:"B104N2",
+    endX:13, endY:48,
+    entry:"正门扶梯", startX:55, startY:58,
+    route:[[55,58],[40,55],[28,50],[13,48]],
+    tips:["从<strong>正门扶梯</strong>下到B1层","向左沿主通道直行约30米","经过中庭区域继续向前","<strong>奈雪的茶</strong>在通道右侧"]
+  },
+  {
+    name:"UNIQLO优衣库", loc:"B116N1",
+    endX:44, endY:38,
+    entry:"北门", startX:33, startY:72,
+    route:[[33,72],[35,60],[38,50],[44,38]],
+    tips:["从<strong>北门</strong>进入B1层","沿通道向右前方直行","穿过中庭区域","<strong>优衣库</strong>在右前方时尚区"]
+  },
+  {
+    name:"太二酸菜鱼", loc:"B102-03",
+    endX:9, endY:56,
+    entry:"北门", startX:33, startY:72,
+    route:[[33,72],[25,65],[15,58],[9,56]],
+    tips:["从<strong>北门</strong>进入B1层","沿左侧通道向西南方向走","穿过正餐区通道","<strong>太二酸菜鱼</strong>在西南角"]
+  },
+  {
+    name:"POP MART泡泡玛特", loc:"B111N1",
+    endX:38, endY:19,
+    entry:"北门", startX:33, startY:72,
+    route:[[33,72],[35,55],[36,38],[38,19]],
+    tips:["从<strong>北门</strong>进入B1层","沿中庭通道向右前方直行","经过优衣库区域继续向前","<strong>泡泡玛特</strong>在东北侧精品区"]
+  },
+  {
+    name:"NITORI", loc:"B118A2",
+    endX:94, endY:45,
+    entry:"地铁口", startX:97, startY:42,
+    route:[[97,42],[95,43],[94,45]],
+    tips:["从<strong>地铁口</strong>直接进入B1层","出地铁口后向左前方步行约10米","<strong>NITORI</strong>在通道左侧"]
+  }
+];
+
+function init(){
+  var c=document.getElementById("sl");
+  c.innerHTML='<h2>📋 B1层 点击店铺查看导航路线</h2>';
+  S.forEach(function(s){
+    var d=document.createElement("div");
+    d.className="store-card";
+    d.onclick=function(){openNav(s)};
+    d.innerHTML='<div class="store-info"><div class="name">'+s.name+'</div><div class="loc">'+s.loc+'</div><div class="entry-hint">🚶 从'+s.entry+'出发</div></div><div class="store-floor">B1</div>';
+    c.appendChild(d);
+  });
+  document.getElementById("cb").onclick=closeNav;
+  document.getElementById("ov").addEventListener("click",function(e){if(e.target===this)closeNav()});
+}
+
+function openNav(s){
+  document.getElementById("nt").textContent="📍 "+s.name+" — 路线导航";
+
+  var h='<div class="map-box" id="mb">';
+  h+='<img src="maps/floor_2.jpg" class="floor-img" id="fi" onload="drawRoute()"/>';
+  // SVG覆盖层
+  h+='<svg class="route-svg" id="rsvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>';
+  // 起点标记
+  h+='<div class="start-dot" id="sd" style="left:'+s.startX+'%;top:'+s.startY+'%;display:none">🚶<div class="start-label">'+s.entry+'</div></div>';
+  // 终点标记
+  h+='<div class="end-dot" id="ed" style="left:'+s.endX+'%;top:'+s.endY+'%;display:none"><div class="end-label">'+s.name+'</div></div>';
+  // 图例
+  h+='<div class="legend"><div class="legend-item"><div class="legend-dot" style="background:#00e5ff"></div><span style="color:#00e5ff">导航路线</span></div><div class="legend-item"><div class="legend-dot" style="background:#4caf50"></div><span style="color:#4caf50">起点入口</span></div><div class="legend-item"><div class="legend-dot" style="background:#e91e63"></div><span style="color:#e91e63">目标店铺</span></div></div>';
+  h+='</div>';
+
+  document.getElementById("ma").innerHTML=h;
+
+  var tp='<h3>🧭 从'+s.entry+'前往 '+s.name+'</h3>';
+  s.tips.forEach(function(t,i){
+    tp+='<div class="step"><div class="step-n">'+(i+1)+'</div><div class="step-t">'+t+'</div></div>';
+  });
+  document.getElementById("ns").innerHTML=tp;
+
+  document.getElementById("ov").classList.add("active");
+  window._cs=s;
+}
+
+function drawRoute(){
+  var s=window._cs;
+  if(!s)return;
+
+  // 显示标记
+  document.getElementById("sd").style.display="flex";
+  document.getElementById("ed").style.display="block";
+
+  // 构建SVG路线
+  var svg=document.getElementById("rsvg");
+  var pts=s.route;
+
+  // 路线polyline
+  var pl=document.createElementNS("http://www.w3.org/2000/svg","polyline");
+  var points=pts.map(function(p){return p[0]+","+p[1]}).join(" ");
+  pl.setAttribute("points",points);
+  pl.setAttribute("class","route-line route-line-anim");
+  svg.appendChild(pl);
+
+  // 在最后一个拐点画箭头指向终点
+  if(pts.length>=2){
+    var last=pts[pts.length-1];
+    var prev=pts[pts.length-2];
+    var dx=last[0]-prev[0];
+    var dy=last[1]-prev[1];
+    var len=Math.sqrt(dx*dx+dy*dy);
+    if(len>0){
+      dx/=len; dy/=len;
+      var ax=last[0]-dx*2;
+      var ay=last[1]-dy*2;
+      var px=-dy*1.2;
+      var py=dx*1.2;
+      var arrow=document.createElementNS("http://www.w3.org/2000/svg","polygon");
+      var apts=[
+        (ax+dx*2)+","+(ay+dy*2),
+        (ax+px)+","+(ay+py),
+        (ax-px)+","+(ay-py)
+      ].join(" ");
+      arrow.setAttribute("points",apts);
+      arrow.setAttribute("class","route-arrow");
+      svg.appendChild(arrow);
+    }
+  }
+}
+
+function closeNav(){document.getElementById("ov").classList.remove("active")}
+
+init();
+</script>
+</body>
+</html>
