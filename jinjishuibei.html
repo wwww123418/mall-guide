@@ -1,0 +1,2751 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>京基水贝城市广场</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:          #0a1018;
+    --bg-card:     #111824;
+    --bg-card-hover: #182232;
+    --bg-header:   #0c1520;
+    --border:      rgba(74,144,226,0.15);
+    --border-hover:rgba(74,144,226,0.45);
+    --blue:        #4a90e2;
+    --blue-light:  #74aff2;
+    --blue-dim:    rgba(74,144,226,0.10);
+    --blue-glow:   rgba(74,144,226,0.06);
+    --text:        #e8eef5;
+    --text-secondary: #8898ae;
+    --text-dim:    #4a5a72;
+    --white:       #ffffff;
+    --shadow:      0 4px 24px rgba(0,0,0,0.5);
+    --shadow-blue: 0 4px 30px rgba(74,144,226,0.12);
+    --radius:      14px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .header {
+    background: var(--bg-header);
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(20px);
+  }
+
+  .header-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 0 0;
+  }
+
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .header-logo-icon {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, var(--blue), #2d6abf);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    box-shadow: 0 2px 12px rgba(74,144,226,0.3);
+  }
+
+  .header-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--blue-light);
+    letter-spacing: 2px;
+  }
+
+  .header-subtitle {
+    font-size: 10px;
+    color: var(--blue);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .header-deco {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .header-deco span {
+    display: block;
+    width: 40px; height: 1px;
+    background: linear-gradient(to right, transparent, var(--blue), transparent);
+  }
+
+  .header-deco em {
+    font-style: normal;
+    color: var(--blue);
+    font-size: 10px;
+    letter-spacing: 2px;
+  }
+
+  /* Zone tabs */
+  .zone-tabs {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding-top: 16px;
+  }
+
+  .zone-tabs::-webkit-scrollbar { display: none; }
+
+  .zone-tab {
+    flex-shrink: 0;
+    padding: 10px 22px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 10px 10px 0 0;
+    transition: all 0.25s;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .zone-tab:hover { color: var(--blue-light); background: var(--blue-glow); }
+
+  .zone-tab.active {
+    color: var(--blue);
+    background: var(--blue-dim);
+    border-color: var(--border);
+    border-bottom-color: var(--bg-header);
+    font-weight: 700;
+  }
+
+  .zone-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, transparent, var(--blue), transparent);
+  }
+
+  /* Floor tabs */
+  .floor-tabs {
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 8px 20px 0;
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .floor-tabs::-webkit-scrollbar { display: none; }
+
+  .floor-tab {
+    flex-shrink: 0;
+    padding: 6px 18px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border: 1px solid transparent;
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .floor-tab:hover { color: var(--blue-light); }
+
+  .floor-tab.active {
+    color: var(--blue);
+    background: var(--blue-dim);
+    border-color: var(--border);
+    font-weight: 700;
+  }
+
+  /* Service bar */
+  .service-bar {
+    background: linear-gradient(135deg, #0f1828, #131f30);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 20px;
+  }
+
+  .service-bar-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+
+  .service-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+
+  .service-info svg { color: var(--blue); flex-shrink: 0; }
+
+  .vip-hotline {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+
+  .vip-hotline strong { color: var(--blue); font-weight: 600; }
+
+  /* Search */
+  .search-wrap {
+    padding: 16px;
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 52px;
+    z-index: 99;
+  }
+
+  .search-box {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 28px;
+    padding: 10px 20px;
+    gap: 10px;
+    transition: border-color 0.25s, box-shadow 0.25s;
+  }
+
+  .search-box:focus-within {
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-glow), var(--shadow-blue);
+  }
+
+  .search-box svg { flex-shrink: 0; color: var(--blue); opacity: 0.7; }
+
+  .search-box input {
+    flex: 1;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    outline: none;
+    color: var(--text);
+  }
+
+  .search-box input::placeholder { color: var(--text-dim); }
+
+  .clear-btn {
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: var(--text-dim);
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    display: none;
+    transition: color 0.2s;
+  }
+
+  .clear-btn:hover { color: var(--text-secondary); }
+  .clear-btn.visible { display: block; }
+
+  /* Content */
+  .content {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 16px 80px;
+  }
+
+  /* Stats bar */
+  .stats-bar {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 24px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-around;
+    gap: 16px;
+    box-shadow: var(--shadow);
+  }
+
+  .stat-item { text-align: center; position: relative; }
+  .stat-item + .stat-item::before {
+    content: '';
+    position: absolute;
+    left: -8px; top: 50%;
+    transform: translateY(-50%);
+    width: 1px; height: 28px;
+    background: var(--border);
+  }
+
+  .stat-num {
+    font-size: 24px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--blue-light), var(--blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.1;
+  }
+
+  .stat-label { font-size: 11px; color: var(--text-dim); margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
+
+  /* VIP Section */
+  .vip-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+
+  .vip-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .vip-header-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--blue), #2d6abf);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 10px rgba(74,144,226,0.3);
+  }
+
+  .vip-header-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--blue);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .vip-header-sub {
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .vip-header-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, var(--border), transparent);
+  }
+
+  .vip-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .vip-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 14px;
+    text-align: center;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .vip-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    border-radius: 12px 12px 0 0;
+  }
+
+  .vip-card.v-card::before { background: linear-gradient(to right, #5a5a6a, #7a7a8a); }
+  .vip-card.s-card::before { background: linear-gradient(to right, #6080a0, #80a8c0); }
+  .vip-card.g-card::before { background: linear-gradient(to right, #6090b0, #88b8d8); }
+  .vip-card.d-card::before { background: linear-gradient(to right, #4a90e2, #74aff2); }
+
+  .vip-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-blue);
+  }
+
+  .vip-tier { font-size: 15px; font-weight: 800; margin-bottom: 8px; letter-spacing: 1px; }
+  .v-card .vip-tier { color: #aaa8b8; }
+  .s-card .vip-tier { color: var(--blue-light); }
+  .g-card .vip-tier { color: #88c0e8; }
+  .d-card .vip-tier { color: var(--blue-light); }
+
+  .vip-divider { width: 24px; height: 1px; margin: 0 auto 10px; }
+  .v-card .vip-divider { background: #3a3a4a; }
+  .s-card .vip-divider { background: rgba(74,144,226,0.3); }
+  .g-card .vip-divider { background: rgba(100,160,210,0.3); }
+  .d-card .vip-divider { background: rgba(74,144,226,0.35); }
+
+  .vip-benefit { font-size: 11px; color: var(--text-secondary); line-height: 1.7; text-align: left; }
+  .vip-benefit li { list-style: none; padding-left: 10px; position: relative; margin-bottom: 3px; }
+  .v-card .vip-benefit li::before { content: '·'; position: absolute; left: 0; color: #5a5a6a; }
+  .s-card .vip-benefit li::before { content: '·'; position: absolute; left: 0; color: var(--blue); opacity: 0.6; }
+  .g-card .vip-benefit li::before { content: '·'; position: absolute; left: 0; color: #88c0e8; opacity: 0.6; }
+  .d-card .vip-benefit li::before { content: '★'; position: absolute; left: 0; color: var(--blue-light); font-size: 8px; top: 3px; }
+
+  .vip-cond {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed rgba(255,255,255,0.06);
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.8;
+  }
+
+  .vip-cond-row { display: flex; justify-content: space-between; gap: 6px; }
+  .vip-cond-row span:first-child { flex-shrink: 0; color: var(--text-secondary); }
+  .vip-cond-row span:last-child { text-align: right; }
+  .vip-tag-forever { color: var(--blue); font-weight: 600; }
+
+  /* Category group */
+  .cat-group { margin-bottom: 28px; }
+
+  .cat-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--blue);
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    margin-bottom: 14px;
+    padding-left: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .cat-title::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: linear-gradient(to right, var(--blue), transparent);
+  }
+
+  .cat-title::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: var(--border);
+  }
+
+  /* Brand grid */
+  .brand-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 10px;
+  }
+
+  .brand-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 14px 14px;
+    cursor: pointer;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .brand-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--blue), var(--blue-light), var(--blue));
+    opacity: 0;
+    transition: opacity 0.28s;
+  }
+
+  .brand-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top, var(--blue-glow), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.28s;
+  }
+
+  .brand-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--border-hover);
+    box-shadow: var(--shadow-blue);
+    background: var(--bg-card-hover);
+  }
+
+  .brand-card:hover::before { opacity: 1; }
+  .brand-card:hover::after { opacity: 1; }
+
+  .brand-name { font-size: 14px; font-weight: 700; color: var(--text); margin-bottom: 5px; line-height: 1.35; position: relative; z-index: 1; }
+  .brand-code { font-size: 10px; color: var(--text-dim); font-family: "Courier New", Courier, monospace; margin-bottom: 10px; letter-spacing: 0.5px; position: relative; z-index: 1; }
+
+  .brand-location {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--blue-dim);
+    color: var(--blue-light);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 6px;
+    border: 1px solid rgba(74,144,226,0.2);
+    position: relative;
+    z-index: 1;
+    transition: all 0.22s;
+  }
+
+  .brand-card:hover .brand-location {
+    background: rgba(74,144,226,0.2);
+    border-color: rgba(74,144,226,0.4);
+  }
+
+  .brand-tags {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--text-dim);
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge-reno {
+    display: inline-block;
+    font-size: 10px;
+    background: rgba(255,100,100,0.12);
+    color: #e07070;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-left: 4px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+
+  .brand-card.highlight { border-color: rgba(74,144,226,0.3); background: var(--bg-card-hover); }
+
+  /* Empty state */
+  .empty-state { text-align: center; padding: 80px 20px; }
+  .empty-state .icon { font-size: 52px; margin-bottom: 16px; opacity: 0.4; }
+  .empty-state p { font-size: 14px; color: var(--text-dim); letter-spacing: 1px; }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(5,8,16,0.85);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+  }
+
+  .modal-overlay.show { display: flex; }
+
+  .modal {
+    background: #131e2e;
+    border: 1px solid var(--border);
+    border-radius: 22px 22px 0 0;
+    padding: 28px 24px 48px;
+    width: 100%;
+    max-width: 560px;
+    max-height: 82vh;
+    overflow-y: auto;
+    animation: slideUp 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.6);
+  }
+
+  @keyframes slideUp {
+    from { transform: translateY(60px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .modal-handle { width: 44px; height: 4px; background: rgba(74,144,226,0.3); border-radius: 2px; margin: 0 auto 24px; }
+
+  .modal-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; margin-bottom: 20px; }
+  .modal-brand-icon { width: 52px; height: 52px; background: linear-gradient(135deg, var(--blue), #2d6abf); border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 24px; color: #fff; font-weight: 900; box-shadow: 0 4px 16px rgba(74,144,226,0.3); }
+  .modal-brand-name { font-size: 22px; font-weight: 800; color: var(--text); line-height: 1.3; }
+  .modal-brand-code { font-size: 11px; color: var(--blue); font-family: "Courier New", monospace; margin-top: 4px; letter-spacing: 1px; }
+
+  .modal-divider { height: 1px; background: var(--border); margin: 18px 0; }
+  .modal-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+  .modal-row-label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1.5px; width: 56px; flex-shrink: 0; padding-top: 3px; }
+  .modal-row-value { font-size: 14px; color: var(--text); }
+  .modal-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .modal-tag { background: var(--blue-dim); color: var(--blue-light); padding: 5px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; border: 1px solid rgba(74,144,226,0.25); }
+  .modal-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.8; padding: 14px 16px; background: var(--bg-card); border-radius: 10px; border: 1px solid var(--border); }
+
+  .modal-close {
+    width: 100%;
+    background: linear-gradient(135deg, var(--blue), #2d6abf);
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    padding: 15px;
+    font-size: 15px;
+    font-weight: 800;
+    cursor: pointer;
+    margin-top: 20px;
+    letter-spacing: 1px;
+    transition: all 0.22s;
+    box-shadow: 0 4px 20px rgba(74,144,226,0.3);
+  }
+
+  .modal-close:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(74,144,226,0.45); }
+
+  /* Responsive */
+  @media (max-width: 440px) {
+    .brand-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stats-bar { padding: 12px 16px; }
+    .stat-num { font-size: 20px; }
+    .vip-cards { grid-template-columns: 1fr 1fr; gap: 8px; }
+    .vip-tier { font-size: 13px; }
+    .vip-benefit { font-size: 10px; }
+    .vip-section { padding: 16px 14px; }
+    .vip-hotline span { display: none; }
+  }
+
+  @media (max-width: 360px) { .vip-cards { grid-template-columns: 1fr; } }
+
+  @media (min-width: 680px) { .brand-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 960px) { .brand-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 1100px) { .brand-grid { grid-template-columns: repeat(5, 1fr); } }
+
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(74,144,226,0.3); border-radius: 2px; }
+
+  /* Carousel */
+  .carousel-overlay {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 80vh;
+    background: rgba(8,10,18,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 10vh;
+    transform: translateY(0);
+    transition: transform 0.4s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
+    border-bottom: 1px solid rgba(74,144,226,0.15);
+    box-shadow: 0 -8px 40px rgba(0,0,0,0.6), 0 8px 40px rgba(0,0,0,0.6);
+  }
+  .carousel-overlay.hidden { opacity: 0; pointer-events: none; transform: scale(0.95); }
+  .carousel-close {
+    position: absolute;
+    top: 12px; left: 12px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid rgba(74,144,226,0.3);
+    color: var(--blue);
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 210;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    line-height: 1;
+  }
+  .carousel-close:hover { background: rgba(74,144,226,0.2); }
+  .carousel-track-wrap { width: 85%; max-width: 700px; height: 80%; overflow: hidden; position: relative; border-radius: 10px; }
+  .carousel-track { display: flex; height: 100%; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
+  .carousel-track.no-transition { transition: none; }
+  .carousel-slide { flex: 0 0 100%; height: 100%; display: flex; align-items: center; justify-content: center; padding: 10px; box-sizing: border-box; }
+  .carousel-slide img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 4px 24px rgba(0,0,0,0.4); user-select: none; -webkit-user-drag: none; pointer-events: none; }
+  .carousel-dots { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); display: flex; gap: 8px; z-index: 210; }
+  .carousel-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.25); cursor: pointer; transition: background 0.3s, transform 0.3s; }
+  .carousel-dot.active { background: var(--blue); transform: scale(1.3); }
+  @media (max-width: 440px) { .carousel-track-wrap { width: 92%; height: 78%; } .carousel-close { width: 32px; height: 32px; font-size: 16px; top: 10px; left: 10px; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-logo">
+      <div class="header-logo-icon">🏢</div>
+      <div>
+        <div class="header-title">京基水贝城市广场</div>
+        <div class="header-subtitle">MALL GUIDE</div>
+      </div>
+    </div>
+  </div>
+  <div class="zone-tabs" id="zoneTabs"></div>
+  <div class="floor-tabs" id="floorTabs"></div>
+</div>
+
+<div class="service-bar">
+  <div class="service-bar-inner">
+    <div class="service-info">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.07 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3 2.18h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+      </svg>
+      <span>客服热线</span>
+      <span style="color:var(--blue-light);font-weight:700;">0755-22308888</span>
+    </div>
+    <div class="vip-hotline">
+      <strong>★</strong>
+      <span>会员中心 · 积分兑换 · 专属礼遇</span>
+    </div>
+  </div>
+</div>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+    </svg>
+    <input type="text" id="searchInput" placeholder="搜索品牌、业态或位置…">
+    <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
+  </div>
+</div>
+
+<div class="content" id="content"></div>
+
+<!-- Brand Detail Modal -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-handle"></div>
+    <div class="modal-top">
+      <div>
+        <div class="modal-brand-name" id="modalName"></div>
+        <div class="modal-brand-code" id="modalCode"></div>
+      </div>
+      <div class="modal-brand-icon" id="modalIcon"></div>
+    </div>
+    <div class="modal-divider"></div>
+    <div class="modal-row">
+      <div class="modal-row-label">楼层</div>
+      <div class="modal-tags"><span class="modal-tag" id="modalFloor"></span></div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-row-label">区位</div>
+      <div class="modal-tags"><span class="modal-tag" id="modalZone"></span></div>
+    </div>
+    <div class="modal-row">
+      <div class="modal-row-label">位置</div>
+      <div class="modal-tags"><span class="modal-tag" id="modalLoc"></span></div>
+    </div>
+    <div class="modal-divider"></div>
+    <div class="modal-desc" id="modalDesc"></div>
+    <button class="modal-close" onclick="closeModal()">确 定</button>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  "B2": {
+    "floorName": "B2层（负二楼）",
+    "categories": {
+      "南区": [
+        {
+          "code": "B201A",
+          "name": "世家堂",
+          "location": "B201A",
+          "brands": [
+            "世家堂"
+          ],
+          "tags": "凉茶糖水甜品"
+        },
+        {
+          "code": "B204A",
+          "name": "拌粉君",
+          "location": "B204A",
+          "brands": [
+            "拌粉君"
+          ],
+          "tags": "南昌拌粉"
+        },
+        {
+          "code": "B204B",
+          "name": "福客",
+          "location": "B204B",
+          "brands": [
+            "福客"
+          ],
+          "tags": "麻辣烫"
+        },
+        {
+          "code": "B204C",
+          "name": "木治关东煮、喜识",
+          "location": "B204C",
+          "brands": [
+            "木治关东煮",
+            "喜识"
+          ],
+          "tags": "已撤场",
+          "renovating": true
+        },
+        {
+          "code": "B205A",
+          "name": "茶救星球",
+          "location": "B205A",
+          "brands": [
+            "茶救星球"
+          ],
+          "tags": "蔬果茶、柠檬茶"
+        },
+        {
+          "code": "B206",
+          "name": "苏晓玥",
+          "location": "B206",
+          "brands": [
+            "苏晓玥"
+          ],
+          "tags": "鸭血粉丝"
+        },
+        {
+          "code": "B208",
+          "name": "万利记",
+          "location": "B208",
+          "brands": [
+            "万利记"
+          ],
+          "tags": "长沙小吃、臭豆腐"
+        },
+        {
+          "code": "B209",
+          "name": "盛香亭",
+          "location": "B209",
+          "brands": [
+            "盛香亭"
+          ],
+          "tags": "热卤湖南粉面小吃",
+          "subloc": "D区停车场入口"
+        },
+        {
+          "code": "B210",
+          "name": "禾花虞",
+          "location": "B210",
+          "brands": [
+            "禾花虞"
+          ],
+          "tags": "湖北小吃藕汤"
+        },
+        {
+          "code": "B211",
+          "name": "潮有友",
+          "location": "B211",
+          "brands": [
+            "潮有友"
+          ],
+          "tags": "潮汕风味、粿条"
+        },
+        {
+          "code": "B212",
+          "name": "麺屋猪一",
+          "location": "B212",
+          "brands": [
+            "麺屋猪一"
+          ],
+          "tags": "日式拉面"
+        },
+        {
+          "code": "B213",
+          "name": "和府捞面",
+          "location": "B213",
+          "brands": [
+            "和府捞面"
+          ],
+          "tags": "养生草本汤面"
+        },
+        {
+          "code": "B214",
+          "name": "品质优健身",
+          "location": "B214",
+          "brands": [
+            "品质优健身"
+          ],
+          "tags": "负二楼南区通道"
+        }
+      ]
+    }
+  },
+  "B1": {
+    "floorName": "B1层（负一楼）",
+    "categories": {
+      "中庭": [
+        {
+          "code": "B101",
+          "name": "臻选珠宝",
+          "location": "B101",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "A区 时尚"
+        },
+        {
+          "code": "B130",
+          "name": "东芝",
+          "location": "B130",
+          "brands": [
+            "东芝"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B163",
+          "name": "JR原创品牌",
+          "location": "B163",
+          "brands": [
+            "JR原创品牌"
+          ],
+          "tags": "K区 婚庆",
+          "subloc": "6号门"
+        }
+      ],
+      "北区": [
+        {
+          "code": "B105",
+          "name": "臻选珠宝",
+          "location": "B105",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B122",
+          "name": "臻选珠宝",
+          "location": "B122",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "F区 潮品、玉石"
+        },
+        {
+          "code": "B128",
+          "name": "臻选珠宝",
+          "location": "B128",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "G区 国潮",
+          "subloc": "显福、银龙、珠宝修理"
+        },
+        {
+          "code": "B129",
+          "name": "臻选珠宝",
+          "location": "B129",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "鼎礼珠宝·黄金"
+        },
+        {
+          "code": "B134",
+          "name": "臻选珠宝",
+          "location": "B134",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "I区 婚庆"
+        },
+        {
+          "code": "B135",
+          "name": "臻选珠宝",
+          "location": "B135",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "J区 婚庆",
+          "subloc": "鑫琪、爱乐"
+        }
+      ],
+      "南区": [
+        {
+          "code": "B137",
+          "name": "小林蓝鳄",
+          "location": "B137",
+          "brands": [
+            "小林蓝鳄"
+          ],
+          "tags": "精品饰品"
+        },
+        {
+          "code": "B137A",
+          "name": "混果汁",
+          "location": "B137A",
+          "brands": [
+            "混果汁"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B137B",
+          "name": "SKG",
+          "location": "B137B",
+          "brands": [
+            "SKG"
+          ],
+          "tags": "按摩仪"
+        },
+        {
+          "code": "B137C",
+          "name": "转转",
+          "location": "B137C",
+          "brands": [
+            "转转"
+          ],
+          "tags": "二手手机回收",
+          "subloc": "母婴室"
+        },
+        {
+          "code": "B137C2",
+          "name": "玩刻",
+          "location": "B137C2",
+          "brands": [
+            "玩刻"
+          ],
+          "tags": "自助switch"
+        },
+        {
+          "code": "B138",
+          "name": "瑞幸咖啡",
+          "location": "B138",
+          "brands": [
+            "瑞幸咖啡"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B139",
+          "name": "茉莉奶白",
+          "location": "B139",
+          "brands": [
+            "茉莉奶白"
+          ],
+          "tags": "奶茶"
+        },
+        {
+          "code": "B140",
+          "name": "淡马茶坊",
+          "location": "B140",
+          "brands": [
+            "淡马茶坊"
+          ],
+          "tags": "奶茶"
+        },
+        {
+          "code": "B141",
+          "name": "良品铺子",
+          "location": "B141",
+          "brands": [
+            "良品铺子"
+          ],
+          "tags": "零食"
+        },
+        {
+          "code": "B142",
+          "name": "名创优品",
+          "location": "B142",
+          "brands": [
+            "名创优品"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B143A",
+          "name": "国洋烟酒行",
+          "location": "B143A",
+          "brands": [
+            "国洋烟酒行"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B143",
+          "name": "元初食品",
+          "location": "B143",
+          "brands": [
+            "元初食品"
+          ],
+          "tags": "超市",
+          "subloc": "B144同铺"
+        },
+        {
+          "code": "B143C",
+          "name": "乐沙儿",
+          "location": "B143C",
+          "brands": [
+            "乐沙儿"
+          ],
+          "tags": "彩妆护肤"
+        },
+        {
+          "code": "B148",
+          "name": "味千拉面",
+          "location": "B148",
+          "brands": [
+            "味千拉面"
+          ],
+          "tags": "日式拉面"
+        },
+        {
+          "code": "B148A",
+          "name": "老广记细蓉",
+          "location": "B148A",
+          "brands": [
+            "老广记细蓉"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B153",
+          "name": "港究茶",
+          "location": "B153",
+          "brands": [
+            "港究茶"
+          ],
+          "tags": "丝袜奶茶"
+        },
+        {
+          "code": "B154",
+          "name": "白玉串城",
+          "location": "B154",
+          "brands": [
+            "白玉串城"
+          ],
+          "tags": "朝鲜族烤串"
+        },
+        {
+          "code": "B155",
+          "name": "探炉",
+          "location": "B155",
+          "brands": [
+            "探炉"
+          ],
+          "tags": "烤鱼"
+        },
+        {
+          "code": "B156",
+          "name": "农耕记",
+          "location": "B156",
+          "brands": [
+            "农耕记"
+          ],
+          "tags": "湖南土菜"
+        },
+        {
+          "code": "B157",
+          "name": "凯乐里冰室",
+          "location": "B157",
+          "brands": [
+            "凯乐里冰室"
+          ],
+          "tags": "香港茶餐厅"
+        },
+        {
+          "code": "B158",
+          "name": "森崎面包",
+          "location": "B158",
+          "brands": [
+            "森崎面包"
+          ],
+          "tags": "面包、咖啡"
+        },
+        {
+          "code": "B158A",
+          "name": "满记甜品",
+          "location": "B158A",
+          "brands": [
+            "满记甜品"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B159",
+          "name": "Lenovo联想",
+          "location": "B159",
+          "brands": [
+            "Lenovo联想"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B160",
+          "name": "沐纯",
+          "location": "B160",
+          "brands": [
+            "沐纯"
+          ],
+          "tags": "内衣、床品"
+        },
+        {
+          "code": "B161",
+          "name": "XUKOU序蔻",
+          "location": "B161",
+          "brands": [
+            "XUKOU序蔻"
+          ],
+          "tags": "女装"
+        },
+        {
+          "code": "B162",
+          "name": "象山酥院",
+          "location": "B162",
+          "brands": [
+            "象山酥院"
+          ],
+          "tags": "糕点面包"
+        },
+        {
+          "code": "B166",
+          "name": "追觅",
+          "location": "B166",
+          "brands": [
+            "追觅"
+          ],
+          "tags": "古梵珠宝"
+        },
+        {
+          "code": "B166-B",
+          "name": "凯迪仕",
+          "location": "B166-B",
+          "brands": [
+            "凯迪仕"
+          ],
+          "tags": "智能锁"
+        },
+        {
+          "code": "B167",
+          "name": "日立中央空调/史密斯",
+          "location": "B167",
+          "brands": [
+            "日立中央空调",
+            "史密斯"
+          ],
+          "tags": ""
+        }
+      ],
+      "其他": [
+        {
+          "code": "B102",
+          "name": "美的智慧家体验馆",
+          "location": "B102",
+          "brands": [
+            "美的智慧家体验馆"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B103",
+          "name": "小米",
+          "location": "B103",
+          "brands": [
+            "小米"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B104",
+          "name": "VIVO",
+          "location": "B104",
+          "brands": [
+            "VIVO"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B106",
+          "name": "臻选珠宝",
+          "location": "B106",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "周瑞祥珠宝·黄金"
+        },
+        {
+          "code": "B107",
+          "name": "臻选珠宝",
+          "location": "B107",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "",
+          "subloc": "B108/B123/B124/B125/B126/B128A/B164/B165同区"
+        },
+        {
+          "code": "B128B",
+          "name": "东芝",
+          "location": "B128B",
+          "brands": [
+            "东芝"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "B131",
+          "name": "东芝",
+          "location": "B131",
+          "brands": [
+            "东芝"
+          ],
+          "tags": "",
+          "subloc": "B130a同铺"
+        },
+        {
+          "code": "B132",
+          "name": "6IXTY 8IGHT",
+          "location": "B132",
+          "brands": [
+            "6IXTY 8IGHT"
+          ],
+          "tags": "内衣",
+          "subloc": "B133同铺"
+        }
+      ]
+    }
+  },
+  "L1": {
+    "floorName": "L1层（一楼）",
+    "categories": {
+      "北区": [
+        {
+          "code": "L101A",
+          "name": "农业银行",
+          "location": "L101A",
+          "brands": [
+            "农业银行"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L102",
+          "name": "臻选珠宝",
+          "location": "L102",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "N区",
+          "subloc": "古梵、欣宏钻石、金地业珠宝等"
+        },
+        {
+          "code": "L103",
+          "name": "周大福",
+          "location": "L103",
+          "brands": [
+            "周大福"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L105",
+          "name": "斯凯奇SKECHERS",
+          "location": "L105",
+          "brands": [
+            "SKECHERS"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L105B",
+          "name": "猫员外精酿啤酒馆",
+          "location": "L105B",
+          "brands": [
+            "猫员外精酿啤酒馆"
+          ],
+          "tags": "外围"
+        },
+        {
+          "code": "L106",
+          "name": "诺贝达",
+          "location": "L106",
+          "brands": [
+            "诺贝达"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L107",
+          "name": "九牧王",
+          "location": "L107",
+          "brands": [
+            "九牧王"
+          ],
+          "tags": "男装"
+        },
+        {
+          "code": "L108",
+          "name": "博士眼镜",
+          "location": "L108",
+          "brands": [
+            "博士眼镜"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L108A",
+          "name": "M Stand",
+          "location": "L108A",
+          "brands": [
+            "M Stand"
+          ],
+          "tags": "咖啡"
+        },
+        {
+          "code": "L122",
+          "name": "爷爷不泡茶",
+          "location": "L122",
+          "brands": [
+            "爷爷不泡茶"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L123",
+          "name": "比华利保罗",
+          "location": "L123",
+          "brands": [
+            "比华利保罗"
+          ],
+          "tags": "三楼另有"
+        },
+        {
+          "code": "L124",
+          "name": "波司登",
+          "location": "L124",
+          "brands": [
+            "波司登"
+          ],
+          "tags": "",
+          "subloc": "L125/L126同铺"
+        },
+        {
+          "code": "L127A",
+          "name": "华为",
+          "location": "L127A",
+          "brands": [
+            "华为"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L128",
+          "name": "MC CHOICE",
+          "location": "L128",
+          "brands": [
+            "MC CHOICE"
+          ],
+          "tags": "女装、鞋靴"
+        }
+      ],
+      "南区": [
+        {
+          "code": "L109",
+          "name": "奈雪的茶",
+          "location": "L109",
+          "brands": [
+            "奈雪的茶"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L116",
+          "name": "乐凯撒",
+          "location": "L116",
+          "brands": [
+            "乐凯撒"
+          ],
+          "tags": "披萨"
+        },
+        {
+          "code": "L116A",
+          "name": "麦当劳",
+          "location": "L116A",
+          "brands": [
+            "麦当劳"
+          ],
+          "tags": "外围"
+        },
+        {
+          "code": "L116C",
+          "name": "传城老树日茶",
+          "location": "L116C",
+          "brands": [
+            "传城老树日茶"
+          ],
+          "tags": "外围"
+        },
+        {
+          "code": "L116D",
+          "name": "霸王茶姬",
+          "location": "L116D",
+          "brands": [
+            "霸王茶姬"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L117",
+          "name": "星巴克",
+          "location": "L117",
+          "brands": [
+            "星巴克"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L117A",
+          "name": "全家",
+          "location": "L117A",
+          "brands": [
+            "全家"
+          ],
+          "tags": "便利店"
+        },
+        {
+          "code": "L113A",
+          "name": "711便利店",
+          "location": "L113A",
+          "brands": [
+            "711便利店"
+          ],
+          "tags": "外围"
+        }
+      ],
+      "S区": [
+        {
+          "code": "L110",
+          "name": "臻选珠宝",
+          "location": "L110",
+          "brands": [
+            "臻选珠宝"
+          ],
+          "tags": "",
+          "subloc": "华祥、清金福、新荣黄金等",
+          "subloc_extra": "L112/L113/L114/L115/L118/L119/L120/L121同区"
+        },
+        {
+          "code": "L121A",
+          "name": "labaker乐焙",
+          "location": "L121A",
+          "brands": [
+            "labaker乐焙"
+          ],
+          "tags": "面包"
+        },
+        {
+          "code": "L121B",
+          "name": "赤矿咖啡",
+          "location": "L121B",
+          "brands": [
+            "赤矿咖啡"
+          ],
+          "tags": "轻食、咖啡"
+        },
+        {
+          "code": "L121C",
+          "name": "祥宁福星",
+          "location": "L121C",
+          "brands": [
+            "祥宁福星"
+          ],
+          "tags": ""
+        }
+      ]
+    }
+  },
+  "L2": {
+    "floorName": "L2层（二楼）",
+    "categories": {
+      "北区": [
+        {
+          "code": "L201A",
+          "name": "农业银行",
+          "location": "L201A",
+          "brands": [
+            "农业银行"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L202",
+          "name": "圈子里湘菜",
+          "location": "L202",
+          "brands": [
+            "圈子里湘菜"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L203",
+          "name": "传世金玉",
+          "location": "L203",
+          "brands": [
+            "传世金玉"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L204",
+          "name": "GIRDEAR哥弟",
+          "location": "L204",
+          "brands": [
+            "GIRDEAR哥弟"
+          ],
+          "tags": "包"
+        },
+        {
+          "code": "L205",
+          "name": "SIEGO西蔻",
+          "location": "L205",
+          "brands": [
+            "SIEGO西蔻"
+          ],
+          "tags": "女装"
+        },
+        {
+          "code": "L206",
+          "name": "麦莉雅MAILIYA",
+          "location": "L206",
+          "brands": [
+            "麦莉雅MAILIYA"
+          ],
+          "tags": "女装",
+          "subloc": "L207同铺"
+        },
+        {
+          "code": "L208",
+          "name": "SETIROM西町村屋",
+          "location": "L208",
+          "brands": [
+            "SETIROM西町村屋"
+          ],
+          "tags": "复古女装"
+        },
+        {
+          "code": "L209",
+          "name": "PRICH",
+          "location": "L209",
+          "brands": [
+            "PRICH"
+          ],
+          "tags": "女装"
+        },
+        {
+          "code": "L211",
+          "name": "播元素",
+          "location": "L211",
+          "brands": [
+            "播元素"
+          ],
+          "tags": "潮酷女装"
+        },
+        {
+          "code": "L212",
+          "name": "G2000",
+          "location": "L212",
+          "brands": [
+            "G2000"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L213",
+          "name": "绵棉麻译",
+          "location": "L213",
+          "brands": [
+            "绵棉麻译"
+          ],
+          "tags": "森系女装"
+        },
+        {
+          "code": "L214A",
+          "name": "lagogo",
+          "location": "L214A",
+          "brands": [
+            "lagogo"
+          ],
+          "tags": "女装"
+        },
+        {
+          "code": "L215",
+          "name": "欧娅颂",
+          "location": "L215",
+          "brands": [
+            "欧娅颂"
+          ],
+          "tags": "女装"
+        },
+        {
+          "code": "L216",
+          "name": "茜施尔",
+          "location": "L216",
+          "brands": [
+            "茜施尔"
+          ],
+          "tags": "内衣"
+        },
+        {
+          "code": "L231A",
+          "name": "茉薇寇",
+          "location": "L231A",
+          "brands": [
+            "茉薇寇"
+          ],
+          "tags": "文艺简约女装"
+        }
+      ],
+      "南区": [
+        {
+          "code": "L214",
+          "name": "龙虎寻隐阁",
+          "location": "L214",
+          "brands": [
+            "龙虎寻隐阁"
+          ],
+          "tags": "精品饰品",
+          "subloc": "母婴室"
+        },
+        {
+          "code": "L218",
+          "name": "元气寿司",
+          "location": "L218",
+          "brands": [
+            "元气寿司"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L221",
+          "name": "乐宴",
+          "location": "L221",
+          "brands": [
+            "乐宴"
+          ],
+          "tags": "老北京铜火锅"
+        },
+        {
+          "code": "L222",
+          "name": "Meland club",
+          "location": "L222",
+          "brands": [
+            "Meland club"
+          ],
+          "tags": "儿童乐园入口"
+        },
+        {
+          "code": "L222A",
+          "name": "紫涵",
+          "location": "L222A",
+          "brands": [
+            "紫涵"
+          ],
+          "tags": "森系女装"
+        },
+        {
+          "code": "L223",
+          "name": "诺曼霓NOMIN",
+          "location": "L223",
+          "brands": [
+            "诺曼霓NOMIN"
+          ],
+          "tags": "女装",
+          "subloc": "近中庭"
+        },
+        {
+          "code": "L226",
+          "name": "松林之月",
+          "location": "L226",
+          "brands": [
+            "松林之月"
+          ],
+          "tags": "女装"
+        },
+        {
+          "code": "L227",
+          "name": "josiny卓诗尼",
+          "location": "L227",
+          "brands": [
+            "josiny卓诗尼"
+          ],
+          "tags": "鞋、包"
+        },
+        {
+          "code": "L227A",
+          "name": "三格",
+          "location": "L227A",
+          "brands": [
+            "三格"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L228",
+          "name": "yindiao引调",
+          "location": "L228",
+          "brands": [
+            "yindiao引调"
+          ],
+          "tags": "女装"
+        },
+        {
+          "code": "L229",
+          "name": "谭木匠",
+          "location": "L229",
+          "brands": [
+            "谭木匠"
+          ],
+          "tags": "木梳"
+        },
+        {
+          "code": "L230",
+          "name": "拉伽瑜伽",
+          "location": "L230",
+          "brands": [
+            "拉伽瑜伽"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L219B",
+          "name": "麦当劳二楼",
+          "location": "L219B",
+          "brands": [
+            "麦当劳"
+          ],
+          "tags": ""
+        }
+      ]
+    }
+  },
+  "L3": {
+    "floorName": "L3层（三楼）",
+    "categories": {
+      "北区": [
+        {
+          "code": "L301",
+          "name": "润园四季椰子鸡",
+          "location": "L301",
+          "brands": [
+            "润园四季椰子鸡"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L302",
+          "name": "SlimeGOGO史莱姆学院",
+          "location": "L302",
+          "brands": [
+            "SlimeGOGO史莱姆学院"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L303",
+          "name": "星际传奇",
+          "location": "L303",
+          "brands": [
+            "星际传奇"
+          ],
+          "tags": "电玩"
+        },
+        {
+          "code": "L304",
+          "name": "李宁",
+          "location": "L304",
+          "brands": [
+            "李宁"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L304A",
+          "name": "阿迪达斯",
+          "location": "L304A",
+          "brands": [
+            "阿迪达斯"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L305",
+          "name": "鸿星尔克",
+          "location": "L305",
+          "brands": [
+            "鸿星尔克"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L305A",
+          "name": "安踏",
+          "location": "L305A",
+          "brands": [
+            "安踏"
+          ],
+          "tags": "",
+          "subloc": "L306同铺"
+        },
+        {
+          "code": "L307",
+          "name": "回力",
+          "location": "L307",
+          "brands": [
+            "回力"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L309",
+          "name": "ROOKIE",
+          "location": "L309",
+          "brands": [
+            "ROOKIE"
+          ],
+          "tags": "童装"
+        },
+        {
+          "code": "L310",
+          "name": "NB新百伦儿童",
+          "location": "L310",
+          "brands": [
+            "NB新百伦儿童"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L311",
+          "name": "pawinpaw宝英宝",
+          "location": "L311",
+          "brands": [
+            "pawinpaw宝英宝"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L311A",
+          "name": "蓬纱馆",
+          "location": "L311A",
+          "brands": [
+            "蓬纱馆"
+          ],
+          "tags": "儿童公主裙",
+          "subloc": "母婴室"
+        },
+        {
+          "code": "L327A",
+          "name": "洗脸猫",
+          "location": "L327A",
+          "brands": [
+            "洗脸猫"
+          ],
+          "tags": "护肤"
+        },
+        {
+          "code": "L327",
+          "name": "阿赞拳馆",
+          "location": "L327",
+          "brands": [
+            "阿赞拳馆"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L327B",
+          "name": "小天才",
+          "location": "L327B",
+          "brands": [
+            "小天才"
+          ],
+          "tags": "儿童电子"
+        },
+        {
+          "code": "L328",
+          "name": "POLP WALK",
+          "location": "L328",
+          "brands": [
+            "POLP WALK"
+          ],
+          "tags": "poloclub年轻款"
+        },
+        {
+          "code": "L328A",
+          "name": "K-BOXING劲霸",
+          "location": "L328A",
+          "brands": [
+            "K-BOXING劲霸"
+          ],
+          "tags": "男装"
+        },
+        {
+          "code": "L329",
+          "name": "GOGOPONI健身小马",
+          "location": "L329",
+          "brands": [
+            "GOGOPONI健身小马"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L330",
+          "name": "润今生",
+          "location": "L330",
+          "brands": [
+            "润今生"
+          ],
+          "tags": ""
+        }
+      ],
+      "南区": [
+        {
+          "code": "L312",
+          "name": "黑空VR",
+          "location": "L312",
+          "brands": [
+            "黑空VR"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L313",
+          "name": "聚乐驿站",
+          "location": "L313",
+          "brands": [
+            "聚乐驿站"
+          ],
+          "tags": "夹娃娃"
+        },
+        {
+          "code": "L314",
+          "name": "外婆家+炉鱼",
+          "location": "L314",
+          "brands": [
+            "外婆家",
+            "炉鱼"
+          ],
+          "tags": "",
+          "subloc": "L315同铺"
+        },
+        {
+          "code": "L317",
+          "name": "京味张北京菜",
+          "location": "L317",
+          "brands": [
+            "京味张北京菜"
+          ],
+          "tags": "烤鸭"
+        },
+        {
+          "code": "L318",
+          "name": "ICD能舞",
+          "location": "L318",
+          "brands": [
+            "ICD能舞"
+          ],
+          "tags": "街舞",
+          "subloc": "L318A Meland club三层"
+        },
+        {
+          "code": "L319",
+          "name": "the entertainer",
+          "location": "L319",
+          "brands": [
+            "the entertainer"
+          ],
+          "tags": "潮玩"
+        },
+        {
+          "code": "L320",
+          "name": "虎芽乐",
+          "location": "L320",
+          "brands": [
+            "虎芽乐"
+          ],
+          "tags": "儿童手工、亲子",
+          "subloc": "L321近中庭"
+        },
+        {
+          "code": "L322",
+          "name": "嘻鸭涂",
+          "location": "L322",
+          "brands": [
+            "嘻鸭涂"
+          ],
+          "tags": "儿童手工"
+        },
+        {
+          "code": "L323A",
+          "name": "英氏YeeHoo",
+          "location": "L323A",
+          "brands": [
+            "英氏YeeHoo"
+          ],
+          "tags": "婴童"
+        },
+        {
+          "code": "L324",
+          "name": "Dandy",
+          "location": "L324",
+          "brands": [
+            "Dandy"
+          ],
+          "tags": "童装"
+        },
+        {
+          "code": "L325",
+          "name": "TARANIS泰兰尼斯",
+          "location": "L325",
+          "brands": [
+            "TARANIS泰兰尼斯"
+          ],
+          "tags": "童装童鞋"
+        },
+        {
+          "code": "L326",
+          "name": "优剪",
+          "location": "L326",
+          "brands": [
+            "优剪"
+          ],
+          "tags": "理发"
+        }
+      ]
+    }
+  },
+  "L4": {
+    "floorName": "L4层（四楼）",
+    "categories": {
+      "北区": [
+        {
+          "code": "L401",
+          "name": "晓文客家本色",
+          "location": "L401",
+          "brands": [
+            "晓文客家本色"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L402",
+          "name": "79号渔船",
+          "location": "L402",
+          "brands": [
+            "79号渔船"
+          ],
+          "tags": "海鲜",
+          "subloc": "L402A同铺"
+        },
+        {
+          "code": "L403",
+          "name": "芸山季",
+          "location": "L403",
+          "brands": [
+            "芸山季"
+          ],
+          "tags": "云南野山菌火锅"
+        },
+        {
+          "code": "L404",
+          "name": "肉祭",
+          "location": "L404",
+          "brands": [
+            "肉祭"
+          ],
+          "tags": "烤肉"
+        },
+        {
+          "code": "L405",
+          "name": "小顺天顺德菜",
+          "location": "L405",
+          "brands": [
+            "小顺天顺德菜"
+          ],
+          "tags": "烧鹅",
+          "subloc": "L405A 合兴牛庄"
+        },
+        {
+          "code": "L406",
+          "name": "常乐推拿",
+          "location": "L406",
+          "brands": [
+            "常乐推拿"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L407",
+          "name": "斐斯里肖像",
+          "location": "L407",
+          "brands": [
+            "斐斯里肖像"
+          ],
+          "tags": "照相馆",
+          "subloc": "L407A 曼尼荟（头疗SPA）"
+        },
+        {
+          "code": "L408",
+          "name": "太二酸菜鱼",
+          "location": "L408",
+          "brands": [
+            "太二酸菜鱼"
+          ],
+          "tags": "",
+          "subloc": "L409近中庭"
+        },
+        {
+          "code": "L411",
+          "name": "IN STYLE",
+          "location": "L411",
+          "brands": [
+            "IN STYLE"
+          ],
+          "tags": "美发"
+        },
+        {
+          "code": "L412",
+          "name": "璞斐缇",
+          "location": "L412",
+          "brands": [
+            "璞斐缇"
+          ],
+          "tags": "美发、皮肤管理、美甲"
+        },
+        {
+          "code": "L426",
+          "name": "小秋配镜",
+          "location": "L426",
+          "brands": [
+            "小秋配镜"
+          ],
+          "tags": "已撤场",
+          "renovating": true
+        }
+      ],
+      "南区": [
+        {
+          "code": "L413",
+          "name": "ARTEASE啊T",
+          "location": "L413",
+          "brands": [
+            "ARTEASE啊T"
+          ],
+          "tags": "奶茶",
+          "subloc": "L413A 袭兔星球（弹珠）"
+        },
+        {
+          "code": "L414",
+          "name": "居竹潮汕菜",
+          "location": "L414",
+          "brands": [
+            "居竹潮汕菜"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L415",
+          "name": "淘米捞中山脆肉鲩",
+          "location": "L415",
+          "brands": [
+            "淘米捞中山脆肉鲩"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L416",
+          "name": "悦得闲",
+          "location": "L416",
+          "brands": [
+            "悦得闲"
+          ],
+          "tags": "广式茶点"
+        },
+        {
+          "code": "L417B",
+          "name": "悦刻",
+          "location": "L417B",
+          "brands": [
+            "悦刻"
+          ],
+          "tags": "电子烟"
+        },
+        {
+          "code": "L418",
+          "name": "中影天川国际影城",
+          "location": "L418",
+          "brands": [
+            "中影天川国际影城"
+          ],
+          "tags": "",
+          "subloc": "L419同铺"
+        },
+        {
+          "code": "L419A",
+          "name": "鮨匠龙",
+          "location": "L419A",
+          "brands": [
+            "鮨匠龙"
+          ],
+          "tags": "日料"
+        },
+        {
+          "code": "L420",
+          "name": "蛙来哒",
+          "location": "L420",
+          "brands": [
+            "蛙来哒"
+          ],
+          "tags": "",
+          "subloc": "L421近中庭、母婴室"
+        },
+        {
+          "code": "L423",
+          "name": "顺德公",
+          "location": "L423",
+          "brands": [
+            "顺德公"
+          ],
+          "tags": "猪肚鸡"
+        },
+        {
+          "code": "L424A",
+          "name": "许仙堂正骨",
+          "location": "L424A",
+          "brands": [
+            "许仙堂正骨"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L425",
+          "name": "丝域养发",
+          "location": "L425",
+          "brands": [
+            "丝域养发"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L427",
+          "name": "八合里",
+          "location": "L427",
+          "brands": [
+            "八合里"
+          ],
+          "tags": "牛肉火锅"
+        },
+        {
+          "code": "L428",
+          "name": "啫火啫啫煲",
+          "location": "L428",
+          "brands": [
+            "啫火啫啫煲"
+          ],
+          "tags": ""
+        },
+        {
+          "code": "L430",
+          "name": "米乐乖乖",
+          "location": "L430",
+          "brands": [
+            "米乐乖乖"
+          ],
+          "tags": "宠物洗护、猫咖"
+        }
+      ]
+    }
+  }
+};
+
+let currentZone = '';
+let currentFloor = '';
+let searchQuery = '';
+
+// Collect all zones
+function getAllZones() {
+  const zones = new Set();
+  Object.values(DATA).forEach(floor => {
+    Object.keys(floor.categories).forEach(z => zones.add(z));
+  });
+  return Array.from(zones);
+}
+
+// Get floors for a given zone
+function getFloorsForZone(zone) {
+  const floors = [];
+  Object.entries(DATA).forEach(([floorKey, floor]) => {
+    if (floor.categories[zone]) {
+      floors.push(floorKey);
+    }
+  });
+  return floors;
+}
+
+function initZoneTabs() {
+  const container = document.getElementById('zoneTabs');
+  container.innerHTML = '';
+  const zones = getAllZones();
+  currentZone = zones[0] || '';
+  zones.forEach(zone => {
+    const tab = document.createElement('div');
+    tab.className = 'zone-tab' + (zone === currentZone ? ' active' : '');
+    tab.textContent = zone;
+    tab.onclick = () => switchZone(zone);
+    container.appendChild(tab);
+  });
+}
+
+function initFloorTabs() {
+  const container = document.getElementById('floorTabs');
+  container.innerHTML = '';
+  if (!currentZone) return;
+  const floors = getFloorsForZone(currentZone);
+  currentFloor = floors[0] || '';
+  floors.forEach(floor => {
+    const tab = document.createElement('div');
+    tab.className = 'floor-tab' + (floor === currentFloor ? ' active' : '');
+    tab.textContent = DATA[floor].floorName;
+    tab.onclick = () => switchFloor(floor);
+    container.appendChild(tab);
+  });
+}
+
+function switchZone(zone) {
+  currentZone = zone;
+  document.querySelectorAll('.zone-tab').forEach((t, i) => {
+    t.classList.toggle('active', getAllZones()[i] === zone);
+  });
+  initFloorTabs();
+  render();
+}
+
+function switchFloor(floor) {
+  currentFloor = floor;
+  const floors = getFloorsForZone(currentZone);
+  document.querySelectorAll('.floor-tab').forEach((t, i) => {
+    t.classList.toggle('active', floors[i] === floor);
+  });
+  render();
+}
+
+function clearSearch() {
+  searchQuery = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('clearBtn').classList.remove('visible');
+  render();
+}
+
+document.getElementById('searchInput').addEventListener('input', function () {
+  searchQuery = this.value.trim().toLowerCase();
+  document.getElementById('clearBtn').classList.toggle('visible', searchQuery.length > 0);
+  render();
+});
+
+function render() {
+  const content = document.getElementById('content');
+  if (!currentZone || !currentFloor) { content.innerHTML = ''; return; }
+
+  const floor = DATA[currentFloor];
+  const zoneCats = floor.categories[currentZone] || {};
+
+  let totalShops = 0;
+  const cats = Object.entries(zoneCats);
+  cats.forEach(([catName, shops]) => {
+    if (searchQuery) {
+      const filtered = shops.filter(s =>
+        s.name.toLowerCase().includes(searchQuery) ||
+        s.code.toLowerCase().includes(searchQuery) ||
+        s.location.toLowerCase().includes(searchQuery) ||
+        s.brands.some(b => b.toLowerCase().includes(searchQuery)) ||
+        (s.tags && s.tags.toLowerCase().includes(searchQuery))
+      );
+      totalShops += filtered.length;
+    } else {
+      totalShops += shops.length;
+    }
+  });
+
+  let html = `
+  <div class="stats-bar">
+    <div class="stat-item">
+      <div class="stat-num">${currentZone}</div>
+      <div class="stat-label">当前区位</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">${floor.floorName}</div>
+      <div class="stat-label">当前楼层</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">${totalShops}</div>
+      <div class="stat-label">品牌数量</div>
+    </div>
+  </div>
+
+  <!-- VIP -->
+  <div class="vip-section">
+    <div class="vip-header">
+      <div class="vip-header-icon">👑</div>
+      <div>
+        <div class="vip-header-text">会员权益</div>
+        <div class="vip-header-sub">VIP MEMBERSHIP BENEFITS</div>
+      </div>
+      <div class="vip-header-line"></div>
+    </div>
+    <div class="vip-cards">
+      <div class="vip-card v-card">
+        <div class="vip-tier">V 卡</div>
+        <div class="vip-divider"></div>
+        <ul class="vip-benefit">
+          <li>消费积分</li>
+          <li>积分当钱花</li>
+          <li>积分兑礼</li>
+        </ul>
+        <div class="vip-cond">
+          <div class="vip-cond-row"><span>升级条件</span><span>扫码注册</span></div>
+          <div class="vip-cond-row"><span>有效期</span><span class="vip-tag-forever">永久有效</span></div>
+        </div>
+      </div>
+      <div class="vip-card s-card">
+        <div class="vip-tier">银 卡</div>
+        <div class="vip-divider"></div>
+        <ul class="vip-benefit">
+          <li>V卡全部权益</li>
+          <li>双倍积分日</li>
+          <li>免费停车2h</li>
+          <li>积分兑礼</li>
+          <li>免费礼品包装×1</li>
+        </ul>
+        <div class="vip-cond">
+          <div class="vip-cond-row"><span>升级条件</span><span>日消费满¥1k / 年消费满¥3k</span></div>
+          <div class="vip-cond-row"><span>保级条件</span><span>年消费满¥3k</span></div>
+          <div class="vip-cond-row"><span>有效期</span><span>1年</span></div>
+        </div>
+      </div>
+      <div class="vip-card g-card">
+        <div class="vip-tier">金 卡</div>
+        <div class="vip-divider"></div>
+        <ul class="vip-benefit">
+          <li>银卡全部权益</li>
+          <li>免费停车2h</li>
+          <li>高端活动邀请</li>
+          <li>生日礼遇（倒推1年满1w）</li>
+          <li>积分兑礼</li>
+          <li>免费礼品包装×3</li>
+        </ul>
+        <div class="vip-cond">
+          <div class="vip-cond-row"><span>升级条件</span><span>日消费满¥1w / 年消费满¥3w</span></div>
+          <div class="vip-cond-row"><span>保级条件</span><span>年消费满¥3w</span></div>
+          <div class="vip-cond-row"><span>有效期</span><span>1年</span></div>
+        </div>
+      </div>
+      <div class="vip-card d-card">
+        <div class="vip-tier">钻石卡</div>
+        <div class="vip-divider"></div>
+        <ul class="vip-benefit">
+          <li>金卡全部权益</li>
+          <li>免费停车（单店消费满8w）</li>
+          <li>高端活动邀请</li>
+          <li>一对一定制服务</li>
+          <li>LED大屏使用</li>
+          <li>生日礼遇（倒推1年满3w）</li>
+          <li>积分兑礼</li>
+          <li>免费礼品包装×5</li>
+        </ul>
+        <div class="vip-cond">
+          <div class="vip-cond-row"><span>升级条件</span><span>日消费满¥5w / 年消费满¥10w</span></div>
+          <div class="vip-cond-row"><span>保级条件</span><span>年消费满¥8w</span></div>
+          <div class="vip-cond-row"><span>有效期</span><span>1年</span></div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  cats.forEach(([catName, shops]) => {
+    const filtered = searchQuery
+      ? shops.filter(s =>
+          s.name.toLowerCase().includes(searchQuery) ||
+          s.code.toLowerCase().includes(searchQuery) ||
+          s.location.toLowerCase().includes(searchQuery) ||
+          s.brands.some(b => b.toLowerCase().includes(searchQuery)) ||
+          (s.tags && s.tags.toLowerCase().includes(searchQuery))
+        )
+      : shops;
+
+    if (filtered.length === 0) return;
+
+    html += `<div class="cat-group">
+      <div class="cat-title">${catName}</div>
+      <div class="brand-grid">`;
+
+    filtered.forEach(shop => {
+      const isHighlight = searchQuery && shop.name.toLowerCase().includes(searchQuery);
+      const isRenovating = shop.renovating;
+      const tagsText = shop.tags ? shop.tags : '';
+      const sublocText = shop.subloc ? ' · ' + shop.subloc : '';
+      html += `<div class="brand-card${isHighlight ? ' highlight' : ''}" onclick="openModal(${JSON.stringify(shop).replace(/"/g, '&quot;')}, '${floor.floorName}', '${catName.replace(/'/g, "\'")}', '${currentZone}')">
+        <div class="brand-name">${shop.name}${isRenovating ? '<span class="badge-reno">已撤场</span>' : ''}</div>
+        <div class="brand-code">${shop.code}</div>
+        <div class="brand-location">📍 ${shop.location}</div>
+        ${tagsText ? '<div class="brand-tags">' + tagsText + sublocText + '</div>' : ''}
+      </div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  if (cats.every(([,s]) => searchQuery && s.every(x => !x.name.toLowerCase().includes(searchQuery) && !x.code.toLowerCase().includes(searchQuery) && !x.location.toLowerCase().includes(searchQuery) && !x.brands.some(b => b.toLowerCase().includes(searchQuery)) && !(x.tags && x.tags.toLowerCase().includes(searchQuery))))) {
+    html += `<div class="empty-state"><div class="icon">🔍</div><p>未找到匹配的品牌</p></div>`;
+  }
+
+  content.innerHTML = html;
+}
+
+function openModal(shop, floorName, catName, zone) {
+  document.getElementById('modalName').textContent = shop.name;
+  document.getElementById('modalCode').textContent = shop.code;
+  document.getElementById('modalFloor').textContent = floorName;
+  document.getElementById('modalZone').textContent = zone;
+  document.getElementById('modalLoc').textContent = shop.location + (shop.subloc ? '（' + shop.subloc + '）' : '');
+  document.getElementById('modalIcon').textContent = shop.name.charAt(0);
+  const brandsInfo = shop.brands.length > 1 ? '集合品牌包括：' + shop.brands.join('、') + '。' : '';
+  const tagsInfo = shop.tags ? '业态：' + shop.tags + '。' : '';
+  document.getElementById('modalDesc').innerHTML = `${shop.name} 位于 ${floorName} ${zone} ${shop.location}。${tagsInfo}${brandsInfo}`;
+  document.getElementById('modalOverlay').classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modalOverlay')) return;
+  document.getElementById('modalOverlay').classList.remove('show');
+  document.body.style.overflow = '';
+}
+
+initZoneTabs();
+initFloorTabs();
+render();
+
+/* Carousel - same idle behavior */
+(function() {
+  const slides = ['activity1.png', 'activity2.jpg', 'activity3.jpg'];
+  const total = slides.length;
+  let idx = 0, timer = null, idleTimer = null;
+  const INTERVAL = 4000, IDLE_DELAY = 10000;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'carousel-overlay';
+  overlay.id = 'carouselOverlay';
+  let dotsHTML = '';
+  for (let i = 0; i < total; i++) dotsHTML += '<div class="carousel-dot' + (i===0?' active':'') + '" data-i="' + i + '"></div>';
+  overlay.innerHTML =
+    '<button class="carousel-close" id="carouselClose">✕</button>' +
+    '<div class="carousel-track-wrap">' +
+      '<div class="carousel-track" id="carouselTrack">' +
+        slides.map(function(s) { return '<div class="carousel-slide"><img src="' + s + '" draggable="false"></div>'; }).join('') +
+      '</div>' +
+    '</div>' +
+    '<div class="carousel-dots" id="carouselDots">' + dotsHTML + '</div>';
+  document.body.appendChild(overlay);
+
+  var track = document.getElementById('carouselTrack');
+  var dots = document.getElementById('carouselDots').children;
+  var closeBtn = document.getElementById('carouselClose');
+
+  function goTo(i) {
+    if (i < 0) i = total - 1;
+    if (i >= total) i = 0;
+    idx = i;
+    track.style.transform = 'translateX(-' + (idx * 100) + '%)';
+    for (var d = 0; d < dots.length; d++) dots[d].classList.toggle('active', d === idx);
+  }
+
+  function startAuto() { stopAuto(); timer = setInterval(function() { goTo(idx + 1); }, INTERVAL); }
+  function stopAuto() { if (timer) { clearInterval(timer); timer = null; } }
+
+  function startIdleTimer() { clearIdleTimer(); idleTimer = setTimeout(function() { showCarousel(); goTo(0); startAuto(); }, IDLE_DELAY); }
+  function clearIdleTimer() { if (idleTimer) { clearTimeout(idleTimer); idleTimer = null; } }
+
+  function onUserActivity() {
+    if (overlay.classList.contains('hidden')) {
+      clearIdleTimer();
+      startIdleTimer();
+    }
+  }
+
+  function showCarousel() { overlay.classList.remove('hidden'); }
+  function hideCarousel() { overlay.classList.add('hidden'); stopAuto(); startIdleTimer(); }
+
+  closeBtn.addEventListener('click', function() { hideCarousel(); });
+  for (var d = 0; d < dots.length; d++) {
+    dots[d].addEventListener('click', (function(i) { return function() { stopAuto(); goTo(i); }; })(d));
+  }
+
+  // touch swipe
+  var startX = 0, startY = 0, swiping = false, dx = 0;
+  track.addEventListener('touchstart', function(e) {
+    startX = e.touches[0].clientX; startY = e.touches[0].clientY;
+    swiping = false; dx = 0; touchMoved = false;
+    track.classList.add('no-transition');
+  }, { passive: true });
+  var touchMoved = false;
+  track.addEventListener('touchmove', function(e) {
+    touchMoved = true;
+    var cx = e.touches[0].clientX, cy = e.touches[0].clientY;
+    dx = cx - startX;
+    if (Math.abs(cy - startY) > Math.abs(dx)) return;
+    if (Math.abs(dx) > 10 && !swiping) { swiping = true; stopAuto(); }
+    if (swiping) track.style.transform = 'translateX(' + (-idx * 100 + dx / track.parentElement.offsetWidth * 100) + '%)';
+  }, { passive: true });
+  track.addEventListener('touchend', function() {
+    track.classList.remove('no-transition');
+    if (swiping) { if (Math.abs(dx) > 50) goTo(dx < 0 ? idx + 1 : idx - 1); else goTo(idx); }
+    swiping = false;
+  });
+
+  // mouse drag
+  var mDown = false, mStartX = 0, mDx = 0;
+  track.addEventListener('mousedown', function(e) { mDown = true; mStartX = e.clientX; mDx = 0; track.classList.add('no-transition'); e.preventDefault(); });
+  document.addEventListener('mousemove', function(e) { if (!mDown) return; mDx = e.clientX - mStartX; if (Math.abs(mDx) > 10) stopAuto(); track.style.transform = 'translateX(' + (-idx * 100 + mDx / track.parentElement.offsetWidth * 100) + '%)'; });
+  document.addEventListener('mouseup', function() { if (!mDown) return; mDown = false; track.classList.remove('no-transition'); if (Math.abs(mDx) > 50) goTo(mDx < 0 ? idx + 1 : idx - 1); else goTo(idx); });
+
+  document.addEventListener('touchstart', onUserActivity, { passive: true });
+  document.addEventListener('click', onUserActivity);
+  document.addEventListener('scroll', onUserActivity, { passive: true });
+  document.addEventListener('keydown', onUserActivity);
+
+  showCarousel();
+  startAuto();
+})();
+</script>
+</body>
+</html>
