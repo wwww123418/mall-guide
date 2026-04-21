@@ -324,7 +324,6 @@
 
     // ── 状态 ──
     let capturedImageData = null;
-    let stream = null;
     let currentStep = 1;
 
     // ── 表单基础 ──
@@ -337,7 +336,6 @@
     function closeJifen() {
       document.getElementById('jifenModal').classList.remove('show');
       document.getElementById('mainFrame').style.pointerEvents = '';
-      stopCamera();
       capturedImageData = null;
     }
 
@@ -348,6 +346,17 @@
       document.getElementById('step2').style.display = n === 2 ? '' : 'none';
       document.getElementById('dot1').classList.toggle('active', n === 1);
       document.getElementById('dot2').classList.toggle('active', n === 2);
+
+      if (n === 1) {
+        // 重置 Step1 视图
+        document.getElementById('camPreview').style.display = 'none';
+        document.getElementById('camPreview').src = '';
+        document.getElementById('camVideo').style.display = 'none';
+        document.getElementById('camOverlay').classList.remove('hidden');
+        document.getElementById('btnCapture').style.display = 'flex';
+        document.getElementById('btnRetake').style.display = 'none';
+        document.getElementById('btnNextStep').disabled = true;
+      }
 
       if (n === 2 && capturedImageData) {
         document.getElementById('thumbPreview').src = capturedImageData;
@@ -365,67 +374,71 @@
       const btnCapture = document.getElementById('btnCapture');
       const btnRetake = document.getElementById('btnRetake');
 
-      // 如果还没启动摄像头，尝试启动
-      if (!stream) {
-        try {
-          stream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } }
-          });
-          video.srcObject = stream;
-          await video.play();
-          btnCapture.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> 拍照`;
-        } catch (e) {
-          // 摄像头拒绝/不支持 → 走文件上传
-          document.getElementById('fileInput').click();
-          return;
-        }
-        return;
-      }
+      // 优先：原生相机触发（iOS/Android/iPad 通用，点击即开相机，最可靠）
+      const fi = document.getElementById('fileInput');
+      fi.setAttribute('capture', 'environment');
+      fi.click();
+    }
 
-      // 拍照：canvas 截图
-      const canvas = document.createElement('canvas');
-      const vw = video.videoWidth || video.clientWidth;
-      const vh = video.videoHeight || video.clientHeight;
-      canvas.width = vw; canvas.height = vh;
-      canvas.getContext('2d').drawImage(video, 0, 0, vw, vh);
-      capturedImageData = canvas.toDataURL('image/jpeg', 0.75);
+    // 处理文件选择（来自原生相机 or 相册）
+    document.getElementById('fileInput').addEventListener('change', async e => {
+      const file = e.target.files[0];
+      if (!file) return;
 
-      stopCamera();
+      const preview = document.getElementById('camPreview');
+      const btnCapture = document.getElementById('btnCapture');
+      const btnRetake = document.getElementById('btnRetake');
+
+      // 显示加载中
+      preview.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><rect fill="%23eee" width="100" height="60"/><text x="50" y="35" text-anchor="middle" font-size="10" fill="%23aaa">处理中…</text></svg>';
+      preview.style.display = 'block';
+      document.getElementById('camVideo').style.display = 'none';
+      document.getElementById('camOverlay').classList.add('hidden');
+
+      // 读取并压缩
+      capturedImageData = await loadAndCompress(file);
 
       // 显示预览
       preview.src = capturedImageData;
-      preview.style.display = 'block';
-      video.style.display = 'none';
-      overlay.classList.add('hidden');
       btnCapture.style.display = 'none';
       btnRetake.style.display = 'flex';
       document.getElementById('btnNextStep').disabled = false;
+
+      // 清空 input，允许重复选同一张
+      e.target.value = '';
+    });
+
+    // 读取图片 → 压缩到 maxW，输出 JPEG base64
+    function loadAndCompress(file, maxW = 1200, quality = 0.75) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onerror = reject;
+        reader.onload = ev => {
+          const img = new Image();
+          img.onerror = reject;
+          img.onload = () => {
+            const scale = Math.min(1, maxW / Math.max(img.width, img.height));
+            const w = Math.round(img.width * scale);
+            const h = Math.round(img.height * scale);
+            const c = Object.assign(document.createElement('canvas'), { width: w, height: h });
+            c.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(c.toDataURL('image/jpeg', quality));
+          };
+          img.src = ev.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
     }
 
     function retakePhoto() {
       capturedImageData = null;
-      const video = document.getElementById('camVideo');
-      const preview = document.getElementById('camPreview');
-      const overlay = document.getElementById('camOverlay');
-      const btnCapture = document.getElementById('btnCapture');
-      const btnRetake = document.getElementById('btnRetake');
-
-      preview.style.display = 'none';
-      video.style.display = 'block';
-      overlay.classList.remove('hidden');
-      btnCapture.style.display = 'flex';
-      btnRetake.style.display = 'none';
+      document.getElementById('camPreview').style.display = 'none';
+      document.getElementById('camPreview').src = '';
+      document.getElementById('camVideo').style.display = 'none';
+      document.getElementById('camOverlay').classList.remove('hidden');
+      document.getElementById('btnCapture').style.display = 'flex';
+      document.getElementById('btnRetake').style.display = 'none';
       document.getElementById('btnNextStep').disabled = true;
-
-      // 重启摄像头
-      capturePhoto();
-    }
-
-    function stopCamera() {
-      if (stream) {
-        stream.getTracks().forEach(t => t.stop());
-        stream = null;
-      }
     }
 
     // 备用：文件上传（摄像头不可用时）
@@ -453,6 +466,10 @@
 
       if (!/^1\d{10}$/.test(phone)) {
         alert('请输入正确的11位手机号');
+        return;
+      }
+      if (!capturedImageData) {
+        alert('请先拍摄小票');
         return;
       }
 
