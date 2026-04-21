@@ -84,6 +84,7 @@
 
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     let count = 0;
+    let lastId = 0; // 记录已显示的最大ID，只显示新增的
 
     // ── 1. 加载历史数据 ──
     async function loadHistory() {
@@ -91,52 +92,56 @@
         const { data, error } = await sb
           .from('submissions')
           .select('*')
-          .order('created_at', { ascending: true })
-          .limit(100);
+          .order('id', { ascending: true })
+          .limit(200);
         if (error) throw error;
         if (data && data.length) {
           document.getElementById('emptyMsg')?.remove();
           data.forEach(row => addCard(row));
           count = data.length;
+          lastId = data[data.length - 1].id;
           const badge = document.getElementById('countBadge');
           badge.textContent = count;
           badge.style.display = 'inline-block';
         }
+        // 标记连接成功
+        document.getElementById('dot').className = 'dot on';
+        document.getElementById('statusText').textContent = '已连接 · 每3秒刷新';
       } catch (err) {
         console.error('Load history failed:', err);
+        document.getElementById('dot').className = 'dot off';
+        document.getElementById('statusText').textContent = '加载失败';
       }
     }
 
-    // ── 2. 实时监听新插入 ──
-    const channel = sb.channel('mall-jifen-db')
-      .on('postgres_changes',
-        { event: 'INSERT', schema: 'public', table: 'submissions' },
-        (payload) => {
-          addCard(payload.new);
-          count++;
+    // ── 2. 轮询新数据（每3秒）──
+    async function pollNew() {
+      try {
+        const { data, error } = await sb
+          .from('submissions')
+          .select('*')
+          .gt('id', lastId)
+          .order('id', { ascending: true });
+        if (error) throw error;
+        if (data && data.length) {
+          document.getElementById('emptyMsg')?.remove();
+          data.forEach(row => {
+            addCard(row);
+            lastId = row.id;
+            count++;
+          });
           const badge = document.getElementById('countBadge');
           badge.textContent = count;
           badge.style.display = 'inline-block';
           if (document.getElementById('soundOn').checked) playSound();
         }
-      )
-      .subscribe((status, err) => {
-        const dot = document.getElementById('dot');
-        const text = document.getElementById('statusText');
-        if (status === 'SUBSCRIBED') {
-          dot.className = 'dot on';
-          text.textContent = '已连接 · 实时监听中';
-        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-          dot.className = 'dot off';
-          text.textContent = '连接断开';
-          console.error('Channel error:', err);
-        } else {
-          dot.className = 'dot wait';
-          text.textContent = '连接中…';
-        }
-      });
+      } catch (err) {
+        console.error('Poll failed:', err);
+      }
+    }
 
     loadHistory();
+    setInterval(pollNew, 3000);
 
     function addCard(data) {
       document.getElementById('emptyMsg')?.remove();
