@@ -339,11 +339,17 @@
     <button class="closeBtn" onclick="closeBanner()">×</button>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     // Register Service Worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js?v=1').catch(() => {});
     }
+
+    // ===== ⚠️ 配置区：把你的 Supabase 凭据填这里 =====
+    const SUPABASE_URL = 'https://sbdqkzfwuczkbudeocks.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
+    // ================================================
 
     // ── 状态 ──
     let capturedImageData = null;
@@ -519,6 +525,23 @@
       });
     }
 
+    // ── 广播用图片压缩（800px / 0.6 质量，控制payload体积）──
+    function compressForBroadcast(dataUrl, maxW = 800, quality = 0.6) {
+      return new Promise(resolve => {
+        const img = new Image();
+        img.onload = () => {
+          const scale = Math.min(1, maxW / Math.max(img.width, img.height));
+          const w = Math.round(img.width * scale);
+          const h = Math.round(img.height * scale);
+          const c = Object.assign(document.createElement('canvas'), { width: w, height: h });
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(c.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => resolve(dataUrl); // 压缩失败就用原图
+        img.src = dataUrl;
+      });
+    }
+
     // ── 提交 ──
     async function submitJifen() {
       const phone = document.getElementById('jfPhone').value.trim();
@@ -540,24 +563,31 @@
       const now = new Date();
       const timeStr = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
 
+      // 压缩图片用于广播（更小体积，传输更快）
+      const broadcastImage = await compressForBroadcast(capturedImageData);
+
       const payload = {
         phone,
         note,
-        image: capturedImageData,
+        image: broadcastImage,
         time: timeStr,
         mall: 'KK MALL'
       };
 
-      // TODO: 替换为真实推送（企业微信群机器人/QQ机器人）
-      console.log('积分提交 payload:', {
-        phone,
-        note,
-        imageLen: capturedImageData ? capturedImageData.length : 0,
-        time: timeStr
-      });
-
-      // 模拟网络延迟
-      await new Promise(r => setTimeout(r, 800));
+      // 发送到 Supabase Realtime Broadcast
+      try {
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const channel = sb.channel('mall-jifen');
+        await channel.send({
+          type: 'broadcast',
+          event: 'new-submission',
+          payload: payload
+        });
+        console.log('✅ Broadcast sent');
+      } catch (err) {
+        console.error('Broadcast failed:', err);
+        // 失败也继续，不影响用户体验
+      }
 
       closeJifen();
       document.getElementById('jifenSuccess').classList.add('show');
