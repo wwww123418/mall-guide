@@ -4,12 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KK MALL 积分监控</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body{width:100%;min-height:100vh;font-family:system-ui,-apple-system,sans-serif;background:#0c0a06;color:#f0ebe0}
     body{padding:16px 16px env(safe-area-inset-bottom, 16px)}
-
     .header{text-align:center;padding:12px 0 20px}
     .header h1{font-size:20px;color:#C5962A;margin-bottom:8px}
     .status{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#888}
@@ -18,36 +16,18 @@
     .dot.off{background:#ef4444;box-shadow:0 0 6px #ef4444}
     .dot.wait{background:#eab308;animation:blink 1s infinite}
     @keyframes blink{50%{opacity:.3}}
-
-    .soundToggle{
-      margin-top:10px;display:inline-flex;align-items:center;gap:6px;
-      font-size:12px;color:#888;cursor:pointer;
-    }
+    .soundToggle{margin-top:10px;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#888;cursor:pointer}
     .soundToggle input{accent-color:#C5962A}
-
     .list{max-width:520px;margin:0 auto}
-    .card{
-      background:#1a1508;border:1px solid #2a2210;border-radius:14px;
-      padding:14px;margin-bottom:14px;
-      animation:fadeUp .3s ease;
-    }
+    .card{background:#1a1508;border:1px solid #2a2210;border-radius:14px;padding:14px;margin-bottom:14px;animation:fadeUp .3s ease}
     @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-    .card img{
-      width:100%;border-radius:8px;margin-bottom:10px;
-      background:#111;max-height:360px;object-fit:contain;
-    }
+    .card img{width:100%;border-radius:8px;margin-bottom:10px;background:#111;max-height:360px;object-fit:contain}
     .card .phone{font-size:22px;font-weight:bold;color:#C5962A;letter-spacing:1px}
     .card .time{font-size:12px;color:#666;margin-top:4px}
     .card .note{font-size:14px;color:#aaa;margin-top:6px;padding:6px 10px;background:#0f0d08;border-radius:8px}
-
     .empty{text-align:center;color:#444;padding:80px 20px;font-size:15px}
     .empty .icon{font-size:48px;margin-bottom:12px;opacity:.4}
-
-    .badge{
-      display:inline-block;background:#C5962A;color:#fff;
-      border-radius:8px;padding:2px 8px;font-size:11px;font-weight:bold;
-      margin-left:8px;vertical-align:middle;
-    }
+    .badge{display:inline-block;background:#C5962A;color:#fff;border-radius:8px;padding:2px 8px;font-size:11px;font-weight:bold;margin-left:8px;vertical-align:middle}
   </style>
 </head>
 <body>
@@ -55,7 +35,7 @@
     <h1>🏪 KK MALL 积分监控 <span class="badge" id="countBadge" style="display:none">0</span></h1>
     <div class="status">
       <span class="dot wait" id="dot"></span>
-      <span id="statusText">连接中…</span>
+      <span id="statusText">加载中…</span>
     </div>
     <div style="margin-top:10px">
       <label class="soundToggle">
@@ -72,99 +52,45 @@
   </div>
 
   <script>
-    // ===== ⚠️ 配置区：把你的 Supabase 凭据填这里 =====
-    const SUPABASE_URL = 'https://sbdqkzfwuczkbudeocks.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
-    // ================================================
+    var SUPABASE_URL = 'https://sbdqkzfwuczkbudeocks.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
+    var sb = null;
+    var count = 0;
+    var lastId = 0;
 
-    if (SUPABASE_URL.startsWith('__')) {
-      document.getElementById('statusText').textContent = '未配置 Supabase';
-      document.getElementById('dot').className = 'dot off';
+    function setStatus(type, text) {
+      document.getElementById('dot').className = 'dot ' + type;
+      document.getElementById('statusText').textContent = text;
     }
-
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let count = 0;
-    let lastId = 0; // 记录已显示的最大ID，只显示新增的
-
-    // ── 1. 加载历史数据 ──
-    async function loadHistory() {
-      try {
-        const { data, error } = await sb
-          .from('submissions')
-          .select('*')
-          .order('id', { ascending: true })
-          .limit(200);
-        if (error) throw error;
-        if (data && data.length) {
-          document.getElementById('emptyMsg')?.remove();
-          data.forEach(row => addCard(row));
-          count = data.length;
-          lastId = data[data.length - 1].id;
-          const badge = document.getElementById('countBadge');
-          badge.textContent = count;
-          badge.style.display = 'inline-block';
-        }
-        // 标记连接成功
-        document.getElementById('dot').className = 'dot on';
-        document.getElementById('statusText').textContent = '已连接 · 每3秒刷新';
-      } catch (err) {
-        console.error('Load history failed:', err);
-        document.getElementById('dot').className = 'dot off';
-        document.getElementById('statusText').textContent = '加载失败';
-      }
-    }
-
-    // ── 2. 轮询新数据（每3秒）──
-    async function pollNew() {
-      try {
-        const { data, error } = await sb
-          .from('submissions')
-          .select('*')
-          .gt('id', lastId)
-          .order('id', { ascending: true });
-        if (error) throw error;
-        if (data && data.length) {
-          document.getElementById('emptyMsg')?.remove();
-          data.forEach(row => {
-            addCard(row);
-            lastId = row.id;
-            count++;
-          });
-          const badge = document.getElementById('countBadge');
-          badge.textContent = count;
-          badge.style.display = 'inline-block';
-          if (document.getElementById('soundOn').checked) playSound();
-        }
-      } catch (err) {
-        console.error('Poll failed:', err);
-      }
-    }
-
-    loadHistory();
-    setInterval(pollNew, 3000);
 
     function addCard(data) {
-      document.getElementById('emptyMsg')?.remove();
-      const list = document.getElementById('list');
-      const card = document.createElement('div');
+      var em = document.getElementById('emptyMsg');
+      if (em) em.remove();
+      var list = document.getElementById('list');
+      var card = document.createElement('div');
       card.className = 'card';
-      // 数据库行用 created_at，Broadcast 用 time
-      const timeDisplay = data.created_at
+      var timeDisplay = data.created_at
         ? new Date(data.created_at).toLocaleString('zh-CN', { hour12: false })
-        : data.time || '';
+        : (data.time || '');
       card.innerHTML =
         '<img src="' + data.image + '" alt="小票">' +
-        '<div class="phone">\uD83D\uDCF1 ' + data.phone + '</div>' +
-        '<div class="time">\uD83D\uDD50 ' + timeDisplay + '</div>' +
-        (data.note ? '<div class="note">\uD83D\uDCDD ' + data.note + '</div>' : '');
+        '<div class="phone">📱 ' + data.phone + '</div>' +
+        '<div class="time">🕐 ' + timeDisplay + '</div>' +
+        (data.note ? '<div class="note">📝 ' + data.note + '</div>' : '');
       list.prepend(card);
+    }
+
+    function updateBadge() {
+      var badge = document.getElementById('countBadge');
+      badge.textContent = count;
+      badge.style.display = 'inline-block';
     }
 
     function playSound() {
       try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
+        var ctx = new (window.AudioContext || window.webkitAudioContext)();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
         osc.connect(gain);
         gain.connect(ctx.destination);
         osc.frequency.value = 880;
@@ -175,6 +101,61 @@
         osc.stop(ctx.currentTime + 0.3);
       } catch(e) {}
     }
+
+    // ── 用 REST API 直接请求（不依赖 Supabase JS SDK）──
+    function apiRequest(path) {
+      return fetch(SUPABASE_URL + '/rest/v1/' + path, {
+        headers: {
+          'apikey': SUPABASE_ANON_KEY,
+          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
+        }
+      }).then(function(r) {
+        if (!r.ok) throw new Error('API ' + r.status);
+        return r.json();
+      });
+    }
+
+    function loadHistory() {
+      apiRequest('submissions?select=*&order=id.asc&limit=200')
+        .then(function(data) {
+          if (data && data.length) {
+            var em = document.getElementById('emptyMsg');
+            if (em) em.remove();
+            data.forEach(function(row) { addCard(row); });
+            count = data.length;
+            lastId = data[data.length - 1].id;
+            updateBadge();
+          }
+          setStatus('on', '已连接 · 每3秒刷新');
+        })
+        .catch(function(err) {
+          console.error('Load failed:', err);
+          setStatus('off', '加载失败: ' + err.message);
+        });
+    }
+
+    function pollNew() {
+      apiRequest('submissions?select=*&id=gt.' + lastId + '&order=id.asc')
+        .then(function(data) {
+          if (data && data.length) {
+            var em = document.getElementById('emptyMsg');
+            if (em) em.remove();
+            data.forEach(function(row) {
+              addCard(row);
+              lastId = row.id;
+              count++;
+            });
+            updateBadge();
+            if (document.getElementById('soundOn').checked) playSound();
+          }
+        })
+        .catch(function(err) {
+          console.error('Poll failed:', err);
+        });
+    }
+
+    loadHistory();
+    setInterval(pollNew, 3000);
   </script>
 </body>
 </html>
