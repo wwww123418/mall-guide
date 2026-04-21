@@ -83,44 +83,74 @@
     }
 
     const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    const channel = sb.channel('mall-jifen', { config: { broadcast: { self: true } } });
-
     let count = 0;
 
-    channel.on('broadcast', { event: 'new-submission' }, (msg) => {
-      addCard(msg.payload);
-      count++;
-      const badge = document.getElementById('countBadge');
-      badge.textContent = count;
-      badge.style.display = 'inline-block';
-      if (document.getElementById('soundOn').checked) playSound();
-    });
-
-    channel.subscribe((status, err) => {
-      const dot = document.getElementById('dot');
-      const text = document.getElementById('statusText');
-      if (status === 'SUBSCRIBED') {
-        dot.className = 'dot on';
-        text.textContent = '已连接 · 实时监听中';
-      } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
-        dot.className = 'dot off';
-        text.textContent = '连接断开';
-        console.error('Channel error:', err);
-      } else {
-        dot.className = 'dot wait';
-        text.textContent = '连接中…';
+    // ── 1. 加载历史数据 ──
+    async function loadHistory() {
+      try {
+        const { data, error } = await sb
+          .from('submissions')
+          .select('*')
+          .order('created_at', { ascending: true })
+          .limit(100);
+        if (error) throw error;
+        if (data && data.length) {
+          document.getElementById('emptyMsg')?.remove();
+          data.forEach(row => addCard(row));
+          count = data.length;
+          const badge = document.getElementById('countBadge');
+          badge.textContent = count;
+          badge.style.display = 'inline-block';
+        }
+      } catch (err) {
+        console.error('Load history failed:', err);
       }
-    });
+    }
+
+    // ── 2. 实时监听新插入 ──
+    const channel = sb.channel('mall-jifen-db')
+      .on('postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'submissions' },
+        (payload) => {
+          addCard(payload.new);
+          count++;
+          const badge = document.getElementById('countBadge');
+          badge.textContent = count;
+          badge.style.display = 'inline-block';
+          if (document.getElementById('soundOn').checked) playSound();
+        }
+      )
+      .subscribe((status, err) => {
+        const dot = document.getElementById('dot');
+        const text = document.getElementById('statusText');
+        if (status === 'SUBSCRIBED') {
+          dot.className = 'dot on';
+          text.textContent = '已连接 · 实时监听中';
+        } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+          dot.className = 'dot off';
+          text.textContent = '连接断开';
+          console.error('Channel error:', err);
+        } else {
+          dot.className = 'dot wait';
+          text.textContent = '连接中…';
+        }
+      });
+
+    loadHistory();
 
     function addCard(data) {
       document.getElementById('emptyMsg')?.remove();
       const list = document.getElementById('list');
       const card = document.createElement('div');
       card.className = 'card';
+      // 数据库行用 created_at，Broadcast 用 time
+      const timeDisplay = data.created_at
+        ? new Date(data.created_at).toLocaleString('zh-CN', { hour12: false })
+        : data.time || '';
       card.innerHTML =
         '<img src="' + data.image + '" alt="小票">' +
         '<div class="phone">\uD83D\uDCF1 ' + data.phone + '</div>' +
-        '<div class="time">\uD83D\uDD50 ' + data.time + '</div>' +
+        '<div class="time">\uD83D\uDD50 ' + timeDisplay + '</div>' +
         (data.note ? '<div class="note">\uD83D\uDCDD ' + data.note + '</div>' : '');
       list.prepend(card);
     }
