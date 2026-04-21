@@ -247,7 +247,7 @@
         <!-- 拍照区域：label 内嵌 input，覆盖全区域 -->
         <!-- input 用 opacity:0 + position:absolute，保持在渲染树中，iOS 点击即触发 -->
         <label class="camWrapLabel" id="camWrap">
-          <input type="file" id="fileInput" accept="image/*" capture="user"
+          <input type="file" id="fileInput" accept="image/*" capture="environment"
             style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;z-index:3">
           <video id="camVideo" autoplay playsinline muted></video>
           <img id="camPreview" src="" alt="小票预览" style="display:none">
