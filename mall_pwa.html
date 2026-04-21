@@ -244,24 +244,37 @@
       <div id="step1">
         <div class="sheetTitle">📷 拍摄小票</div>
 
-        <!-- 拍照区域：label 内嵌 input，覆盖全区域 -->
-        <!-- input 用 opacity:0 + position:absolute，保持在渲染树中，iOS 点击即触发 -->
-        <label class="camWrapLabel" id="camWrap">
-          <input type="file" id="fileInput" accept="image/*" capture="environment"
-            style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;z-index:3">
+        <!-- 拍照区域：视频流 + 截图 -->
+        <div class="camWrapLabel" id="camWrap">
           <video id="camVideo" autoplay playsinline muted></video>
           <img id="camPreview" src="" alt="小票预览" style="display:none">
+          <!-- 遮罩：未开启相机时显示 -->
           <div class="camOverlay" id="camOverlay">
             <div class="camIcon">📷</div>
-            <p>点击此处打开相机<br>对准小票拍照</p>
+            <p>点击开启相机<br>对准小票拍照</p>
           </div>
-        </label>
+          <!-- 切换摄像头按钮 -->
+          <button id="btnFlip" onclick="switchCamera()" title="切换摄像头"
+            style="position:absolute;top:10px;right:10px;z-index:10;
+                   background:rgba(0,0,0,.5);border:none;border-radius:50%;
+                   width:36px;height:36px;color:#fff;cursor:pointer;
+                   display:none;align-items:center;justify-content:center;
+                   font-size:15px;line-height:1;">
+            🔄
+          </button>
+        </div>
 
         <div class="camBtnRow">
-          <!-- 拍照按钮：直接触发 label 内的 fileInput -->
-          <button class="camBtn btnCapture" id="btnCapture" onclick="document.getElementById('fileInput').click()">
+          <!-- 开启相机 -->
+          <button class="camBtn btnCapture" id="btnCapture" onclick="openCamera()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
-            拍照上传
+            开启相机
+          </button>
+          <!-- 拍照（视频流模式下） -->
+          <button class="camBtn btnCapture" id="btnTakePhoto" onclick="captureFromVideo()" disabled
+            style="display:none">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
+            拍照
           </button>
           <!-- 相册选择 -->
           <label class="camBtn btnRetake" id="btnAlbum">
@@ -271,7 +284,7 @@
             相册选择
           </label>
           <!-- 重拍 -->
-          <button class="camBtn btnRetake" id="btnRetake" onclick="document.getElementById('fileInput').click()" style="display:none">
+          <button class="camBtn btnRetake" id="btnRetake" onclick="openCamera()" style="display:none">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.54"/></svg>
             重拍
           </button>
@@ -335,6 +348,74 @@
     // ── 状态 ──
     let capturedImageData = null;
     let currentStep = 1;
+    let currentFacing = 'environment'; // 'environment'=后置, 'user'=前置
+    let currentStream  = null;         // MediaStream
+    let rafId          = null;         // requestAnimationFrame id
+
+    // ── 摄像头 ──
+    async function openCamera() {
+      try {
+        if (currentStream) stopCamera();
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: currentFacing, width: { ideal: 1280 }, height: { ideal: 720 } },
+          audio: false
+        });
+        currentStream = stream;
+        const video = document.getElementById('camVideo');
+        video.srcObject = stream;
+        video.style.display = 'block';
+        document.getElementById('camPreview').style.display = 'none';
+        document.getElementById('camOverlay').classList.add('hidden');
+        document.getElementById('btnCapture').style.display = 'none';
+        document.getElementById('btnTakePhoto').style.display = 'flex';
+        document.getElementById('btnTakePhoto').disabled = false;
+        document.getElementById('btnFlip').style.display = 'flex';
+        document.getElementById('btnRetake').style.display = 'none';
+        document.getElementById('btnAlbum').style.display = 'flex';
+      } catch (err) {
+        console.warn('Camera unavailable, fallback to file input:', err);
+        // 权限拒绝或无摄像头 → 回退到文件选择
+        document.getElementById('fileInput').click();
+      }
+    }
+
+    function stopCamera() {
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      if (currentStream) {
+        currentStream.getTracks().forEach(t => t.stop());
+        currentStream = null;
+      }
+      const video = document.getElementById('camVideo');
+      video.srcObject = null;
+      video.style.display = 'none';
+    }
+
+    async function switchCamera() {
+      currentFacing = currentFacing === 'environment' ? 'user' : 'environment';
+      await openCamera(); // 关闭旧流 + 打开新流
+    }
+
+    async function captureFromVideo() {
+      const video = document.getElementById('camVideo');
+      const w = video.videoWidth || video.clientWidth;
+      const h = video.videoHeight || video.clientHeight;
+      if (!w || !h) { alert('相机未就绪，请稍候'); return; }
+      const scale = Math.min(1, 1200 / Math.max(w, h));
+      const c = Object.assign(document.createElement('canvas'), {
+        width: Math.round(w * scale), height: Math.round(h * scale)
+      });
+      c.getContext('2d').drawImage(video, 0, 0, c.width, c.height);
+      stopCamera();
+      capturedImageData = c.toDataURL('image/jpeg', 0.8);
+      document.getElementById('camPreview').src = capturedImageData;
+      document.getElementById('camPreview').style.display = 'block';
+      document.getElementById('camVideo').style.display = 'none';
+      document.getElementById('btnTakePhoto').style.display = 'none';
+      document.getElementById('btnFlip').style.display = 'none';
+      document.getElementById('btnAlbum').style.display = 'none';
+      document.getElementById('btnRetake').style.display = 'flex';
+      document.getElementById('btnNextStep').disabled = false;
+    }
 
     // ── 表单基础 ──
     function openJifen() {
@@ -344,6 +425,7 @@
     }
 
     function closeJifen() {
+      stopCamera();
       document.getElementById('jifenModal').classList.remove('show');
       document.getElementById('mainFrame').style.pointerEvents = '';
       capturedImageData = null;
@@ -358,7 +440,8 @@
       document.getElementById('dot2').classList.toggle('active', n === 2);
 
       if (n === 1) {
-        // 重置 Step1 视图
+        // 重置 Step1：关闭相机 + 恢复初始视图
+        stopCamera();
         document.getElementById('camPreview').style.display = 'none';
         document.getElementById('camPreview').src = '';
         document.getElementById('camVideo').style.display = 'none';
@@ -366,6 +449,8 @@
         document.getElementById('btnCapture').style.display = 'flex';
         document.getElementById('btnAlbum').style.display = 'flex';
         document.getElementById('btnRetake').style.display = 'none';
+        document.getElementById('btnTakePhoto').style.display = 'none';
+        document.getElementById('btnFlip').style.display = 'none';
         document.getElementById('btnNextStep').disabled = true;
       }
 
