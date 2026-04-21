@@ -377,55 +377,91 @@
     function backStep1() { goStep(1); }
 
     // ── 拍照入口 ──
-    // 拍照按钮 → fileInput（capture=environment → 优先开相机）
-    // 相册按钮 → albumInput（无 capture → 弹出选择器）
+    // 拍照按钮：先尝试摄像头 API，失败则回退到文件选择
+    async function capturePhoto() {
+      const video = document.getElementById('camVideo');
+
+      // 尝试摄像头 API
+      if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: { ideal: 'environment' }, width: { ideal: 1920 }, height: { ideal: 1440 } }
+          });
+          video.srcObject = stream;
+          video.style.display = 'block';
+          document.getElementById('camOverlay').classList.add('hidden');
+          // 隐藏拍照/相册按钮，显示「拍这张」
+          document.getElementById('btnCapture').style.display = 'none';
+          document.getElementById('btnAlbum').style.display = 'none';
+          // 等待视频元数据加载
+          await new Promise(resolve => {
+            video.onloadedmetadata = resolve;
+            setTimeout(resolve, 1500); // 超时保护
+          });
+          // canvas 截图
+          const canvas = Object.assign(document.createElement('canvas'), {
+            width: video.videoWidth || 1280, height: video.videoHeight || 960
+          });
+          canvas.getContext('2d').drawImage(video, 0, 0);
+          stream.getTracks().forEach(t => t.stop());
+          await handleFileCapture(canvas.toDataURL('image/jpeg', 0.8));
+          return;
+        } catch (err) {
+          // 摄像头不可用，继续走文件输入
+        }
+      }
+
+      // 回退：打开文件选择器（iOS/Android 触发相机）
+      document.getElementById('fileInput').click();
+    }
+
     function openAlbum() {
       document.getElementById('albumInput').click();
     }
 
-    function retakePhoto() {
-      // 重拍：开相机（也保留相册入口）
-      document.getElementById('btnAlbum').style.display = 'flex';
-      document.getElementById('btnRetake').style.display = 'none';
-      document.getElementById('fileInput').click();
+    // 拍完后处理（处理 canvas 截图或文件输入）
+    async function handleFileCapture(dataUrl) {
+      capturedImageData = dataUrl;
+      const preview = document.getElementById('camPreview');
+      preview.src = capturedImageData;
+      preview.style.display = 'block';
+      document.getElementById('camVideo').style.display = 'none';
+      document.getElementById('camOverlay').classList.add('hidden');
+      document.getElementById('btnCapture').style.display = 'none';
+      document.getElementById('btnAlbum').style.display   = 'none';
+      document.getElementById('btnRetake').style.display  = 'flex';
+      document.getElementById('btnNextStep').disabled = false;
     }
 
-    // 处理文件选择（相机 + 相册 共用逻辑）
+    // 处理文件输入（相册/相机返回的文件）
     async function handleFilePick(file) {
       if (!file) return;
-
       const preview = document.getElementById('camPreview');
-      const btnCapture = document.getElementById('btnCapture');
-      const btnAlbum   = document.getElementById('btnAlbum');
-      const btnRetake  = document.getElementById('btnRetake');
-
-      // 显示加载中
       preview.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><rect fill="%23eee" width="100" height="60"/><text x="50" y="35" text-anchor="middle" font-size="10" fill="%23aaa">处理中…</text></svg>';
       preview.style.display = 'block';
       document.getElementById('camVideo').style.display = 'none';
       document.getElementById('camOverlay').classList.add('hidden');
-
-      // 读取并压缩
-      capturedImageData = await loadAndCompress(file);
-
-      // 显示预览，按钮切换为「重拍」
-      preview.src = capturedImageData;
-      btnCapture.style.display = 'none';
-      btnAlbum.style.display   = 'none';
-      btnRetake.style.display  = 'flex';
-      document.getElementById('btnNextStep').disabled = false;
+      const dataUrl = await loadAndCompress(file);
+      await handleFileCapture(dataUrl);
+      file.value = '';
     }
 
-    document.getElementById('fileInput').addEventListener('change', e => {
-      handleFilePick(e.target.files[0]);
-      e.target.value = '';
-    });
-    document.getElementById('albumInput').addEventListener('change', e => {
-      handleFilePick(e.target.files[0]);
-      e.target.value = '';
-    });
+    document.getElementById('fileInput').addEventListener('change', e => { handleFilePick(e.target.files[0]); });
+    document.getElementById('albumInput').addEventListener('change', e => { handleFilePick(e.target.files[0]); });
 
-    // 读取图片 → 压缩到 maxW，输出 JPEG base64
+    function retakePhoto() {
+      capturedImageData = null;
+      document.getElementById('camPreview').style.display = 'none';
+      document.getElementById('camPreview').src = '';
+      document.getElementById('camVideo').style.display = 'none';
+      document.getElementById('camOverlay').classList.remove('hidden');
+      document.getElementById('btnCapture').style.display = 'flex';
+      document.getElementById('btnAlbum').style.display   = 'flex';
+      document.getElementById('btnRetake').style.display  = 'none';
+      document.getElementById('btnNextStep').disabled = true;
+    }
+
+    // 读取图片文件 → 压缩到 maxW，输出 JPEG dataURL
     function loadAndCompress(file, maxW = 1200, quality = 0.75) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -446,35 +482,6 @@
         reader.readAsDataURL(file);
       });
     }
-
-    function retakePhoto() {
-      capturedImageData = null;
-      document.getElementById('camPreview').style.display = 'none';
-      document.getElementById('camPreview').src = '';
-      document.getElementById('camVideo').style.display = 'none';
-      document.getElementById('camOverlay').classList.remove('hidden');
-      document.getElementById('btnCapture').style.display = 'flex';
-      document.getElementById('btnRetake').style.display = 'none';
-      document.getElementById('btnNextStep').disabled = true;
-    }
-
-    // 备用：文件上传（摄像头不可用时）
-    document.getElementById('fileInput').addEventListener('change', e => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = ev => {
-        capturedImageData = ev.target.result;
-        document.getElementById('camPreview').src = capturedImageData;
-        document.getElementById('camPreview').style.display = 'block';
-        document.getElementById('camVideo').style.display = 'none';
-        document.getElementById('camOverlay').classList.add('hidden');
-        document.getElementById('btnCapture').style.display = 'none';
-        document.getElementById('btnRetake').style.display = 'flex';
-        document.getElementById('btnNextStep').disabled = false;
-      };
-      reader.readAsDataURL(file);
-    });
 
     // ── 提交 ──
     async function submitJifen() {
