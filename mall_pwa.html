@@ -53,6 +53,7 @@
       width:100%;max-width:480px;
       padding:28px 24px calc(24px + env(safe-area-inset-bottom, 0));
       animation:slideUp .28s ease;
+      max-height:92vh;overflow-y:auto;
     }
     @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 
@@ -65,6 +66,59 @@
       margin-bottom:20px;text-align:center;
     }
 
+    /* 步骤指示器 */
+    .stepBar{
+      display:flex;justify-content:center;gap:8px;margin-bottom:20px;
+    }
+    .stepDot{
+      width:8px;height:8px;border-radius:50%;background:#e0d8c8;
+      transition:background .3s;
+    }
+    .stepDot.active{background:#C5962A}
+
+    /* Step1: 拍照区 */
+    .camWrap{
+      position:relative;border-radius:14px;overflow:hidden;
+      background:#111;aspect-ratio:4/3;
+      margin-bottom:14px;
+    }
+    .camWrap video,.camWrap img{
+      width:100%;height:100%;object-fit:cover;
+      display:block;
+    }
+    .camWrap img{position:absolute;inset:0;z-index:1;}
+    .camOverlay{
+      position:absolute;inset:0;display:flex;
+      flex-direction:column;align-items:center;justify-content:center;
+      color:#fff;text-align:center;z-index:2;pointer-events:none;
+    }
+    .camOverlay.hidden{display:none}
+    .camOverlay .camIcon{font-size:52px;margin-bottom:8px;opacity:.8}
+    .camOverlay p{font-size:13px;opacity:.7}
+
+    /* 拍照按钮 */
+    .camBtnRow{
+      display:flex;gap:12px;margin-bottom:16px;
+    }
+    .camBtn{
+      flex:1;padding:13px;border:none;border-radius:12px;
+      font-size:15px;font-weight:bold;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;gap:6px;
+      transition:opacity .15s;
+    }
+    .camBtn:active{opacity:.8}
+    .btnCapture{
+      background:#C5962A;color:#fff;
+    }
+    .btnRetake{
+      background:#f0ede6;color:#888;
+    }
+
+    /* Step2: 预览+表单 */
+    .previewThumb{
+      width:100%;border-radius:10px;border:2px dashed #e0d8c8;
+      display:block;margin-bottom:16px;
+    }
     .field{margin-bottom:16px}
     .field label{
       display:block;font-size:13px;color:#888;margin-bottom:6px;
@@ -80,19 +134,39 @@
     }
     .field textarea{resize:none;height:72px;}
 
+    /* 步骤切换按钮文字 */
+    .stepTitle{display:none}
+    .stepTitle.active{display:block}
+
     .btnRow{display:flex;gap:12px;margin-top:20px}
     .btnCancel{
       flex:1;padding:13px;border:none;border-radius:12px;
       background:#f0ede6;color:#888;font-size:15px;cursor:pointer;
     }
+    .btnNext{
+      flex:2;padding:13px;border:none;border-radius:12px;
+      background:#C5962A;color:#fff;font-size:15px;font-weight:bold;
+      cursor:pointer;transition:background .15s;
+    }
+    .btnNext:active{background:#a87d22}
     .btnSubmit{
       flex:2;padding:13px;border:none;border-radius:12px;
       background:#C5962A;color:#fff;font-size:15px;font-weight:bold;
       cursor:pointer;transition:background .15s;
     }
     .btnSubmit:active{background:#a87d22}
+    .btnSubmit:disabled{background:#ccc;cursor:not-allowed}
 
-    /* ── 成功提示 ── */
+    /* 提交中状态 */
+    .btnSubmit .spinner{
+      display:inline-block;width:16px;height:16px;
+      border:2px solid rgba(255,255,255,.4);
+      border-top-color:#fff;border-radius:50%;
+      animation:spin .6s linear infinite;vertical-align:middle;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ── 提交成功 ── */
     #jifenSuccess{
       display:none;position:fixed;inset:0;z-index:10000;
       background:rgba(0,0,0,.55);
@@ -156,30 +230,75 @@
   <!-- 积分提交表单 -->
   <div id="jifenModal">
     <div id="jifenSheet">
+
       <div class="sheetHandle"></div>
-      <div class="sheetTitle">📮 自助积分提交</div>
 
-      <div class="field">
-        <label>手机号码</label>
-        <input id="jfPhone" type="tel" maxlength="11" placeholder="请输入手机号" inputmode="numeric">
+      <!-- 步骤指示器 -->
+      <div class="stepBar">
+        <div class="stepDot active" id="dot1"></div>
+        <div class="stepDot" id="dot2"></div>
       </div>
 
-      <div class="field">
-        <label>积分数量</label>
-        <input id="jfAmount" type="number" min="1" max="99999" placeholder="请输入积分数量" inputmode="numeric">
+      <!-- ========== STEP 1: 拍照 ========== -->
+      <div id="step1">
+        <div class="sheetTitle">📷 拍摄小票</div>
+
+        <div class="camWrap" id="camWrap">
+          <!-- 摄像头画面 -->
+          <video id="camVideo" autoplay playsinline muted></video>
+          <!-- 拍照后预览 -->
+          <img id="camPreview" src="" alt="小票预览" style="display:none">
+          <!-- 提示文字 -->
+          <div class="camOverlay" id="camOverlay">
+            <div class="camIcon">📷</div>
+            <p>点击下方按钮开启摄像头<br>对准小票拍照</p>
+          </div>
+        </div>
+
+        <div class="camBtnRow">
+          <button class="camBtn btnCapture" id="btnCapture" onclick="capturePhoto()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
+            拍照
+          </button>
+          <button class="camBtn btnRetake" id="btnRetake" onclick="retakePhoto()" style="display:none">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.54"/></svg>
+            重拍
+          </button>
+        </div>
+
+        <div class="btnRow">
+          <button class="btnCancel" onclick="closeJifen()">取消</button>
+          <button class="btnNext" id="btnNextStep" onclick="goStep2()" disabled>下一步 →</button>
+        </div>
       </div>
 
-      <div class="field">
-        <label>备注（选填）</label>
-        <textarea id="jfNote" placeholder="小票号、购物说明等"></textarea>
+      <!-- ========== STEP 2: 手机号 ========== -->
+      <div id="step2" style="display:none">
+        <div class="sheetTitle">📱 填写手机号</div>
+
+        <img id="thumbPreview" class="previewThumb" src="" alt="小票预览">
+
+        <div class="field">
+          <label>手机号码</label>
+          <input id="jfPhone" type="tel" maxlength="11" placeholder="请输入手机号" inputmode="numeric">
+        </div>
+
+        <div class="field">
+          <label>备注（选填）</label>
+          <textarea id="jfNote" placeholder="积分说明等"></textarea>
+        </div>
+
+        <div class="btnRow">
+          <button class="btnCancel" onclick="backStep1()">← 上一步</button>
+          <button class="btnSubmit" id="btnSubmit" onclick="submitJifen()">提交积分</button>
+        </div>
       </div>
 
-      <div class="btnRow">
-        <button class="btnCancel" onclick="closeJifen()">取消</button>
-        <button class="btnSubmit" onclick="submitJifen()">立即提交</button>
-      </div>
     </div>
   </div>
+
+  <!-- 隐藏的文件input（备用） -->
+  <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none">
 
   <!-- 提交成功 -->
   <div id="jifenSuccess">
@@ -200,49 +319,176 @@
   <script>
     // Register Service Worker
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js?v=1').then(reg => {
-        console.log('SW registered:', reg.scope);
-      }).catch(e => console.log('SW error:', e));
+      navigator.serviceWorker.register('sw.js?v=1').catch(() => {});
     }
 
-    // ── 积分表单 ──
+    // ── 状态 ──
+    let capturedImageData = null;
+    let stream = null;
+    let currentStep = 1;
+
+    // ── 表单基础 ──
     function openJifen() {
       document.getElementById('jifenModal').classList.add('show');
-      // 阻止底层 iframe 滚动穿透
       document.getElementById('mainFrame').style.pointerEvents = 'none';
+      goStep(1);
     }
+
     function closeJifen() {
       document.getElementById('jifenModal').classList.remove('show');
       document.getElementById('mainFrame').style.pointerEvents = '';
+      stopCamera();
+      capturedImageData = null;
     }
-    function submitJifen() {
+
+    // ── 步骤切换 ──
+    function goStep(n) {
+      currentStep = n;
+      document.getElementById('step1').style.display = n === 1 ? '' : 'none';
+      document.getElementById('step2').style.display = n === 2 ? '' : 'none';
+      document.getElementById('dot1').classList.toggle('active', n === 1);
+      document.getElementById('dot2').classList.toggle('active', n === 2);
+
+      if (n === 2 && capturedImageData) {
+        document.getElementById('thumbPreview').src = capturedImageData;
+        document.getElementById('jfPhone').focus();
+      }
+    }
+    function goStep2() { goStep(2); }
+    function backStep1() { goStep(1); }
+
+    // ── 拍照 ──
+    async function capturePhoto() {
+      const video = document.getElementById('camVideo');
+      const preview = document.getElementById('camPreview');
+      const overlay = document.getElementById('camOverlay');
+      const btnCapture = document.getElementById('btnCapture');
+      const btnRetake = document.getElementById('btnRetake');
+
+      // 如果还没启动摄像头，尝试启动
+      if (!stream) {
+        try {
+          stream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 960 } }
+          });
+          video.srcObject = stream;
+          await video.play();
+          btnCapture.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg> 拍照`;
+        } catch (e) {
+          // 摄像头拒绝/不支持 → 走文件上传
+          document.getElementById('fileInput').click();
+          return;
+        }
+        return;
+      }
+
+      // 拍照：canvas 截图
+      const canvas = document.createElement('canvas');
+      const vw = video.videoWidth || video.clientWidth;
+      const vh = video.videoHeight || video.clientHeight;
+      canvas.width = vw; canvas.height = vh;
+      canvas.getContext('2d').drawImage(video, 0, 0, vw, vh);
+      capturedImageData = canvas.toDataURL('image/jpeg', 0.75);
+
+      stopCamera();
+
+      // 显示预览
+      preview.src = capturedImageData;
+      preview.style.display = 'block';
+      video.style.display = 'none';
+      overlay.classList.add('hidden');
+      btnCapture.style.display = 'none';
+      btnRetake.style.display = 'flex';
+      document.getElementById('btnNextStep').disabled = false;
+    }
+
+    function retakePhoto() {
+      capturedImageData = null;
+      const video = document.getElementById('camVideo');
+      const preview = document.getElementById('camPreview');
+      const overlay = document.getElementById('camOverlay');
+      const btnCapture = document.getElementById('btnCapture');
+      const btnRetake = document.getElementById('btnRetake');
+
+      preview.style.display = 'none';
+      video.style.display = 'block';
+      overlay.classList.remove('hidden');
+      btnCapture.style.display = 'flex';
+      btnRetake.style.display = 'none';
+      document.getElementById('btnNextStep').disabled = true;
+
+      // 重启摄像头
+      capturePhoto();
+    }
+
+    function stopCamera() {
+      if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+        stream = null;
+      }
+    }
+
+    // 备用：文件上传（摄像头不可用时）
+    document.getElementById('fileInput').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        capturedImageData = ev.target.result;
+        document.getElementById('camPreview').src = capturedImageData;
+        document.getElementById('camPreview').style.display = 'block';
+        document.getElementById('camVideo').style.display = 'none';
+        document.getElementById('camOverlay').classList.add('hidden');
+        document.getElementById('btnCapture').style.display = 'none';
+        document.getElementById('btnRetake').style.display = 'flex';
+        document.getElementById('btnNextStep').disabled = false;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // ── 提交 ──
+    async function submitJifen() {
       const phone = document.getElementById('jfPhone').value.trim();
-      const amount = document.getElementById('jfAmount').value.trim();
       const note = document.getElementById('jfNote').value.trim();
 
       if (!/^1\d{10}$/.test(phone)) {
-        alert('请输入正确的手机号（11位数字）');
+        alert('请输入正确的11位手机号');
         return;
       }
-      if (!amount || amount <= 0) {
-        alert('请输入积分数量');
-        return;
-      }
+
+      const btn = document.getElementById('btnSubmit');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> 提交中…';
 
       const now = new Date();
       const timeStr = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
 
-      // TODO: 这里后续替换成 QQ 机器人 API 推送
-      console.log('积分提交:', { phone, amount, note, time: timeStr });
+      const payload = {
+        phone,
+        note,
+        image: capturedImageData,
+        time: timeStr,
+        mall: 'KK MALL'
+      };
 
-      // 关闭表单 + 弹出成功
+      // TODO: 替换为真实推送（企业微信群机器人/QQ机器人）
+      console.log('积分提交 payload:', {
+        phone,
+        note,
+        imageLen: capturedImageData ? capturedImageData.length : 0,
+        time: timeStr
+      });
+
+      // 模拟网络延迟
+      await new Promise(r => setTimeout(r, 800));
+
       closeJifen();
       document.getElementById('jifenSuccess').classList.add('show');
-
-      // 清空表单
+      btn.disabled = false;
+      btn.innerHTML = '提交积分';
       document.getElementById('jfPhone').value = '';
-      document.getElementById('jfAmount').value = '';
       document.getElementById('jfNote').value = '';
+      capturedImageData = null;
     }
 
     // 点击遮罩关闭
@@ -250,7 +496,7 @@
       if (e.target === document.getElementById('jifenModal')) closeJifen();
     });
 
-    // Install prompt
+    // ── PWA 安装提示 ──
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault();
@@ -261,19 +507,10 @@
         }
       }, 3000);
     });
-
     function installApp() {
-      if (deferredPrompt) {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then(() => {
-          closeBanner();
-          deferredPrompt = null;
-        });
-      } else {
-        alert('请使用浏览器菜单中的"添加到主屏幕"功能');
-      }
+      if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; }
+      else { alert('请使用浏览器菜单中的"添加到主屏幕"功能'); }
     }
-
     function closeBanner() {
       document.getElementById('installBanner').classList.remove('show');
       localStorage.setItem('pwaBannerClosed', '1');
