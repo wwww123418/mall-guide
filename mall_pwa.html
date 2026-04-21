@@ -244,8 +244,11 @@
       <div id="step1">
         <div class="sheetTitle">📷 拍摄小票</div>
 
-        <!-- 拍照区域：label 包裹 file input，iOS 点击即调起相机 -->
-        <label for="fileInput" class="camWrapLabel" id="camWrap">
+        <!-- 拍照区域：label 内嵌 input，覆盖全区域 -->
+        <!-- input 用 opacity:0 + position:absolute，保持在渲染树中，iOS 点击即触发 -->
+        <label class="camWrapLabel" id="camWrap">
+          <input type="file" id="fileInput" accept="image/*" capture="user"
+            style="position:absolute;inset:0;opacity:0;width:100%;height:100%;cursor:pointer;z-index:3">
           <video id="camVideo" autoplay playsinline muted></video>
           <img id="camPreview" src="" alt="小票预览" style="display:none">
           <div class="camOverlay" id="camOverlay">
@@ -255,18 +258,20 @@
         </label>
 
         <div class="camBtnRow">
-          <!-- 主按钮：打开相机 -->
-          <label for="fileInput" class="camBtn btnCapture" id="btnCapture">
+          <!-- 拍照按钮：直接触发 label 内的 fileInput -->
+          <button class="camBtn btnCapture" id="btnCapture" onclick="document.getElementById('fileInput').click()">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
             拍照上传
-          </label>
-          <!-- 备选：相册 -->
-          <button class="camBtn btnRetake" id="btnAlbum" onclick="document.getElementById('albumInput').click()">
+          </button>
+          <!-- 相册选择 -->
+          <label class="camBtn btnRetake" id="btnAlbum">
+            <input type="file" id="albumInput" accept="image/*"
+              style="position:absolute;opacity:0;width:0;height:0">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
             相册选择
-          </button>
+          </label>
           <!-- 重拍 -->
-          <button class="camBtn btnRetake" id="btnRetake" onclick="retakePhoto()" style="display:none">
+          <button class="camBtn btnRetake" id="btnRetake" onclick="document.getElementById('fileInput').click()" style="display:none">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.54"/></svg>
             重拍
           </button>
@@ -303,10 +308,7 @@
     </div>
   </div>
 
-  <!-- 隐藏的文件input，capture 直接写在 HTML 中，iOS 必须硬编码 -->
-  <input type="file" id="fileInput" accept="image/*" capture="environment" style="display:none">
-  <!-- 备选：相册选择（无 capture 属性，弹出选择器） -->
-  <input type="file" id="albumInput" accept="image/*" style="display:none">
+
 
   <!-- 提交成功 -->
   <div id="jifenSuccess">
@@ -375,54 +377,39 @@
     function goStep2() { goStep(2); }
     function backStep1() { goStep(1); }
 
-    // ── 拍照入口（label 方案：直接触发 file input，iOS/Android 最稳定）──
-    function capturePhoto() {
-      document.getElementById('fileInput').click();
-    }
-    function openAlbum() {
-      document.getElementById('albumInput').click();
-    }
-
-    // 拍完后处理（处理 canvas 截图或文件输入）
-    async function handleFileCapture(dataUrl) {
-      capturedImageData = dataUrl;
-      const preview = document.getElementById('camPreview');
-      preview.src = capturedImageData;
-      preview.style.display = 'block';
-      document.getElementById('camVideo').style.display = 'none';
-      document.getElementById('camOverlay').classList.add('hidden');
-      document.getElementById('btnCapture').style.display = 'none';
-      document.getElementById('btnAlbum').style.display   = 'none';
-      document.getElementById('btnRetake').style.display  = 'flex';
-      document.getElementById('btnNextStep').disabled = false;
-    }
-
-    // 处理文件输入（相册/相机返回的文件）
-    async function handleFilePick(file) {
+    // ── 文件选择处理（fileInput / albumInput 共用）──
+    // 核心：label 内的 input 被点击 → change 事件触发 → 这里处理
+    document.getElementById('fileInput').addEventListener('change', e => {
+      const file = e.target.files[0];
       if (!file) return;
+      processImage(file);
+      e.target.value = ''; // 清空，允许重复选择同一文件
+    });
+    document.getElementById('albumInput').addEventListener('change', e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      processImage(file);
+      e.target.value = '';
+    });
+
+    // 处理图片：压缩 → 显示预览 → 更新按钮状态
+    async function processImage(file) {
       const preview = document.getElementById('camPreview');
+      // 显示加载中
       preview.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 60"><rect fill="%23eee" width="100" height="60"/><text x="50" y="35" text-anchor="middle" font-size="10" fill="%23aaa">处理中…</text></svg>';
       preview.style.display = 'block';
       document.getElementById('camVideo').style.display = 'none';
       document.getElementById('camOverlay').classList.add('hidden');
-      const dataUrl = await loadAndCompress(file);
-      await handleFileCapture(dataUrl);
-      file.value = '';
-    }
 
-    document.getElementById('fileInput').addEventListener('change', e => { handleFilePick(e.target.files[0]); });
-    document.getElementById('albumInput').addEventListener('change', e => { handleFilePick(e.target.files[0]); });
+      // 压缩
+      capturedImageData = await loadAndCompress(file);
+      preview.src = capturedImageData;
 
-    function retakePhoto() {
-      capturedImageData = null;
-      document.getElementById('camPreview').style.display = 'none';
-      document.getElementById('camPreview').src = '';
-      document.getElementById('camVideo').style.display = 'none';
-      document.getElementById('camOverlay').classList.remove('hidden');
-      document.getElementById('btnCapture').style.display = 'flex';
-      document.getElementById('btnAlbum').style.display   = 'flex';
-      document.getElementById('btnRetake').style.display  = 'none';
-      document.getElementById('btnNextStep').disabled = true;
+      // 按钮切换
+      document.getElementById('btnCapture').style.display = 'none';
+      document.getElementById('btnAlbum').style.display   = 'none';
+      document.getElementById('btnRetake').style.display = 'flex';
+      document.getElementById('btnNextStep').disabled = false;
     }
 
     // 读取图片文件 → 压缩到 maxW，输出 JPEG dataURL
