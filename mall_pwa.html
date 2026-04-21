@@ -351,6 +351,13 @@
     const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
     // ================================================
 
+    // ── Supabase 初始化（页面加载时 subscribe，复用 channel）──
+    const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    const sbChannel = sbClient.channel('mall-jifen');
+    sbChannel.subscribe((status) => {
+      console.log('Supabase channel status:', status);
+    });
+
     // ── 状态 ──
     let capturedImageData = null;
     let currentStep = 1;
@@ -576,9 +583,7 @@
 
       // 发送到 Supabase Realtime Broadcast
       try {
-        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        const channel = sb.channel('mall-jifen');
-        await channel.send({
+        await sbChannel.send({
           type: 'broadcast',
           event: 'new-submission',
           payload: payload
