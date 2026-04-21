@@ -26,7 +26,95 @@
       border:none;display:block;
       background:#fff;
     }
-    /* PWA install banner */
+
+    /* ── 积分入口按钮 ── */
+    #jifenBtn{
+      position:fixed;top:env(safe-area-inset-top, 12px);
+      right:14px;z-index:9000;
+      background:#C5962A;color:#fff;
+      border:none;border-radius:22px;
+      padding:8px 14px;font-size:12px;font-weight:bold;
+      cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.35);
+      display:flex;align-items:center;gap:5px;
+      transition:transform .15s,background .15s;
+    }
+    #jifenBtn:active{transform:scale(.95);background:#a87d22}
+
+    /* ── 表单弹窗 ── */
+    #jifenModal{
+      display:none;position:fixed;inset:0;
+      z-index:9999;
+      background:rgba(0,0,0,.6);
+      justify-content:center;align-items:flex-end;
+    }
+    #jifenModal.show{display:flex}
+    #jifenSheet{
+      background:#fff;border-radius:18px 18px 0 0;
+      width:100%;max-width:480px;
+      padding:28px 24px calc(24px + env(safe-area-inset-bottom, 0));
+      animation:slideUp .28s ease;
+    }
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+    .sheetHandle{
+      width:40px;height:4px;border-radius:2px;
+      background:#ddd;margin:0 auto 20px;
+    }
+    .sheetTitle{
+      font-size:17px;font-weight:bold;color:#1a1008;
+      margin-bottom:20px;text-align:center;
+    }
+
+    .field{margin-bottom:16px}
+    .field label{
+      display:block;font-size:13px;color:#888;margin-bottom:6px;
+    }
+    .field input,.field select,.field textarea{
+      width:100%;border:1.5px solid #e0d8c8;
+      border-radius:10px;padding:11px 14px;font-size:15px;
+      color:#1a1008;background:#faf8f4;
+      outline:none;transition:border-color .2s;
+    }
+    .field input:focus,.field select:focus,.field textarea:focus{
+      border-color:#C5962A;
+    }
+    .field textarea{resize:none;height:72px;}
+
+    .btnRow{display:flex;gap:12px;margin-top:20px}
+    .btnCancel{
+      flex:1;padding:13px;border:none;border-radius:12px;
+      background:#f0ede6;color:#888;font-size:15px;cursor:pointer;
+    }
+    .btnSubmit{
+      flex:2;padding:13px;border:none;border-radius:12px;
+      background:#C5962A;color:#fff;font-size:15px;font-weight:bold;
+      cursor:pointer;transition:background .15s;
+    }
+    .btnSubmit:active{background:#a87d22}
+
+    /* ── 成功提示 ── */
+    #jifenSuccess{
+      display:none;position:fixed;inset:0;z-index:10000;
+      background:rgba(0,0,0,.55);
+      justify-content:center;align-items:center;
+    }
+    #jifenSuccess.show{display:flex}
+    #jifenSuccess .card{
+      background:#fff;border-radius:16px;padding:36px 32px;
+      text-align:center;max-width:280px;width:80%;
+      animation:fadeIn .25s ease;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+    #jifenSuccess .icon{font-size:52px;margin-bottom:12px}
+    #jifenSuccess h3{font-size:17px;color:#1a1008;margin-bottom:8px}
+    #jifenSuccess p{font-size:13px;color:#888;line-height:1.6}
+    #jifenSuccess button{
+      margin-top:20px;background:#C5962A;color:#fff;
+      border:none;border-radius:10px;padding:11px 32px;
+      font-size:15px;font-weight:bold;cursor:pointer;
+    }
+
+    /* ── PWA install banner ── */
     #installBanner{
       display:none;position:fixed;bottom:0;left:0;right:0;
       background:#C5962A;color:#fff;
@@ -59,6 +147,50 @@
     loading="lazy"
   ></iframe>
 
+  <!-- 积分入口按钮 -->
+  <button id="jifenBtn" onclick="openJifen()">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    自助积分
+  </button>
+
+  <!-- 积分提交表单 -->
+  <div id="jifenModal">
+    <div id="jifenSheet">
+      <div class="sheetHandle"></div>
+      <div class="sheetTitle">📮 自助积分提交</div>
+
+      <div class="field">
+        <label>手机号码</label>
+        <input id="jfPhone" type="tel" maxlength="11" placeholder="请输入手机号" inputmode="numeric">
+      </div>
+
+      <div class="field">
+        <label>积分数量</label>
+        <input id="jfAmount" type="number" min="1" max="99999" placeholder="请输入积分数量" inputmode="numeric">
+      </div>
+
+      <div class="field">
+        <label>备注（选填）</label>
+        <textarea id="jfNote" placeholder="小票号、购物说明等"></textarea>
+      </div>
+
+      <div class="btnRow">
+        <button class="btnCancel" onclick="closeJifen()">取消</button>
+        <button class="btnSubmit" onclick="submitJifen()">立即提交</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 提交成功 -->
+  <div id="jifenSuccess">
+    <div class="card">
+      <div class="icon">✅</div>
+      <h3>提交成功</h3>
+      <p>积分信息已收到，审核通过后自动到账<br>如有疑问请联系客服</p>
+      <button onclick="document.getElementById('jifenSuccess').classList.remove('show')">我知道了</button>
+    </div>
+  </div>
+
   <div id="installBanner">
     <span>👉 收藏到主屏幕，更快访问</span>
     <button onclick="installApp()">立即添加</button>
@@ -72,6 +204,51 @@
         console.log('SW registered:', reg.scope);
       }).catch(e => console.log('SW error:', e));
     }
+
+    // ── 积分表单 ──
+    function openJifen() {
+      document.getElementById('jifenModal').classList.add('show');
+      // 阻止底层 iframe 滚动穿透
+      document.getElementById('mainFrame').style.pointerEvents = 'none';
+    }
+    function closeJifen() {
+      document.getElementById('jifenModal').classList.remove('show');
+      document.getElementById('mainFrame').style.pointerEvents = '';
+    }
+    function submitJifen() {
+      const phone = document.getElementById('jfPhone').value.trim();
+      const amount = document.getElementById('jfAmount').value.trim();
+      const note = document.getElementById('jfNote').value.trim();
+
+      if (!/^1\d{10}$/.test(phone)) {
+        alert('请输入正确的手机号（11位数字）');
+        return;
+      }
+      if (!amount || amount <= 0) {
+        alert('请输入积分数量');
+        return;
+      }
+
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}/${now.getMonth()+1}/${now.getDate()} ${now.getHours().toString().padStart(2,'0')}:${now.getMinutes().toString().padStart(2,'0')}`;
+
+      // TODO: 这里后续替换成 QQ 机器人 API 推送
+      console.log('积分提交:', { phone, amount, note, time: timeStr });
+
+      // 关闭表单 + 弹出成功
+      closeJifen();
+      document.getElementById('jifenSuccess').classList.add('show');
+
+      // 清空表单
+      document.getElementById('jfPhone').value = '';
+      document.getElementById('jfAmount').value = '';
+      document.getElementById('jfNote').value = '';
+    }
+
+    // 点击遮罩关闭
+    document.getElementById('jifenModal').addEventListener('click', e => {
+      if (e.target === document.getElementById('jifenModal')) closeJifen();
+    });
 
     // Install prompt
     let deferredPrompt;
