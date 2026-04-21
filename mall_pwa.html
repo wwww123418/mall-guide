@@ -581,17 +581,15 @@
         mall: 'KK MALL'
       };
 
-      // 发送到 Supabase Realtime Broadcast
+      // 写入 Supabase 数据库（自动触发 Realtime 推送给监控端）
       try {
-        await sbChannel.send({
-          type: 'broadcast',
-          event: 'new-submission',
-          payload: payload
-        });
-        console.log('✅ Broadcast sent');
+        const { error } = await sbClient.from('submissions').insert([{
+          phone, note, image: broadcastImage, mall: 'KK MALL'
+        }]);
+        if (error) throw error;
+        console.log('✅ Submission saved');
       } catch (err) {
-        console.error('Broadcast failed:', err);
-        // 失败也继续，不影响用户体验
+        console.error('Submit failed:', err);
       }
 
       closeJifen();
