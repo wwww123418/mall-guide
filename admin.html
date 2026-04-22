@@ -53,6 +53,7 @@
 const TOPIC = 'kk-mall-jifen-2026';
 let audioCtx = null;
 let count = 0;
+let knownIds = new Set();
 
 function initAudio() {
   audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -137,13 +138,17 @@ evtSource.onmessage = e => {
 
 evtSource.addEventListener('message', e => {
   try {
-    // ntfy 返回的 message 字段内容就是实际的通知数据（JSON）
-    const payload = JSON.parse(e.data);
-    if (payload.phone) {
-      addItem(payload);
-    }
+    // SSE data field contains the full ntfy message envelope
+    const env = JSON.parse(e.data);
+    // 忽略 open 心跳消息
+    if (env.event === 'open') return;
+    // 避免重复（网络重连后 ntfy 可能会重发最近一条消息）
+    if (env.id && knownIds.has(env.id)) return;
+    if (env.id) knownIds.add(env.id);
+    // 实际数据在 message 字段（JSON 字符串）
+    const payload = typeof env.message === 'string' ? JSON.parse(env.message) : env;
+    if (payload.phone) addItem(payload);
   } catch(err) {
-    // 可能是普通文本通知，忽略
     console.log('non-json message:', e.data.substring(0, 100));
   }
 });
