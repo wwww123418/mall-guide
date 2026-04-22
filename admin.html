@@ -1,170 +1,159 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KK MALL 积分监控</title>
-  <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    html,body{width:100%;min-height:100vh;font-family:system-ui,-apple-system,sans-serif;background:#0c0a06;color:#f0ebe0}
-    body{padding:16px 16px env(safe-area-inset-bottom, 16px)}
-    .header{text-align:center;padding:12px 0 20px}
-    .header h1{font-size:20px;color:#C5962A;margin-bottom:8px}
-    .status{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:#888}
-    .dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
-    .dot.on{background:#22c55e;box-shadow:0 0 8px #22c55e}
-    .dot.off{background:#ef4444;box-shadow:0 0 6px #ef4444}
-    .dot.wait{background:#eab308;animation:blink 1s infinite}
-    @keyframes blink{50%{opacity:.3}}
-    .soundToggle{margin-top:10px;display:inline-flex;align-items:center;gap:6px;font-size:12px;color:#888;cursor:pointer}
-    .soundToggle input{accent-color:#C5962A}
-    .list{max-width:520px;margin:0 auto}
-    .card{background:#1a1508;border:1px solid #2a2210;border-radius:14px;padding:14px;margin-bottom:14px;animation:fadeUp .3s ease}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-    .card img{width:100%;border-radius:8px;margin-bottom:10px;background:#111;max-height:360px;object-fit:contain}
-    .card .phone{font-size:22px;font-weight:bold;color:#C5962A;letter-spacing:1px}
-    .card .time{font-size:12px;color:#666;margin-top:4px}
-    .card .note{font-size:14px;color:#aaa;margin-top:6px;padding:6px 10px;background:#0f0d08;border-radius:8px}
-    .empty{text-align:center;color:#444;padding:80px 20px;font-size:15px}
-    .empty .icon{font-size:48px;margin-bottom:12px;opacity:.4}
-    .badge{display:inline-block;background:#C5962A;color:#fff;border-radius:8px;padding:2px 8px;font-size:11px;font-weight:bold;margin-left:8px;vertical-align:middle}
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>KK MALL 积分管理后台</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,'PingFang SC',sans-serif;background:#1a1a2e;color:#e0e0e0;min-height:100vh}
+  header{background:#16213e;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #0f3460;position:sticky;top:0;z-index:100}
+  header h1{color:#e94560;font-size:20px;font-weight:600}
+  .stat{color:#888;font-size:13px}
+  .stat span{color:#e94560;font-weight:700;margin-left:4px}
+  .top-bar{background:#0f3460;padding:10px 24px;display:flex;align-items:center;gap:12px;font-size:13px;color:#888;flex-wrap:wrap}
+  .top-bar code{color:#e94560;font-size:14px;font-family:monospace}
+  .beep{background:#e94560;color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:14px;margin-left:auto}
+  .beep:hover{background:#c73e54}
+  .conn-status{display:inline-block;width:8px;height:8px;border-radius:50%;background:#555;margin-right:6px}
+  .conn-status.connected{background:#4ade80;box-shadow:0 0 6px #4ade80}
+  .conn-status.error{background:#f87171}
+  #log{list-style:none;padding:20px;max-width:700px;margin:0 auto}
+  #log li{background:#16213e;margin-bottom:12px;padding:16px 20px;border-radius:10px;border-left:4px solid #e94560;animation:slideIn .3s ease}
+  #log li.new{animation:flash .6s ease}
+  @keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+  @keyframes flash{0%,100%{background:#16213e}50%{background:#2a1a3a}}
+  .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .tag{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+  .tag-phone{background:#e94560;color:#fff}
+  .tag-amount{background:#1a5c1a;color:#90ee90}
+  .note{font-size:13px;color:#aaa;margin-top:6px;padding:6px 10px;background:#0a0a1a;border-radius:6px;line-height:1.5}
+  .time{font-size:12px;color:#555;margin-top:8px}
+  .img-preview{max-width:180px;border-radius:6px;margin-top:8px;cursor:pointer;display:block}
+  .empty{text-align:center;padding:60px;color:#555;font-size:15px}
+  .img-wrap{margin-top:8px}
+  .img-wrap img{max-width:200px;border-radius:6px;cursor:pointer;border:1px solid #333;display:block}
+</style>
 </head>
 <body>
-  <div class="header">
-    <h1>🏪 KK MALL 积分监控 <span class="badge" id="countBadge" style="display:none">0</span></h1>
-    <div class="status">
-      <span class="dot wait" id="dot"></span>
-      <span id="statusText">加载中…</span>
-    </div>
-    <div style="margin-top:10px">
-      <label class="soundToggle">
-        <input type="checkbox" id="soundOn" checked> 🔔 声音提醒
-      </label>
-    </div>
-  </div>
+<header>
+  <h1>📋 KK MALL 积分管理</h1>
+  <div class="stat">共 <span id="count">0</span> 条</div>
+</header>
+<div class="top-bar">
+  <span id="conn" class="conn-status"></span>
+  <span id="connLabel">连接中…</span>
+  <span>Topic：</span>
+  <code>kk-mall-jifen-2026</code>
+  <button class="beep" onclick="testBeep()">🔔 提示音</button>
+</div>
+<ul id="log"><li class="empty">等待积分提交通知…</li></ul>
 
-  <div class="list" id="list">
-    <div class="empty" id="emptyMsg">
-      <div class="icon">📡</div>
-      等待顾客提交…
-    </div>
-  </div>
+<script>
+const TOPIC = 'kk-mall-jifen-2026';
+let audioCtx = null;
+let count = 0;
 
-  <script>
-    var SUPABASE_URL = 'https://sbdqkzfwuczkbudeocks.supabase.co';
-    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
-    var sb = null;
-    var count = 0;
-    var lastId = 0;
+function initAudio() {
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
 
-    function setStatus(type, text) {
-      document.getElementById('dot').className = 'dot ' + type;
-      document.getElementById('statusText').textContent = text;
+function beep() {
+  if (!audioCtx) initAudio();
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.4);
+  } catch(e) { console.log('audio err', e); }
+}
+
+function tripleBeep() { beep(); setTimeout(beep, 200); setTimeout(beep, 400); }
+
+function testBeep() { tripleBeep(); alert('提示音测试，听到响了吗？'); }
+
+function render(item) {
+  const phone = item.phone || '';
+  const last4 = phone.length >= 4 ? phone.slice(-4) : phone;
+  const note = item.note || '';
+  const time = item.time || '';
+  const img = item.image || '';
+  const imgTag = img ? '<div class="img-wrap"><img src="' + img + '" class="img-preview" onclick="window.open(this.src)" title="点击放大查看"></div>' : '';
+  return '<li class="new">' +
+    '<div class="tags">' +
+      '<span class="tag tag-phone">📱 ' + phone + '</span>' +
+      (note ? '<span class="tag tag-amount">💰 ¥' + note + '</span>' : '') +
+    '</div>' +
+    (note ? '<div class="note">📝 小票 ¥' + note + '</div>' : '') +
+    imgTag +
+    '<div class="time">🕐 ' + time + '</div>' +
+  '</li>';
+}
+
+function addItem(item) {
+  count++;
+  document.getElementById('count').textContent = count;
+  document.querySelector('.empty')?.remove();
+  const li = document.createElement('li');
+  li.className = 'new';
+  li.innerHTML = render(item);
+  document.getElementById('log').prepend(li);
+  tripleBeep();
+  // 触发 Windows 桌面通知
+  if ('Notification' in window && Notification.permission === 'granted') {
+    new Notification('KK MALL 积分提交', { body: phone + ' 提交了小票 ¥' + (note||'-'), icon: '' });
+  }
+}
+
+// 连接 ntfy.sh SSE
+const evtSource = new EventSource('https://ntfy.sh/' + TOPIC + '/sse');
+
+evtSource.onopen = () => {
+  document.getElementById('conn').className = 'conn-status connected';
+  document.getElementById('connLabel').textContent = '已连接 ntfy.sh';
+  console.log('SSE connected');
+};
+
+evtSource.onerror = () => {
+  document.getElementById('conn').className = 'conn-status error';
+  document.getElementById('connLabel').textContent = '连接断开，3秒后重连…';
+  setTimeout(() => location.reload(), 3000);
+};
+
+// ntfy.sh SSE 用 message 事件发送通知数据
+evtSource.onmessage = e => {
+  try {
+    const data = JSON.parse(e.data);
+    if (data.event === 'message') {
+      console.log('ntfy message:', data);
     }
+  } catch(err) {}
+};
 
-    function addCard(data) {
-      var em = document.getElementById('emptyMsg');
-      if (em) em.remove();
-      var list = document.getElementById('list');
-      var card = document.createElement('div');
-      card.className = 'card';
-      var timeDisplay = data.created_at
-        ? new Date(data.created_at).toLocaleString('zh-CN', { hour12: false })
-        : (data.time || '');
-      card.innerHTML =
-        '<img src="' + data.image + '" alt="小票">' +
-        '<div class="phone">📱 ' + data.phone + '</div>' +
-        '<div class="time">🕐 ' + timeDisplay + '</div>' +
-        (data.note ? '<div class="note">📝 ' + data.note + '</div>' : '');
-      list.prepend(card);
+evtSource.addEventListener('message', e => {
+  try {
+    // ntfy 返回的 message 字段内容就是实际的通知数据（JSON）
+    const payload = JSON.parse(e.data);
+    if (payload.phone) {
+      addItem(payload);
     }
+  } catch(err) {
+    // 可能是普通文本通知，忽略
+    console.log('non-json message:', e.data.substring(0, 100));
+  }
+});
 
-    function updateBadge() {
-      var badge = document.getElementById('countBadge');
-      badge.textContent = count;
-      badge.style.display = 'inline-block';
-    }
+evtSource.addEventListener('open', () => {
+  document.getElementById('conn').className = 'conn-status connected';
+});
 
-    function playSound() {
-      try {
-        var ctx = new (window.AudioContext || window.webkitAudioContext)();
-        var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = 880;
-        osc.type = 'sine';
-        gain.gain.setValueAtTime(0.35, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + 0.3);
-      } catch(e) {}
-    }
-
-    // ── 用 REST API 直接请求（不依赖 Supabase JS SDK）──
-    function apiRequest(path) {
-      var ctrl = new AbortController();
-      var timer = setTimeout(function() { ctrl.abort(); }, 10000);
-      return fetch(SUPABASE_URL + '/rest/v1/' + path, {
-        signal: ctrl.signal,
-        headers: {
-          'apikey': SUPABASE_ANON_KEY,
-          'Authorization': 'Bearer ' + SUPABASE_ANON_KEY
-        }
-      }).then(function(r) {
-        clearTimeout(timer);
-        if (!r.ok) throw new Error('API ' + r.status);
-        return r.json();
-      }).catch(function(err) {
-        clearTimeout(timer);
-        if (err.name === 'AbortError') throw new Error('连接超时(10s)，Supabase可能被墙');
-        throw err;
-      });
-    }
-
-    function loadHistory() {
-      setStatus('wait', '正在连接Supabase…');
-      apiRequest('submissions?select=*&order=id.asc&limit=200')
-        .then(function(data) {
-          if (data && data.length) {
-            var em = document.getElementById('emptyMsg');
-            if (em) em.remove();
-            data.forEach(function(row) { addCard(row); });
-            count = data.length;
-            lastId = data[data.length - 1].id;
-            updateBadge();
-          }
-          setStatus('on', '已连接 · 每3秒刷新');
-        })
-        .catch(function(err) {
-          console.error('Load failed:', err);
-          setStatus('off', '加载失败: ' + err.message);
-        });
-    }
-
-    function pollNew() {
-      apiRequest('submissions?select=*&id=gt.' + lastId + '&order=id.asc')
-        .then(function(data) {
-          if (data && data.length) {
-            var em = document.getElementById('emptyMsg');
-            if (em) em.remove();
-            data.forEach(function(row) {
-              addCard(row);
-              lastId = row.id;
-              count++;
-            });
-            updateBadge();
-            if (document.getElementById('soundOn').checked) playSound();
-          }
-        })
-        .catch(function(err) {
-          console.error('Poll failed:', err);
-        });
-    }
-
-    loadHistory();
-    setInterval(pollNew, 3000);
-  </script>
+// 请求桌面通知权限
+if ('Notification' in window) Notification.requestPermission();
+</script>
 </body>
 </html>
