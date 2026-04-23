@@ -1,164 +1,218 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>KK MALL 积分管理后台</title>
-<style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:-apple-system,'PingFang SC',sans-serif;background:#1a1a2e;color:#e0e0e0;min-height:100vh}
-  header{background:#16213e;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #0f3460;position:sticky;top:0;z-index:100}
-  header h1{color:#e94560;font-size:20px;font-weight:600}
-  .stat{color:#888;font-size:13px}
-  .stat span{color:#e94560;font-weight:700;margin-left:4px}
-  .top-bar{background:#0f3460;padding:10px 24px;display:flex;align-items:center;gap:12px;font-size:13px;color:#888;flex-wrap:wrap}
-  .top-bar code{color:#e94560;font-size:14px;font-family:monospace}
-  .beep{background:#e94560;color:#fff;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;font-size:14px;margin-left:auto}
-  .beep:hover{background:#c73e54}
-  .conn-status{display:inline-block;width:8px;height:8px;border-radius:50%;background:#555;margin-right:6px}
-  .conn-status.connected{background:#4ade80;box-shadow:0 0 6px #4ade80}
-  .conn-status.error{background:#f87171}
-  #log{list-style:none;padding:20px;max-width:700px;margin:0 auto}
-  #log li{background:#16213e;margin-bottom:12px;padding:16px 20px;border-radius:10px;border-left:4px solid #e94560;animation:slideIn .3s ease}
-  #log li.new{animation:flash .6s ease}
-  @keyframes slideIn{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
-  @keyframes flash{0%,100%{background:#16213e}50%{background:#2a1a3a}}
-  .tags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px}
-  .tag{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
-  .tag-phone{background:#e94560;color:#fff}
-  .tag-amount{background:#1a5c1a;color:#90ee90}
-  .note{font-size:13px;color:#aaa;margin-top:6px;padding:6px 10px;background:#0a0a1a;border-radius:6px;line-height:1.5}
-  .time{font-size:12px;color:#555;margin-top:8px}
-  .img-preview{max-width:180px;border-radius:6px;margin-top:8px;cursor:pointer;display:block}
-  .empty{text-align:center;padding:60px;color:#555;font-size:15px}
-  .img-wrap{margin-top:8px}
-  .img-wrap img{max-width:200px;border-radius:6px;cursor:pointer;border:1px solid #333;display:block}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KK MALL 积分管理后台</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#f5f2ec;color:#1a1008}
+    #app{max-width:960px;margin:0 auto;padding:20px}
+    header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px}
+    h1{font-size:22px;color:#1a1008}
+    .headerRight{display:flex;align-items:center;gap:16px}
+    .filters{display:flex;gap:6px}
+    .filterBtn{
+      border:1.5px solid #e0d8c8;border-radius:8px;padding:6px 16px;
+      background:#fff;color:#888;font-size:13px;cursor:pointer;
+      transition:all .15s;
+    }
+    .filterBtn.active{background:#C5962A;color:#fff;border-color:#C5962A}
+    .filterBtn:hover:not(.active){background:#faf8f4}
+    .badge{
+      background:#e74c3c;color:#fff;font-size:11px;font-weight:bold;
+      border-radius:10px;padding:2px 7px;margin-left:4px;
+    }
+    .refreshBtn{
+      border:none;border-radius:8px;padding:6px 12px;
+      background:#1a1008;color:#C5962A;font-size:13px;cursor:pointer;
+    }
+    .refreshBtn:active{opacity:.8}
+
+    .stats{display:flex;gap:12px;margin-bottom:24px}
+    .statCard{
+      flex:1;background:#fff;border-radius:12px;padding:16px 20px;
+      box-shadow:0 1px 4px rgba(0,0,0,.06);
+    }
+    .statCard .num{font-size:28px;font-weight:bold;color:#C5962A}
+    .statCard .label{font-size:12px;color:#888;margin-top:2px}
+
+    #cardList{display:flex;flex-direction:column;gap:16px}
+    .card{
+      background:#fff;border-radius:14px;overflow:hidden;
+      box-shadow:0 1px 6px rgba(0,0,0,.07);
+      display:flex;transition:opacity .2s;
+    }
+    .card.processed{opacity:.6}
+    .cardImg{
+      width:200px;min-height:150px;background:#111;
+      display:flex;align-items:center;justify-content:center;
+      flex-shrink:0;cursor:pointer;position:relative;
+    }
+    .cardImg img{width:100%;height:100%;object-fit:cover;display:block}
+    .cardImg .noImg{color:#666;font-size:13px}
+    .cardImg .zoomHint{
+      position:absolute;bottom:6px;right:6px;
+      background:rgba(0,0,0,.6);color:#fff;font-size:11px;
+      padding:2px 8px;border-radius:4px;
+    }
+    .cardInfo{flex:1;padding:16px 20px;display:flex;flex-direction:column;gap:8px}
+    .phone{font-size:18px;font-weight:bold}
+    .note{font-size:14px;color:#666;line-height:1.5}
+    .time{font-size:12px;color:#aaa}
+    .statusRow{display:flex;align-items:center;gap:10px;margin-top:auto}
+    .statusTag{
+      display:inline-block;padding:3px 10px;border-radius:6px;
+      font-size:12px;font-weight:bold;
+    }
+    .statusTag.pending{background:#fff3cd;color:#856404}
+    .statusTag.processed{background:#d4edda;color:#155724}
+    .btnProcess{
+      border:none;border-radius:8px;padding:5px 14px;
+      font-size:12px;cursor:pointer;font-weight:bold;
+      transition:background .15s;
+    }
+    .btnProcess.mark{background:#C5962A;color:#fff}
+    .btnProcess.mark:hover{background:#a87d22}
+    .btnProcess.undo{background:#f0ede6;color:#888}
+
+    .empty{
+      text-align:center;padding:60px 20px;color:#bbb;font-size:16px;
+    }
+
+    /* 图片查看弹窗 */
+    #imgModal{
+      display:none;position:fixed;inset:0;z-index:9999;
+      background:rgba(0,0,0,.85);
+      justify-content:center;align-items:center;cursor:zoom-out;
+    }
+    #imgModal.show{display:flex}
+    #imgModal img{max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px}
+
+    @media(max-width:640px){
+      .card{flex-direction:column}
+      .cardImg{width:100%;min-height:120px;max-height:200px}
+      .stats{flex-direction:column}
+    }
+  </style>
 </head>
 <body>
-<header>
-  <h1>📋 KK MALL 积分管理</h1>
-  <div class="stat">共 <span id="count">0</span> 条</div>
-</header>
-<div class="top-bar">
-  <span id="conn" class="conn-status"></span>
-  <span id="connLabel">连接中…</span>
-  <span>Topic：</span>
-  <code>kk-mall-jifen-2026</code>
-  <button class="beep" onclick="testBeep()">🔔 提示音</button>
-</div>
-<ul id="log"><li class="empty">等待积分提交通知…</li></ul>
+  <div id="app">
+    <header>
+      <h1>🏢 KK MALL 积分管理</h1>
+      <div class="headerRight">
+        <div class="filters">
+          <button class="filterBtn active" id="btnPending" onclick="loadData('pending')">待处理<span class="badge" id="pendingBadge" style="display:none">0</span></button>
+          <button class="filterBtn" id="btnAll" onclick="loadData('all')">全部</button>
+          <button class="filterBtn" id="btnProcessed" onclick="loadData('processed')">已处理</button>
+        </div>
+        <button class="refreshBtn" onclick="loadData(currentFilter)">🔄 刷新</button>
+      </div>
+    </header>
 
-<script>
-const TOPIC = 'kk-mall-jifen-2026';
-let audioCtx = null;
-let count = 0;
-let knownIds = new Set();
+    <div class="stats">
+      <div class="statCard"><div class="num" id="statPending">-</div><div class="label">待处理</div></div>
+      <div class="statCard"><div class="num" id="statToday">-</div><div class="label">今日提交</div></div>
+      <div class="statCard"><div class="num" id="statTotal">-</div><div class="label">累计提交</div></div>
+    </div>
 
-function initAudio() {
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-}
+    <div id="cardList"><div class="empty">加载中…</div></div>
+  </div>
 
-function beep() {
-  if (!audioCtx) initAudio();
-  try {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    osc.frequency.setValueAtTime(880, audioCtx.currentTime);
-    gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.4);
-  } catch(e) { console.log('audio err', e); }
-}
+  <!-- 图片查看 -->
+  <div id="imgModal" onclick="this.classList.remove('show')">
+    <img id="imgModalSrc" src="" alt="查看大图">
+  </div>
 
-function tripleBeep() { beep(); setTimeout(beep, 200); setTimeout(beep, 400); }
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const SUPABASE_URL = 'https://sbdqkzfwuczkbudeocks.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
 
-function testBeep() { tripleBeep(); alert('提示音测试，听到响了吗？'); }
+    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    let currentFilter = 'pending';
 
-function render(item) {
-  const phone = item.phone || '';
-  const last4 = phone.length >= 4 ? phone.slice(-4) : phone;
-  const note = item.note || '';
-  const time = item.time || '';
-  const img = item.image || '';
-  const imgTag = img ? '<div class="img-wrap"><img src="' + img + '" class="img-preview" onclick="window.open(this.src)" title="点击放大查看"></div>' : '';
-  return '<li class="new">' +
-    '<div class="tags">' +
-      '<span class="tag tag-phone">📱 ' + phone + '</span>' +
-      (note ? '<span class="tag tag-amount">💰 ¥' + note + '</span>' : '') +
-    '</div>' +
-    (note ? '<div class="note">📝 小票 ¥' + note + '</div>' : '') +
-    imgTag +
-    '<div class="time">🕐 ' + time + '</div>' +
-  '</li>';
-}
-
-function addItem(item) {
-  count++;
-  document.getElementById('count').textContent = count;
-  document.querySelector('.empty')?.remove();
-  const li = document.createElement('li');
-  li.className = 'new';
-  li.innerHTML = render(item);
-  document.getElementById('log').prepend(li);
-  tripleBeep();
-  // 触发 Windows 桌面通知
-  if ('Notification' in window && Notification.permission === 'granted') {
-    new Notification('KK MALL 积分提交', { body: phone + ' 提交了小票 ¥' + (note||'-'), icon: '' });
-  }
-}
-
-// 连接 ntfy.sh SSE
-const evtSource = new EventSource('https://ntfy.sh/' + TOPIC + '/sse');
-
-evtSource.onopen = () => {
-  document.getElementById('conn').className = 'conn-status connected';
-  document.getElementById('connLabel').textContent = '已连接 ntfy.sh';
-  console.log('SSE connected');
-};
-
-evtSource.onerror = () => {
-  document.getElementById('conn').className = 'conn-status error';
-  document.getElementById('connLabel').textContent = '连接断开，3秒后重连…';
-  setTimeout(() => location.reload(), 3000);
-};
-
-// ntfy.sh SSE 用 message 事件发送通知数据
-evtSource.onmessage = e => {
-  try {
-    const data = JSON.parse(e.data);
-    if (data.event === 'message') {
-      console.log('ntfy message:', data);
+    async function loadStats() {
+      const { count: pending } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+      const { count: total } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true });
+      const today = new Date(); today.setHours(0,0,0,0);
+      const { count: todayCount } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).gte('created_at', today.toISOString());
+      document.getElementById('statPending').textContent = pending ?? '-';
+      document.getElementById('statToday').textContent = todayCount ?? '-';
+      document.getElementById('statTotal').textContent = total ?? '-';
+      const badge = document.getElementById('pendingBadge');
+      if (pending > 0) { badge.textContent = pending; badge.style.display = ''; }
+      else { badge.style.display = 'none'; }
     }
-  } catch(err) {}
-};
 
-evtSource.addEventListener('message', e => {
-  try {
-    // SSE data field contains the full ntfy message envelope
-    const env = JSON.parse(e.data);
-    // 忽略 open 心跳消息
-    if (env.event === 'open') return;
-    // 避免重复（网络重连后 ntfy 可能会重发最近一条消息）
-    if (env.id && knownIds.has(env.id)) return;
-    if (env.id) knownIds.add(env.id);
-    // 实际数据在 message 字段（JSON 字符串）
-    const payload = typeof env.message === 'string' ? JSON.parse(env.message) : env;
-    if (payload.phone) addItem(payload);
-  } catch(err) {
-    console.log('non-json message:', e.data.substring(0, 100));
-  }
-});
+    async function loadData(filter = 'pending') {
+      currentFilter = filter;
+      document.querySelectorAll('.filterBtn').forEach(b => b.classList.remove('active'));
+      const id = 'btn' + filter.charAt(0).toUpperCase() + filter.slice(1);
+      document.getElementById(id).classList.add('active');
 
-evtSource.addEventListener('open', () => {
-  document.getElementById('conn').className = 'conn-status connected';
-});
+      let q = sb.from('jifen_submissions').select('*').order('created_at', { ascending: false });
+      if (filter !== 'all') q = q.eq('status', filter);
+      const { data, error } = await q;
+      if (error) { console.error(error); return; }
+      renderCards(data || []);
+      loadStats();
+    }
 
-// 请求桌面通知权限
-if ('Notification' in window) Notification.requestPermission();
-</script>
+    function renderCards(items) {
+      const el = document.getElementById('cardList');
+      if (!items.length) { el.innerHTML = '<div class="empty">📭 暂无记录</div>'; return; }
+      el.innerHTML = items.map(it => `
+        <div class="card ${it.status === 'processed' ? 'processed' : ''}">
+          <div class="cardImg" onclick="viewImage('${it.image_base64 ? '1' : ''}')">
+            ${it.image_base64 ? `<img src="${it.image_base64}" alt="小票"><div class="zoomHint">🔍 点击查看</div>` : '<div class="noImg">无图片</div>'}
+          </div>
+          <div class="cardInfo">
+            <div class="phone">📱 ${it.phone}</div>
+            ${it.note ? `<div class="note">📝 ${escHtml(it.note)}</div>` : ''}
+            <div class="time">🕐 ${fmtTime(it.created_at)}</div>
+            <div class="statusRow">
+              <span class="statusTag ${it.status}">${it.status === 'pending' ? '⏳ 待处理' : '✅ 已处理'}</span>
+              ${it.status === 'pending'
+                ? `<button class="btnProcess mark" onclick="markDone('${it.id}')">标记已处理</button>`
+                : `<button class="btnProcess undo" onclick="markUndo('${it.id}')">撤回</button>`}
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function fmtTime(iso) {
+      const d = new Date(iso);
+      return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+    }
+
+    async function markDone(id) {
+      await sb.from('jifen_submissions').update({ status: 'processed' }).eq('id', id);
+      loadData(currentFilter);
+    }
+    async function markUndo(id) {
+      await sb.from('jifen_submissions').update({ status: 'pending' }).eq('id', id);
+      loadData(currentFilter);
+    }
+
+    function viewImage(src) {
+      if (!src) return;
+      const modal = document.getElementById('imgModal');
+      document.getElementById('imgModalSrc').src = src;
+      modal.classList.add('show');
+    }
+
+    // 实时订阅
+    sb.channel('admin-jifen-ch')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'jifen_submissions' }, () => {
+        loadData(currentFilter);
+      })
+      .subscribe();
+
+    // 初始加载
+    loadData('pending');
+  </script>
 </body>
 </html>
