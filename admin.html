@@ -139,6 +139,22 @@
       if (pollingTimer) { clearInterval(pollingTimer); pollingTimer = null; }
     }
 
+    // ntfy SSE 实时推送
+    function startNtfy() {
+      try {
+        var es = new EventSource('https://ntfy.sh/' + NTFY_TOPIC + '/sse');
+        es.onmessage = function(e) {
+          if (e.data) loadData(currentFilter);
+        };
+        es.onerror = function() {
+          es.close();
+          setTimeout(startNtfy, 8000);
+        };
+      } catch(err) {
+        console.warn('ntfy连接失败，将使用轮询刷新');
+      }
+    }
+
     function showError(msg) {
       document.getElementById('cardList').innerHTML = '<div class="error-msg">⚠️ ' + msg + '</div>';
     }
