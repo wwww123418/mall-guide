@@ -1760,11 +1760,23 @@ render();
 
 /* ── Activity Carousel ──────────────────────────── */
 (function() {
+  // 格式: { src, expires: 'YYYY-MM-DD' }  expires 过期后自动从轮播移除
   const slides = [
-    'activity1.png',
+    { src: 'activity1.png', expires: '2026-04-27' },
     'activity2.jpg',
     'activity3.jpg'
   ];
+  // 过期过滤
+  const today = new Date().toISOString().slice(0,10);
+  const activeSlides = slides.filter(function(s) {
+    if (typeof s === 'string') return true;
+    return s.expires >= today;
+  }).map(function(s) {
+    return typeof s === 'string' ? s : s.src;
+  });
+  if (activeSlides.length === 0) return; // 无活动图则不渲染轮播
+  // 用 activeSlides 替代 slides
+  var total = activeSlides.length;
   const total = slides.length;
   let idx = 0;
   let timer = null;
@@ -1786,7 +1798,7 @@ render();
     '<button class="carousel-close" id="carouselClose">✕</button>' +
     '<div class="carousel-track-wrap">' +
       '<div class="carousel-track" id="carouselTrack">' +
-        slides.map(function(s) { return '<div class="carousel-slide"><img src="' + s + '" draggable="false"></div>'; }).join('') +
+        activeSlides.map(function(s) { return '<div class="carousel-slide"><img src="' + s + '" draggable="false"></div>'; }).join('') +
       '</div>' +
     '</div>' +
     '<div class="carousel-dots" id="carouselDots">' + dotsHTML + '</div>';
