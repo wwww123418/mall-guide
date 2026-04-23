@@ -91,6 +91,8 @@ body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft
 .brand-code { font-size: 11px; color: var(--green); margin-bottom: 6px; font-family: monospace; }
 .brand-location { font-size: 11px; color: var(--text-secondary); }
 .brand-tags { font-size: 10px; color: var(--text-dim); margin-top: 4px; }
+.brand-tags-highlight { font-size: 16px; color: var(--green-light); margin-top: 4px; font-weight: 700; }
+.vip-benefit-highlight { font-size: 18px; color: var(--green-light); font-weight: 700; }
 
 .empty-state { text-align: center; padding: 60px 20px; color: var(--text-dim); }
 .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
@@ -524,7 +526,7 @@ function render(){
 
   vipCards.forEach(function(v){
     html+='<div class="vip-card"><div class="vip-tier">'+v.tier+'</div><div class="vip-divider"></div><ul class="vip-benefit">';
-    v.items.forEach(function(item){html+='<li>'+item+'</li>';});
+    v.items.forEach(function(item){var cls=item==='消费积分'?' vip-benefit-highlight':'';html+='<li class="'+cls+'">'+item+'</li>';});
     html+='</ul><div class="vip-cond">';
     v.cond.forEach(function(row){
       var forever=v.forever&&row[1]==='永久有效'?'<span class="vip-tag-forever">'+row[1]+'</span>':row[1];
@@ -545,11 +547,12 @@ function render(){
       var tags=shop.tags||'';
       var subloc=shop.subloc?' · '+shop.subloc:'';
       var sj=JSON.stringify(shop).replace(/"/g,'&quot;');
+      var tagClass=tags.includes('自助')?'brand-tags-highlight':'brand-tags';
       html+='<div class="brand-card'+(hi?' highlight':'')+'" onclick="openModal('+sj+',\''+escFloor+'\',\''+escZone+'\')">'+
         '<div class="brand-name">'+shop.name+(renov?'<span class="badge-reno">已撤场</span>':'')+'</div>'+
         '<div class="brand-code">'+shop.code+'</div>'+
         '<div class="brand-location">📍 '+(shop.location||'')+'</div>'+
-        (tags?'<div class="brand-tags">'+tags+subloc+'</div>':'')+'</div>';
+        (tags?'<div class="'+tagClass+'">'+tags+subloc+'</div>':'')+'</div>';
     });
     html+='</div>';
   }
