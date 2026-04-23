@@ -211,6 +211,9 @@
       })
       .subscribe();
 
+    // 每3秒自动刷新
+    setInterval(() => loadData(currentFilter), 3000);
+
     // 初始加载
     loadData('pending');
   </script>
