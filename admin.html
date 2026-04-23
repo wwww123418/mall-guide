@@ -90,8 +90,6 @@
   </style>
 </head>
 <body>
-  <div id="pauseTip" style="display:none;text-align:center;padding:6px 16px;background:#fff3cd;color:#856404;font-size:13px;border-radius:8px;margin-bottom:12px"></div>
-
   <div id="app">
     <header>
       <h1>🏢 KK MALL 积分管理</h1>
@@ -127,76 +125,18 @@
     var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     var currentFilter = 'pending';
     var pollingTimer = null;
-    var pausedUntil = 0;
-    var isPaused = false;
-    var pauseReason = '';                // '' | 'newdata' | 'admin'
-    var prevPendingIds = [];
+    var refreshing = false;             // 防重复刷新
 
-    // --- 轮询控制 ---
+    // --- 轮询控制（1分钟自动刷新）---
     function startPolling() {
       stopPolling();
       pollingTimer = setInterval(function() {
-        if (pausedUntil && Date.now() < pausedUntil) {
-          updatePauseStatus();
-          return;
-        }
-        if (pausedUntil && Date.now() >= pausedUntil) {
-          pausedUntil = 0;
-          isPaused = false;
-          prevPendingIds = [];
-          updatePauseStatus();
-        }
-        loadData(currentFilter);
-      }, 3000);
+        if (!refreshing) loadData(currentFilter);
+      }, 60000);
     }
 
     function stopPolling() {
       if (pollingTimer) { clearInterval(pollingTimer); pollingTimer = null; }
-    }
-
-    // pauseMs=0 表示暂停不恢复（等待管理员处理）
-    function pausePolling(pauseMs, reason) {
-      pausedUntil = pauseMs > 0 ? Date.now() + pauseMs : 0;
-      isPaused = true;
-      pauseReason = reason || '';
-      updatePauseStatus();
-    }
-
-    function updatePauseStatus() {
-      var el = document.getElementById('pauseTip');
-      if (!el) return;
-      if (!isPaused) { el.style.display = 'none'; return; }
-      if (pauseReason === 'newdata') {
-        el.textContent = '📢 发现新的待处理，请及时标记处理';
-        el.style.display = '';
-        return;
-      }
-      if (pauseReason === 'admin' && pausedUntil) {
-        var left = Math.max(0, Math.ceil((pausedUntil - Date.now()) / 1000));
-        el.textContent = '⏸ 暂停刷新中，' + left + '秒后自动恢复';
-        el.style.display = '';
-        return;
-      }
-      el.style.display = 'none';
-    }
-
-    // ntfy SSE 实时推送
-    function startNtfy() {
-      try {
-        var es = new EventSource('https://ntfy.sh/' + NTFY_TOPIC + '/sse');
-        es.onmessage = function(e) {
-          if (e.data) {
-            loadData(currentFilter);   // 立即刷新一次
-            pausePolling(10000);       // 暂停10秒
-          }
-        };
-        es.onerror = function() {
-          es.close();
-          setTimeout(startNtfy, 8000);
-        };
-      } catch(err) {
-        console.warn('ntfy连接失败，将使用轮询刷新');
-      }
     }
 
     function showError(msg) {
@@ -256,6 +196,7 @@
     }
 
     function loadData(filter) {
+      if (refreshing) return;
       if (filter !== undefined) {
         currentFilter = filter;
         var btns = document.querySelectorAll('.filterBtn');
@@ -264,11 +205,11 @@
         var el = document.getElementById(idMap[filter] || 'btnPending');
         if (el) el.classList.add('active');
       }
-      // 刷新前记录当前待处理ID（用于检测新数据）
-      var snapPendingIds = prevPendingIds.slice();
+      refreshing = true;
       document.getElementById('cardList').innerHTML = '<div class="empty">加载中…</div>';
       sb.from('jifen_submissions').select('*').order('created_at', { ascending: false })
         .then(function(res) {
+          refreshing = false;
           if (res.error) {
             showError('数据加载失败：' + res.error.message);
             console.error(res.error);
@@ -277,21 +218,9 @@
           var items = currentFilter === 'all' ? res.data : res.data.filter(function(d) { return d.status === currentFilter; });
           renderCards(items);
           loadStats();
-
-          // 仅在"待处理"筛选下检测新数据
-          if (currentFilter === 'pending') {
-            var currIds = res.data.filter(function(d) { return d.status === 'pending'; }).map(function(d) { return d.id; });
-            var hasNew = false;
-            for (var k = 0; k < currIds.length; k++) {
-              if (snapPendingIds.indexOf(currIds[k]) === -1) { hasNew = true; break; }
-            }
-            if (hasNew) {
-              pausePolling(0, 'newdata');
-            }
-            prevPendingIds = currIds;
-          }
         })
         .catch(function(err) {
+          refreshing = false;
           showError('网络错误，请检查网络连接');
           console.error(err);
         });
@@ -299,26 +228,11 @@
 
     function markDone(id) {
       sb.from('jifen_submissions').update({ status: 'processed' }).eq('id', id)
-        .then(function() {
-          // 处理完后：立即刷新 + 10秒后恢复
-          isPaused = false;
-          pausedUntil = 0;
-          pauseReason = '';
-          updatePauseStatus();
-          loadData(currentFilter);
-          pausePolling(10000, 'admin');
-        });
+        .then(function() { loadData(currentFilter); });
     }
     function markUndo(id) {
       sb.from('jifen_submissions').update({ status: 'pending' }).eq('id', id)
-        .then(function() {
-          isPaused = false;
-          pausedUntil = 0;
-          pauseReason = '';
-          updatePauseStatus();
-          loadData(currentFilter);
-          pausePolling(10000, 'admin');
-        });
+        .then(function() { loadData(currentFilter); });
     }
     function viewImage(src) {
       if (!src) return;
@@ -329,11 +243,8 @@
     // 启动 ntfy（不阻塞加载）
     startNtfy();
 
-    // 启动 3 秒轮询
+    // 启动 1 分钟轮询
     startPolling();
-
-    // 每秒更新一次暂停倒计时显示
-    setInterval(updatePauseStatus, 1000);
 
     // 初始加载（加上5秒超时兜底）
     var loadTimer = setTimeout(function() {
