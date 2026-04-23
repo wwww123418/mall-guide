@@ -1,4 +1,4 @@
-const CACHE_NAME = 'kk-mall-v1';
+const CACHE_NAME = 'kk-mall-v2';
 const ASSETS = [
   './mall_guide.html',
   './manifest.json'
@@ -20,6 +20,15 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    caches.match(e.request).then(r => r || fetch(e.request))
+    fetch(e.request)
+      .then(res => {
+        // 成功则更新缓存
+        if (res.ok) {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+        }
+        return res;
+      })
+      .catch(() => caches.match(e.request))
   );
 });
