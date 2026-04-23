@@ -1776,8 +1776,7 @@ render();
   });
   if (activeSlides.length === 0) return; // 无活动图则不渲染轮播
   // 用 activeSlides 替代 slides
-  var total = activeSlides.length;
-  const total = slides.length;
+  const total = activeSlides.length;
   let idx = 0;
   let timer = null;
   let idleTimer = null; // 空闲计时器：用户无操作10秒后弹窗
