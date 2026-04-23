@@ -28,7 +28,6 @@
       background:#1a1008;color:#C5962A;font-size:13px;cursor:pointer;
     }
     .refreshBtn:active{opacity:.8}
-
     .stats{display:flex;gap:12px;margin-bottom:24px}
     .statCard{
       flex:1;background:#fff;border-radius:12px;padding:16px 20px;
@@ -36,7 +35,6 @@
     }
     .statCard .num{font-size:28px;font-weight:bold;color:#C5962A}
     .statCard .label{font-size:12px;color:#888;margin-top:2px}
-
     #cardList{display:flex;flex-direction:column;gap:16px}
     .card{
       background:#fff;border-radius:14px;overflow:hidden;
@@ -75,11 +73,8 @@
     .btnProcess.mark{background:#C5962A;color:#fff}
     .btnProcess.mark:hover{background:#a87d22}
     .btnProcess.undo{background:#f0ede6;color:#888}
-
-    .empty{
-      text-align:center;padding:60px 20px;color:#bbb;font-size:16px;
-    }
-
+    .empty{text-align:center;padding:60px 20px;color:#bbb;font-size:16px}
+    .error-msg{text-align:center;padding:20px;color:#e74c3c;font-size:14px}
     #imgModal{
       display:none;position:fixed;inset:0;z-index:9999;
       background:rgba(0,0,0,.85);
@@ -87,7 +82,6 @@
     }
     #imgModal.show{display:flex}
     #imgModal img{max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px}
-
     @media(max-width:640px){
       .card{flex-direction:column}
       .cardImg{width:100%;min-height:120px;max-height:200px}
@@ -122,105 +116,144 @@
     <img id="imgModalSrc" src="" alt="查看大图">
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
   <script>
-    const SUPABASE_URL = 'https://sbdqkzfwuczkbudeocks.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
-    const NTFY_TOPIC = 'kk-mall-jifen';
+    var SUPABASE_URL = 'https://sbdqkzfwuczkbudeocks.supabase.co';
+    var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
+    var NTFY_TOPIC = 'kk-mall-jifen';
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let currentFilter = 'pending';
+    var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    var currentFilter = 'pending';
+    var initDone = false;
 
     // ntfy SSE 实时推送
     function startNtfy() {
-      const es = new EventSource('https://ntfy.sh/' + NTFY_TOPIC + '/sse');
-      es.onmessage = (e) => {
-        if (e.data) loadData(currentFilter);
-      };
-      es.onerror = () => {
-        es.close();
-        setTimeout(startNtfy, 5000);
-      };
-    }
-    startNtfy();
-
-    async function loadStats() {
-      const { count: pending } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).eq('status', 'pending');
-      const { count: total } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true });
-      const today = new Date(); today.setHours(0,0,0,0);
-      const { count: todayCount } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).gte('created_at', today.toISOString());
-      document.getElementById('statPending').textContent = pending ?? '-';
-      document.getElementById('statToday').textContent = todayCount ?? '-';
-      document.getElementById('statTotal').textContent = total ?? '-';
-      const badge = document.getElementById('pendingBadge');
-      if (pending > 0) { badge.textContent = pending; badge.style.display = ''; }
-      else { badge.style.display = 'none'; }
+      try {
+        var es = new EventSource('https://ntfy.sh/' + NTFY_TOPIC + '/sse');
+        es.onmessage = function(e) {
+          if (e.data) loadData(currentFilter);
+        };
+        es.onerror = function() {
+          es.close();
+          setTimeout(startNtfy, 8000);
+        };
+      } catch(err) {
+        console.warn('ntfy连接失败，将使用轮询刷新');
+      }
     }
 
-    async function loadData(filter = 'pending') {
-      currentFilter = filter;
-      document.querySelectorAll('.filterBtn').forEach(b => b.classList.remove('active'));
-      const id = 'btn' + filter.charAt(0).toUpperCase() + filter.slice(1);
-      document.getElementById(id).classList.add('active');
-
-      let q = sb.from('jifen_submissions').select('*').order('created_at', { ascending: false });
-      if (filter !== 'all') q = q.eq('status', filter);
-      const { data, error } = await q;
-      if (error) { console.error(error); return; }
-      renderCards(data || []);
-      loadStats();
+    function showError(msg) {
+      document.getElementById('cardList').innerHTML = '<div class="error-msg">⚠️ ' + msg + '</div>';
     }
 
     function renderCards(items) {
-      const el = document.getElementById('cardList');
-      if (!items.length) { el.innerHTML = '<div class="empty">📭 暂无记录</div>'; return; }
-      el.innerHTML = items.map(it => `
-        <div class="card ${it.status === 'processed' ? 'processed' : ''}">
-          <div class="cardImg" onclick="viewImage('${it.image_base64 ? '1' : ''}')">
-            ${it.image_base64 ? `<img src="${it.image_base64}" alt="小票"><div class="zoomHint">🔍 点击查看</div>` : '<div class="noImg">无图片</div>'}
-          </div>
-          <div class="cardInfo">
-            <div class="phone">📱 ${it.phone}</div>
-            ${it.note ? `<div class="note">📝 ${escHtml(it.note)}</div>` : ''}
-            <div class="time">🕐 ${fmtTime(it.created_at)}</div>
-            <div class="statusRow">
-              <span class="statusTag ${it.status}">${it.status === 'pending' ? '⏳ 待处理' : '✅ 已处理'}</span>
-              ${it.status === 'pending'
-                ? `<button class="btnProcess mark" onclick="markDone('${it.id}')">标记已处理</button>`
-                : `<button class="btnProcess undo" onclick="markUndo('${it.id}')">撤回</button>`}
-            </div>
-          </div>
-        </div>
-      `).join('');
+      var el = document.getElementById('cardList');
+      if (!items || !items.length) {
+        el.innerHTML = '<div class="empty">📭 暂无记录</div>';
+        return;
+      }
+      var html = '';
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        var cls = it.status === 'processed' ? 'processed' : '';
+        var imgHtml = it.image_base64
+          ? '<img src="' + it.image_base64 + '" alt="小票"><div class="zoomHint">🔍 点击查看</div>'
+          : '<div class="noImg">无图片</div>';
+        var noteHtml = it.note ? '<div class="note">📝 ' + escHtml(it.note) + '</div>' : '';
+        var statusHtml = it.status === 'pending'
+          ? '<span class="statusTag pending">⏳ 待处理</span><button class="btnProcess mark" onclick="markDone(\'' + it.id + '\')">标记已处理</button>'
+          : '<span class="statusTag processed">✅ 已处理</span><button class="btnProcess undo" onclick="markUndo(\'' + it.id + '\')">撤回</button>';
+        html += '<div class="card ' + cls + '">\
+          <div class="cardImg" onclick="viewImage(\'' + (it.image_base64 ? '1' : '') + '\')">' + imgHtml + '</div>\
+          <div class="cardInfo">\
+            <div class="phone">📱 ' + it.phone + '</div>' + noteHtml + '\
+            <div class="time">🕐 ' + fmtTime(it.created_at) + '</div>\
+            <div class="statusRow">' + statusHtml + '</div>\
+          </div>\
+        </div>';
+      }
+      el.innerHTML = html;
     }
 
-    function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+    function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
     function fmtTime(iso) {
-      const d = new Date(iso);
-      return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+      var d = new Date(iso);
+      return d.getFullYear() + '/' + (d.getMonth()+1) + '/' + d.getDate() + ' ' +
+        String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
     }
 
-    async function markDone(id) {
-      await sb.from('jifen_submissions').update({ status: 'processed' }).eq('id', id);
-      loadData(currentFilter);
-    }
-    async function markUndo(id) {
-      await sb.from('jifen_submissions').update({ status: 'pending' }).eq('id', id);
-      loadData(currentFilter);
+    function loadStats() {
+      sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).eq('status', 'pending')
+        .then(function(r) {
+          var p = r.count || 0;
+          document.getElementById('statPending').textContent = p;
+          var badge = document.getElementById('pendingBadge');
+          if (p > 0) { badge.textContent = p; badge.style.display = ''; }
+          else { badge.style.display = 'none'; }
+        });
+      var today = new Date(); today.setHours(0,0,0,0);
+      sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).gte('created_at', today.toISOString())
+        .then(function(r) { document.getElementById('statToday').textContent = r.count || 0; });
+      sb.from('jifen_submissions').select('*', { count: 'exact', head: true })
+        .then(function(r) { document.getElementById('statTotal').textContent = r.count || 0; });
     }
 
+    function loadData(filter) {
+      if (filter !== undefined) {
+        currentFilter = filter;
+        var btns = document.querySelectorAll('.filterBtn');
+        for (var j = 0; j < btns.length; j++) btns[j].classList.remove('active');
+        var idMap = { pending: 'btnPending', all: 'btnAll', processed: 'btnProcessed' };
+        var el = document.getElementById(idMap[filter] || 'btnPending');
+        if (el) el.classList.add('active');
+      }
+      document.getElementById('cardList').innerHTML = '<div class="empty">加载中…</div>';
+      sb.from('jifen_submissions').select('*').order('created_at', { ascending: false })
+        .then(function(res) {
+          if (res.error) {
+            showError('数据加载失败：' + res.error.message);
+            console.error(res.error);
+            return;
+          }
+          var items = currentFilter === 'all' ? res.data : res.data.filter(function(d) { return d.status === currentFilter; });
+          renderCards(items);
+          loadStats();
+        })
+        .catch(function(err) {
+          showError('网络错误，请检查网络连接');
+          console.error(err);
+        });
+    }
+
+    function markDone(id) {
+      sb.from('jifen_submissions').update({ status: 'processed' }).eq('id', id)
+        .then(function() { loadData(currentFilter); });
+    }
+    function markUndo(id) {
+      sb.from('jifen_submissions').update({ status: 'pending' }).eq('id', id)
+        .then(function() { loadData(currentFilter); });
+    }
     function viewImage(src) {
       if (!src) return;
-      const modal = document.getElementById('imgModal');
       document.getElementById('imgModalSrc').src = src;
-      modal.classList.add('show');
+      document.getElementById('imgModal').classList.add('show');
     }
 
-    // 每3秒自动刷新
-    setInterval(() => loadData(currentFilter), 3000);
+    // 启动 ntfy（不阻塞加载）
+    startNtfy();
 
-    // 初始加载
-    loadData('pending');
+    // 每3秒轮询刷新
+    setInterval(function() { loadData(currentFilter); }, 3000);
+
+    // 初始加载（加上5秒超时兜底）
+    var loadTimer = setTimeout(function() {
+      var el = document.getElementById('cardList');
+      if (el && el.innerHTML.indexOf('加载中') !== -1) {
+        showError('加载超时，请刷新页面重试');
+      }
+    }, 5000);
+    loadData(currentFilter);
+    clearTimeout(loadTimer);
   </script>
 </body>
 </html>
