@@ -89,6 +89,30 @@
     #imgModal.show{display:flex}
     #imgModal img{max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px}
 
+    /* 密码门 */
+    #lockScreen{
+      position:fixed;inset:0;z-index:99999;
+      background:#f5f2ec;
+      display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:20px;
+    }
+    #lockScreen h2{font-size:22px;color:#1a1008}
+    #lockScreen p{font-size:13px;color:#888}
+    #pwdInput{
+      border:2px solid #e0d8c8;border-radius:10px;
+      padding:12px 20px;font-size:16px;width:260px;
+      text-align:center;outline:none;
+      transition:border-color .2s;
+    }
+    #pwdInput:focus{border-color:#C5962A}
+    #pwdError{color:#e74c3c;font-size:13px;display:none}
+    #pwdBtn{
+      border:none;border-radius:10px;padding:12px 40px;
+      background:#C5962A;color:#fff;font-size:15px;cursor:pointer;
+      font-weight:bold;
+    }
+    #pwdBtn:hover{background:#a87d22}
+
     @media(max-width:640px){
       .card{flex-direction:column}
       .cardImg{width:100%;min-height:120px;max-height:200px}
@@ -97,7 +121,18 @@
   </style>
 </head>
 <body>
-  <div id="app">
+
+  <!-- 密码门 -->
+  <div id="lockScreen">
+    <h2>🔐 请输入管理员密码</h2>
+    <p>访问积分管理后台</p>
+    <input type="password" id="pwdInput" placeholder="输入密码后按回车" onkeydown="if(event.key==='Enter')checkPwd()">
+    <div id="pwdError">密码错误，请重试</div>
+    <button id="pwdBtn" onclick="checkPwd()">进入后台</button>
+  </div>
+
+  <!-- 正式后台（密码验证前隐藏） -->
+  <div id="app" style="display:none">
     <header>
       <h1>🏢 KK MALL 积分管理</h1>
       <div class="headerRight">
@@ -126,96 +161,111 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    const SUPABASE_URL = 'https://sbdqkzfwuczkbudeocks.supabase.co';
-    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
+    // ⚠️ 在下方引号内设置你的密码（只改这里）
+    const ADMIN_PWD = 'kk123456';
 
-    const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    let currentFilter = 'pending';
-
-    async function loadStats() {
-      const { count: pending } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).eq('status', 'pending');
-      const { count: total } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true });
-      const today = new Date(); today.setHours(0,0,0,0);
-      const { count: todayCount } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).gte('created_at', today.toISOString());
-      document.getElementById('statPending').textContent = pending ?? '-';
-      document.getElementById('statToday').textContent = todayCount ?? '-';
-      document.getElementById('statTotal').textContent = total ?? '-';
-      const badge = document.getElementById('pendingBadge');
-      if (pending > 0) { badge.textContent = pending; badge.style.display = ''; }
-      else { badge.style.display = 'none'; }
+    function checkPwd() {
+      const v = document.getElementById('pwdInput').value;
+      if (v === ADMIN_PWD) {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('app').style.display = 'block';
+        initApp();
+      } else {
+        document.getElementById('pwdError').style.display = 'block';
+        document.getElementById('pwdInput').value = '';
+        document.getElementById('pwdInput').focus();
+      }
     }
 
-    async function loadData(filter = 'pending') {
-      currentFilter = filter;
-      document.querySelectorAll('.filterBtn').forEach(b => b.classList.remove('active'));
-      const id = 'btn' + filter.charAt(0).toUpperCase() + filter.slice(1);
-      document.getElementById(id).classList.add('active');
+    function initApp() {
+      const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      let currentFilter = 'pending';
 
-      let q = sb.from('jifen_submissions').select('*').order('created_at', { ascending: false });
-      if (filter !== 'all') q = q.eq('status', filter);
-      const { data, error } = await q;
-      if (error) { console.error(error); return; }
-      renderCards(data || []);
-      loadStats();
-    }
+      async function loadStats() {
+        const { count: pending } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+        const { count: total } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true });
+        const today = new Date(); today.setHours(0,0,0,0);
+        const { count: todayCount } = await sb.from('jifen_submissions').select('*', { count: 'exact', head: true }).gte('created_at', today.toISOString());
+        document.getElementById('statPending').textContent = pending ?? '-';
+        document.getElementById('statToday').textContent = todayCount ?? '-';
+        document.getElementById('statTotal').textContent = total ?? '-';
+        const badge = document.getElementById('pendingBadge');
+        if (pending > 0) { badge.textContent = pending; badge.style.display = ''; }
+        else { badge.style.display = 'none'; }
+      }
 
-    function renderCards(items) {
-      const el = document.getElementById('cardList');
-      if (!items.length) { el.innerHTML = '<div class="empty">📭 暂无记录</div>'; return; }
-      el.innerHTML = items.map(it => `
-        <div class="card ${it.status === 'processed' ? 'processed' : ''}">
-          <div class="cardImg" onclick="viewImage('${it.image_base64 ? '1' : ''}')">
-            ${it.image_base64 ? `<img src="${it.image_base64}" alt="小票"><div class="zoomHint">🔍 点击查看</div>` : '<div class="noImg">无图片</div>'}
-          </div>
-          <div class="cardInfo">
-            <div class="phone">📱 ${it.phone}</div>
-            ${it.note ? `<div class="note">📝 ${escHtml(it.note)}</div>` : ''}
-            <div class="time">🕐 ${fmtTime(it.created_at)}</div>
-            <div class="statusRow">
-              <span class="statusTag ${it.status}">${it.status === 'pending' ? '⏳ 待处理' : '✅ 已处理'}</span>
-              ${it.status === 'pending'
-                ? `<button class="btnProcess mark" onclick="markDone('${it.id}')">标记已处理</button>`
-                : `<button class="btnProcess undo" onclick="markUndo('${it.id}')">撤回</button>`}
+      async function loadData(filter = 'pending') {
+        currentFilter = filter;
+        document.querySelectorAll('.filterBtn').forEach(b => b.classList.remove('active'));
+        const id = 'btn' + filter.charAt(0).toUpperCase() + filter.slice(1);
+        document.getElementById(id).classList.add('active');
+
+        let q = sb.from('jifen_submissions').select('*').order('created_at', { ascending: false });
+        if (filter !== 'all') q = q.eq('status', filter);
+        const { data, error } = await q;
+        if (error) { console.error(error); return; }
+        renderCards(data || []);
+        loadStats();
+      }
+
+      function renderCards(items) {
+        const el = document.getElementById('cardList');
+        if (!items.length) { el.innerHTML = '<div class="empty">📭 暂无记录</div>'; return; }
+        el.innerHTML = items.map(it => `
+          <div class="card ${it.status === 'processed' ? 'processed' : ''}">
+            <div class="cardImg" onclick="viewImage('${it.image_base64 ? '1' : ''}')">
+              ${it.image_base64 ? `<img src="${it.image_base64}" alt="小票"><div class="zoomHint">🔍 点击查看</div>` : '<div class="noImg">无图片</div>'}
+            </div>
+            <div class="cardInfo">
+              <div class="phone">📱 ${it.phone}</div>
+              ${it.note ? `<div class="note">📝 ${escHtml(it.note)}</div>` : ''}
+              <div class="time">🕐 ${fmtTime(it.created_at)}</div>
+              <div class="statusRow">
+                <span class="statusTag ${it.status}">${it.status === 'pending' ? '⏳ 待处理' : '✅ 已处理'}</span>
+                ${it.status === 'pending'
+                  ? `<button class="btnProcess mark" onclick="markDone('${it.id}')">标记已处理</button>`
+                  : `<button class="btnProcess undo" onclick="markUndo('${it.id}')">撤回</button>`}
+              </div>
             </div>
           </div>
-        </div>
-      `).join('');
-    }
+        `).join('');
+      }
 
-    function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-    function fmtTime(iso) {
-      const d = new Date(iso);
-      return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
-    }
+      function escHtml(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+      function fmtTime(iso) {
+        const d = new Date(iso);
+        return `${d.getFullYear()}/${d.getMonth()+1}/${d.getDate()} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+      }
 
-    async function markDone(id) {
-      await sb.from('jifen_submissions').update({ status: 'processed' }).eq('id', id);
-      loadData(currentFilter);
-    }
-    async function markUndo(id) {
-      await sb.from('jifen_submissions').update({ status: 'pending' }).eq('id', id);
-      loadData(currentFilter);
-    }
-
-    function viewImage(src) {
-      if (!src) return;
-      const modal = document.getElementById('imgModal');
-      document.getElementById('imgModalSrc').src = src;
-      modal.classList.add('show');
-    }
-
-    // 实时订阅
-    sb.channel('admin-jifen-ch')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'jifen_submissions' }, () => {
+      async function markDone(id) {
+        await sb.from('jifen_submissions').update({ status: 'processed' }).eq('id', id);
         loadData(currentFilter);
-      })
-      .subscribe();
+      }
+      async function markUndo(id) {
+        await sb.from('jifen_submissions').update({ status: 'pending' }).eq('id', id);
+        loadData(currentFilter);
+      }
 
-    // 每3秒自动刷新
-    setInterval(() => loadData(currentFilter), 3000);
+      function viewImage(src) {
+        if (!src) return;
+        const modal = document.getElementById('imgModal');
+        document.getElementById('imgModalSrc').src = src;
+        modal.classList.add('show');
+      }
 
-    // 初始加载
-    loadData('pending');
+      // 实时订阅
+      sb.channel('admin-jifen-ch')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'jifen_submissions' }, () => {
+          loadData(currentFilter);
+        })
+        .subscribe();
+
+      // 每3秒自动刷新
+      setInterval(() => loadData(currentFilter), 3000);
+
+      // 初始加载
+      loadData('pending');
+    }
   </script>
 </body>
 </html>
