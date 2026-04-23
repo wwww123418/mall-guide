@@ -253,18 +253,30 @@
         modal.classList.add('show');
       }
 
-      // 实时订阅
+      // 实时订阅（失败不影响正常加载）
       sb.channel('admin-jifen-ch')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'jifen_submissions' }, () => {
           loadData(currentFilter);
         })
-        .subscribe();
+        .subscribe(status => {
+          if (status === 'SUBSCRIBED') console.log('实时订阅已连接');
+          else if (status === 'CHANNEL_ERROR') console.warn('实时订阅失败，将仅靠轮询刷新');
+        });
 
       // 每3秒自动刷新
       setInterval(() => loadData(currentFilter), 3000);
 
-      // 初始加载
-      loadData('pending');
+      // 初始加载（带超时保护）
+      let loaded = false;
+      loadData('pending').then(() => { loaded = true; });
+      setTimeout(() => {
+        if (!loaded) {
+          document.getElementById('cardList').innerHTML = '<div class="empty">📭 暂无记录</div>';
+          document.getElementById('statPending').textContent = '0';
+          document.getElementById('statToday').textContent = '0';
+          document.getElementById('statTotal').textContent = '0';
+        }
+      }, 5000);
     }
   </script>
 </body>
