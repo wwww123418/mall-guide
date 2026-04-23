@@ -90,6 +90,8 @@
   </style>
 </head>
 <body>
+  <div id="pauseTip" style="display:none;text-align:center;padding:6px 16px;background:#fff3cd;color:#856404;font-size:13px;border-radius:8px;margin-bottom:12px"></div>
+
   <div id="app">
     <header>
       <h1>🏢 KK MALL 积分管理</h1>
@@ -124,14 +126,57 @@
 
     var sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
     var currentFilter = 'pending';
-    var initDone = false;
+    var pollingTimer = null;          // 轮询定时器
+    var pausedUntil = 0;               // 暂停截止时间戳
+    var isPaused = false;              // 暂停状态标记
+
+    // --- 轮询控制 ---
+    function startPolling() {
+      stopPolling();
+      pollingTimer = setInterval(function() {
+        if (pausedUntil && Date.now() < pausedUntil) {
+          updatePauseStatus();
+          return;
+        }
+        if (pausedUntil && Date.now() >= pausedUntil) {
+          pausedUntil = 0;
+          isPaused = false;
+          updatePauseStatus();
+        }
+        loadData(currentFilter);
+      }, 3000);
+    }
+
+    function stopPolling() {
+      if (pollingTimer) { clearInterval(pollingTimer); pollingTimer = null; }
+    }
+
+    // 暂停轮询 PAUSE_MS 毫秒
+    function pausePolling(pauseMs) {
+      pausedUntil = Date.now() + pauseMs;
+      isPaused = true;
+      updatePauseStatus();
+    }
+
+    // 实时更新页面上暂停倒计时显示
+    function updatePauseStatus() {
+      var el = document.getElementById('pauseTip');
+      if (!el) return;
+      if (!isPaused || !pausedUntil) { el.style.display = 'none'; return; }
+      var left = Math.max(0, Math.ceil((pausedUntil - Date.now()) / 1000));
+      el.textContent = '⏸ 暂停刷新中，' + left + '秒后自动恢复';
+      el.style.display = '';
+    }
 
     // ntfy SSE 实时推送
     function startNtfy() {
       try {
         var es = new EventSource('https://ntfy.sh/' + NTFY_TOPIC + '/sse');
         es.onmessage = function(e) {
-          if (e.data) loadData(currentFilter);
+          if (e.data) {
+            loadData(currentFilter);   // 立即刷新一次
+            pausePolling(10000);       // 暂停10秒
+          }
         };
         es.onerror = function() {
           es.close();
@@ -227,11 +272,17 @@
 
     function markDone(id) {
       sb.from('jifen_submissions').update({ status: 'processed' }).eq('id', id)
-        .then(function() { loadData(currentFilter); });
+        .then(function() {
+          loadData(currentFilter);
+          pausePolling(10000); // 处理完暂停10秒
+        });
     }
     function markUndo(id) {
       sb.from('jifen_submissions').update({ status: 'pending' }).eq('id', id)
-        .then(function() { loadData(currentFilter); });
+        .then(function() {
+          loadData(currentFilter);
+          pausePolling(10000); // 撤回后暂停10秒
+        });
     }
     function viewImage(src) {
       if (!src) return;
@@ -242,8 +293,11 @@
     // 启动 ntfy（不阻塞加载）
     startNtfy();
 
-    // 每3秒轮询刷新
-    setInterval(function() { loadData(currentFilter); }, 3000);
+    // 启动 3 秒轮询
+    startPolling();
+
+    // 每秒更新一次暂停倒计时显示
+    setInterval(updatePauseStatus, 1000);
 
     // 初始加载（加上5秒超时兜底）
     var loadTimer = setTimeout(function() {
