@@ -1,21 +1,14 @@
 {
   "name": "KK MALL 导购",
   "short_name": "KK MALL",
-  "description": "KK MALL 商场品牌导购",
-  "start_url": "/mall-guide/mall_pwa.html",
+  "description": "KK MALL 商场品牌导购与自助积分",
+  "start_url": "./mall_guide.html",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#1a1008",
-  "theme_color": "#1a1008",
-  "scope": "/mall-guide/",
-  "lang": "zh-CN",
-  "categories": ["shopping", "lifestyle"],
+  "background_color": "#0c0c14",
+  "theme_color": "#0c0c14",
   "icons": [
-    {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' rx='96' fill='%231a1008'/><text x='256' y='330' font-size='260' text-anchor='middle' fill='%23C5962A' font-weight='bold'>K</text></svg>",
-      "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    }
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
   ]
 }
