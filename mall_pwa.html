@@ -582,6 +582,7 @@
       };
 
       // 提交到 Supabase 数据库
+      let submitOk = false;
       try {
         const { error: dbErr } = await sbClient
           .from('jifen_submissions')
@@ -592,9 +593,20 @@
             mall: 'KK MALL',
             status: 'pending'
           });
-        if (dbErr) console.error('Supabase insert error:', dbErr);
+        if (dbErr) {
+          console.error('Supabase insert error:', dbErr);
+          alert('提交失败: ' + (dbErr.message || JSON.stringify(dbErr)));
+        } else {
+          submitOk = true;
+        }
       } catch (err) {
         console.error('Supabase submit failed:', err);
+        alert('提交异常: ' + err.message);
+      }
+      if (!submitOk) {
+        btn.disabled = false;
+        btn.innerHTML = '提交积分';
+        return;
       }
 
       closeJifen();
