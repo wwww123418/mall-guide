@@ -581,20 +581,20 @@
         mall: 'KK MALL'
       };
 
-      // 提交到 ntfy.sh（公网推送，管理员实时收到）
-      const TOPIC = 'kk-mall-jifen-2026';
+      // 提交到 Supabase 数据库
       try {
-        await fetch(`https://ntfy.sh/${TOPIC}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'X-Title': `KK MALL 积分 ${phone} ¥${note || '-'}`,
-            'X-Tags': 'jifen,kk'
-          },
-          body: JSON.stringify({ phone, note, image: broadcastImage, time: timeStr })
-        });
+        const { error: dbErr } = await sbClient
+          .from('jifen_submissions')
+          .insert({
+            phone: phone,
+            note: note || null,
+            image_base64: broadcastImage,
+            mall: 'KK MALL',
+            status: 'pending'
+          });
+        if (dbErr) console.error('Supabase insert error:', dbErr);
       } catch (err) {
-        console.error('ntfy submit failed:', err);
+        console.error('Supabase submit failed:', err);
       }
 
       closeJifen();
