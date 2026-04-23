@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- v2026-04-21c: cat-filter sticky removed -->
 <title>商场导购</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -934,6 +935,126 @@
     .carousel-track-wrap { width: 92%; height: 78%; }
     .carousel-close { width: 32px; height: 32px; font-size: 16px; top: 10px; left: 10px; }
   }
+
+  /* ── 自助积分按钮 ── */
+  #jifenBtn{
+    position:fixed;top:14px;right:14px;z-index:9000;
+    background:linear-gradient(135deg,var(--gold),#b8904e);color:#0c0c14;
+    border:none;border-radius:22px;
+    padding:8px 14px;font-size:12px;font-weight:bold;
+    cursor:pointer;box-shadow:0 2px 12px rgba(201,169,110,0.4);
+    display:flex;align-items:center;gap:5px;
+    transition:transform .15s,box-shadow .15s;
+  }
+  #jifenBtn:active{transform:scale(.95);box-shadow:0 1px 6px rgba(201,169,110,0.3)}
+
+  /* ── 积分表单弹窗 ── */
+  #jifenModal{
+    display:none;position:fixed;inset:0;z-index:9999;
+    background:rgba(5,5,12,.7);backdrop-filter:blur(6px);
+    justify-content:center;align-items:flex-end;
+  }
+  #jifenModal.show{display:flex}
+  #jifenSheet{
+    background:#1a1a28;border:1px solid var(--border);
+    border-radius:22px 22px 0 0;
+    width:100%;max-width:480px;
+    padding:28px 24px calc(24px + env(safe-area-inset-bottom, 0));
+    animation:jifenSlideUp .28s ease;
+    max-height:92vh;overflow-y:auto;
+  }
+  @keyframes jifenSlideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+
+  .jifen-handle{width:40px;height:4px;border-radius:2px;background:rgba(201,169,110,.3);margin:0 auto 20px}
+  .jifen-title{font-size:17px;font-weight:bold;color:var(--text);margin-bottom:20px;text-align:center}
+
+  .jf-stepBar{display:flex;justify-content:center;gap:8px;margin-bottom:20px}
+  .jf-stepDot{width:8px;height:8px;border-radius:50%;background:var(--text-dim);transition:background .3s}
+  .jf-stepDot.active{background:var(--gold)}
+
+  /* 拍照区 */
+  .jf-camWrap{
+    position:relative;border-radius:14px;overflow:hidden;
+    background:#0c0c14;aspect-ratio:4/3;
+    margin-bottom:14px;display:block;cursor:pointer;
+    border:1px solid var(--border);
+  }
+  .jf-camWrap video,.jf-camWrap img{width:100%;height:100%;object-fit:cover;display:block}
+  .jf-camWrap img{position:absolute;inset:0;z-index:1}
+  .jf-camOverlay{
+    position:absolute;inset:0;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;
+    color:var(--text);text-align:center;z-index:2;pointer-events:none;
+  }
+  .jf-camOverlay.hidden{display:none}
+  .jf-camOverlay .camIcon{font-size:52px;margin-bottom:8px;opacity:.7}
+  .jf-camOverlay p{font-size:13px;color:var(--text-secondary)}
+
+  .jf-camBtnRow{display:flex;gap:10px;margin-bottom:16px}
+  .jf-camBtn{
+    flex:1;padding:12px;border:1px solid var(--border);border-radius:12px;
+    font-size:14px;font-weight:bold;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:6px;
+    transition:all .15s;background:var(--bg-card);color:var(--text);
+  }
+  .jf-camBtn:active{opacity:.8}
+  .jf-btnCapture{background:linear-gradient(135deg,var(--gold),#b8904e);color:#0c0c14;border-color:var(--gold)}
+  .jf-btnRetake{background:var(--bg);color:var(--text-secondary)}
+
+  .jf-btnRow{display:flex;gap:12px;margin-top:20px}
+  .jf-btnCancel{
+    flex:1;padding:13px;border:1px solid var(--border);border-radius:12px;
+    background:transparent;color:var(--text-secondary);font-size:15px;cursor:pointer;
+  }
+  .jf-btnNext,.jf-btnSubmit{
+    flex:2;padding:13px;border:none;border-radius:12px;
+    background:linear-gradient(135deg,var(--gold),#b8904e);color:#0c0c14;
+    font-size:15px;font-weight:bold;cursor:pointer;transition:opacity .15s;
+  }
+  .jf-btnNext:active,.jf-btnSubmit:active{opacity:.8}
+  .jf-btnSubmit:disabled{opacity:.4;cursor:not-allowed}
+  .jf-btnSubmit .spinner{
+    display:inline-block;width:16px;height:16px;
+    border:2px solid rgba(12,12,20,.3);border-top-color:#0c0c14;
+    border-radius:50%;animation:spin .6s linear infinite;vertical-align:middle;
+  }
+
+  /* Step2 */
+  .jf-previewThumb{
+    width:100%;border-radius:10px;border:2px dashed var(--border);
+    display:block;margin-bottom:16px;
+  }
+  .jf-field{margin-bottom:16px}
+  .jf-field label{display:block;font-size:13px;color:var(--text-secondary);margin-bottom:6px}
+  .jf-field input,.jf-field textarea{
+    width:100%;border:1.5px solid var(--border);border-radius:10px;
+    padding:11px 14px;font-size:15px;color:var(--text);background:var(--bg);
+    outline:none;transition:border-color .2s;
+  }
+  .jf-field input:focus,.jf-field textarea:focus{border-color:var(--gold)}
+  .jf-field textarea{resize:none;height:72px}
+
+  /* 提交成功 */
+  #jifenSuccess{
+    display:none;position:fixed;inset:0;z-index:10000;
+    background:rgba(5,5,12,.6);backdrop-filter:blur(6px);
+    justify-content:center;align-items:center;
+  }
+  #jifenSuccess.show{display:flex}
+  #jifenSuccess .card{
+    background:#1a1a28;border:1px solid var(--border);border-radius:18px;
+    padding:36px 32px;text-align:center;max-width:300px;width:80%;
+    animation:jifenFadeIn .25s ease;box-shadow:var(--shadow-gold);
+  }
+  @keyframes jifenFadeIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
+  #jifenSuccess .icon{font-size:52px;margin-bottom:12px}
+  #jifenSuccess h3{font-size:17px;color:var(--text);margin-bottom:8px}
+  #jifenSuccess p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+  #jifenSuccess button{
+    margin-top:20px;background:linear-gradient(135deg,var(--gold),#b8904e);color:#0c0c14;
+    border:none;border-radius:10px;padding:11px 32px;
+    font-size:15px;font-weight:bold;cursor:pointer;
+  }
 </style>
 </head>
 <body>
@@ -982,6 +1103,91 @@
 </div>
 
 <div class="content" id="content"></div>
+
+<!-- 自助积分按钮 -->
+<button id="jifenBtn" onclick="openJifen()">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+  自助积分
+</button>
+
+<!-- 积分提交表单 -->
+<div id="jifenModal" onclick="if(event.target===this)closeJifen()">
+  <div id="jifenSheet">
+    <div class="jifen-handle"></div>
+    <div class="jf-stepBar">
+      <div class="jf-stepDot active" id="jfdot1"></div>
+      <div class="jf-stepDot" id="jfdot2"></div>
+    </div>
+
+    <!-- STEP 1: 拍照 -->
+    <div id="jfStep1">
+      <div class="jifen-title">📷 拍摄小票</div>
+      <div class="jf-camWrap" id="jfCamWrap" onclick="openJfCamera()">
+        <video id="jfVideo" autoplay playsinline muted style="display:none"></video>
+        <img id="jfPreview" src="" alt="预览" style="display:none">
+        <div class="jf-camOverlay" id="jfOverlay">
+          <div class="camIcon">📷</div>
+          <p>点击开启相机<br>对准小票拍照</p>
+        </div>
+        <button id="jfBtnFlip" onclick="event.stopPropagation();switchJfCamera()" title="切换摄像头"
+          style="position:absolute;top:10px;right:10px;z-index:10;background:rgba(0,0,0,.6);border:1px solid rgba(201,169,110,.3);border-radius:50%;width:36px;height:36px;color:var(--gold);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:15px;">🔄</button>
+      </div>
+
+      <div class="jf-camBtnRow">
+        <button class="jf-camBtn jf-btnCapture" id="jfBtnCapture" onclick="openJfCamera()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="3"/><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
+          开启相机
+        </button>
+        <button class="jf-camBtn jf-btnCapture" id="jfBtnTake" onclick="captureJfPhoto()" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
+          拍照
+        </button>
+        <label class="jf-camBtn jf-btnRetake" id="jfBtnAlbum">
+          <input type="file" id="jfAlbumInput" accept="image/*" style="position:absolute;opacity:0;width:0;height:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          相册选择
+        </label>
+        <button class="jf-camBtn jf-btnRetake" id="jfBtnRetake" onclick="openJfCamera()" style="display:none">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.54"/></svg>
+          重拍
+        </button>
+      </div>
+
+      <div class="jf-btnRow">
+        <button class="jf-btnCancel" onclick="closeJifen()">取消</button>
+        <button class="jf-btnNext" id="jfBtnNext" onclick="jfGoStep2()" disabled>下一步 →</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: 手机号 -->
+    <div id="jfStep2" style="display:none">
+      <div class="jifen-title">📱 填写手机号</div>
+      <img id="jfThumb" class="jf-previewThumb" src="" alt="小票预览">
+      <div class="jf-field">
+        <label>手机号码</label>
+        <input id="jfPhone" type="tel" maxlength="11" placeholder="请输入手机号" inputmode="numeric">
+      </div>
+      <div class="jf-field">
+        <label>备注（选填）</label>
+        <textarea id="jfNote" placeholder="积分说明等"></textarea>
+      </div>
+      <div class="jf-btnRow">
+        <button class="jf-btnCancel" onclick="jfBackStep1()">← 上一步</button>
+        <button class="jf-btnSubmit" id="jfBtnSubmit" onclick="submitJfJifen()">提交积分</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 提交成功 -->
+<div id="jifenSuccess">
+  <div class="card">
+    <div class="icon">✅</div>
+    <h3>提交成功</h3>
+    <p>积分信息已收到，审核通过后自动到账<br>如有疑问请联系客服</p>
+    <button onclick="document.getElementById('jifenSuccess').classList.remove('show')">我知道了</button>
+  </div>
+</div>
 
 <!-- Brand Detail Modal -->
 <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
@@ -1717,6 +1923,202 @@ render();
   // Auto show on load
   showCarousel();
   startAuto();
+})();
+
+/* ── 自助积分 ────────────────────────────────────── */
+(function() {
+  const SUPABASE_URL = 'https://sbdqkzfwuczkbudeocks.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNiZHFremZ3dWN6a2J1ZGVvY2tzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY3NzEyNDQsImV4cCI6MjA5MjM0NzI0NH0.M47ReMoGMYtCcqDk6grxYlakUxzOJnd_nOVR6HPI8TE';
+  const sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let capturedData = null;
+  let jfFacing = 'environment';
+  let jfStream = null;
+
+  function stopJfCamera() {
+    if (jfStream) { jfStream.getTracks().forEach(t => t.stop()); jfStream = null; }
+    const v = document.getElementById('jfVideo');
+    v.srcObject = null; v.style.display = 'none';
+  }
+
+  window.openJfCamera = async function() {
+    try {
+      stopJfCamera();
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: jfFacing, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false
+      });
+      jfStream = stream;
+      const v = document.getElementById('jfVideo');
+      v.srcObject = stream; v.style.display = 'block';
+      document.getElementById('jfPreview').style.display = 'none';
+      document.getElementById('jfOverlay').classList.add('hidden');
+      document.getElementById('jfBtnCapture').style.display = 'none';
+      document.getElementById('jfBtnTake').style.display = 'flex';
+      document.getElementById('jfBtnFlip').style.display = 'flex';
+      document.getElementById('jfBtnRetake').style.display = 'none';
+      document.getElementById('jfBtnAlbum').style.display = 'flex';
+    } catch (err) {
+      console.warn('Camera error:', err);
+      document.getElementById('jfAlbumInput').click();
+    }
+  };
+
+  window.switchJfCamera = async function() {
+    jfFacing = jfFacing === 'environment' ? 'user' : 'environment';
+    await openJfCamera();
+  };
+
+  window.captureJfPhoto = function() {
+    const v = document.getElementById('jfVideo');
+    const w = v.videoWidth || v.clientWidth, h = v.videoHeight || v.clientHeight;
+    if (!w || !h) { alert('相机未就绪'); return; }
+    const scale = Math.min(1, 1200 / Math.max(w, h));
+    const c = Object.assign(document.createElement('canvas'), { width: Math.round(w*scale), height: Math.round(h*scale) });
+    c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+    stopJfCamera();
+    capturedData = c.toDataURL('image/jpeg', 0.8);
+    document.getElementById('jfPreview').src = capturedData;
+    document.getElementById('jfPreview').style.display = 'block';
+    document.getElementById('jfVideo').style.display = 'none';
+    document.getElementById('jfBtnTake').style.display = 'none';
+    document.getElementById('jfBtnFlip').style.display = 'none';
+    document.getElementById('jfBtnAlbum').style.display = 'none';
+    document.getElementById('jfBtnRetake').style.display = 'flex';
+    document.getElementById('jfBtnNext').disabled = false;
+  };
+
+  // 相册选择
+  document.getElementById('jfAlbumInput').addEventListener('change', function(e) {
+    const file = e.target.files[0]; if (!file) return;
+    jfProcessFile(file); e.target.value = '';
+  });
+
+  async function jfProcessFile(file) {
+    const preview = document.getElementById('jfPreview');
+    preview.style.display = 'block';
+    document.getElementById('jfVideo').style.display = 'none';
+    document.getElementById('jfOverlay').classList.add('hidden');
+    capturedData = await jfLoadCompress(file);
+    preview.src = capturedData;
+    document.getElementById('jfBtnCapture').style.display = 'none';
+    document.getElementById('jfBtnAlbum').style.display = 'none';
+    document.getElementById('jfBtnRetake').style.display = 'flex';
+    document.getElementById('jfBtnNext').disabled = false;
+  }
+
+  function jfLoadCompress(file, maxW = 1200, quality = 0.75) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = ev => {
+        const img = new Image(); img.onerror = reject;
+        img.onload = () => {
+          const scale = Math.min(1, maxW / Math.max(img.width, img.height));
+          const w = Math.round(img.width*scale), h = Math.round(img.height*scale);
+          const c = Object.assign(document.createElement('canvas'), { width: w, height: h });
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(c.toDataURL('image/jpeg', quality));
+        };
+        img.src = ev.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  function jfCompressBroadcast(dataUrl, maxW = 800, quality = 0.6) {
+    return new Promise(resolve => {
+      const img = new Image();
+      img.onload = () => {
+        const scale = Math.min(1, maxW / Math.max(img.width, img.height));
+        const w = Math.round(img.width*scale), h = Math.round(img.height*scale);
+        const c = Object.assign(document.createElement('canvas'), { width: w, height: h });
+        c.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(c.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => resolve(dataUrl);
+      img.src = dataUrl;
+    });
+  }
+
+  window.openJifen = function() {
+    document.getElementById('jifenModal').classList.add('show');
+    document.body.style.overflow = 'hidden';
+    jfGoStep(1);
+  };
+
+  window.closeJifen = function() {
+    stopJfCamera();
+    document.getElementById('jifenModal').classList.remove('show');
+    document.body.style.overflow = '';
+    capturedData = null;
+  };
+
+  function jfGoStep(n) {
+    document.getElementById('jfStep1').style.display = n === 1 ? '' : 'none';
+    document.getElementById('jfStep2').style.display = n === 2 ? '' : 'none';
+    document.getElementById('jfdot1').classList.toggle('active', n === 1);
+    document.getElementById('jfdot2').classList.toggle('active', n === 2);
+    if (n === 1) {
+      stopJfCamera();
+      document.getElementById('jfPreview').style.display = 'none';
+      document.getElementById('jfPreview').src = '';
+      document.getElementById('jfVideo').style.display = 'none';
+      document.getElementById('jfOverlay').classList.remove('hidden');
+      document.getElementById('jfBtnCapture').style.display = 'flex';
+      document.getElementById('jfBtnAlbum').style.display = 'flex';
+      document.getElementById('jfBtnRetake').style.display = 'none';
+      document.getElementById('jfBtnTake').style.display = 'none';
+      document.getElementById('jfBtnFlip').style.display = 'none';
+      document.getElementById('jfBtnNext').disabled = true;
+    }
+    if (n === 2 && capturedData) {
+      document.getElementById('jfThumb').src = capturedData;
+      document.getElementById('jfPhone').focus();
+    }
+  }
+  window.jfGoStep2 = function() { jfGoStep(2); };
+  window.jfBackStep1 = function() { jfGoStep(1); };
+
+  window.submitJfJifen = async function() {
+    const phone = document.getElementById('jfPhone').value.trim();
+    const note = document.getElementById('jfNote').value.trim();
+    if (!/^1\d{10}$/.test(phone)) { alert('请输入正确的11位手机号'); return; }
+    if (!capturedData) { alert('请先拍摄小票'); return; }
+
+    const btn = document.getElementById('jfBtnSubmit');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> 提交中…';
+
+    const broadcastImage = await jfCompressBroadcast(capturedData);
+
+    let submitOk = false;
+    try {
+      const { error: dbErr } = await sbClient
+        .from('jifen_submissions')
+        .insert({ phone, note: note || null, image_base64: broadcastImage, mall: 'KK MALL', status: 'pending' });
+      if (dbErr) {
+        console.error('Supabase insert error:', dbErr);
+        alert('提交失败: ' + (dbErr.message || JSON.stringify(dbErr)));
+      } else { submitOk = true; }
+    } catch (err) {
+      console.error('Supabase submit failed:', err);
+      alert('提交异常: ' + err.message);
+    }
+
+    if (!submitOk) {
+      btn.disabled = false;
+      btn.innerHTML = '提交积分';
+      return;
+    }
+
+    closeJifen();
+    document.getElementById('jifenSuccess').classList.add('show');
+    btn.disabled = false;
+    btn.innerHTML = '提交积分';
+    document.getElementById('jfPhone').value = '';
+    document.getElementById('jfNote').value = '';
+    capturedData = null;
+  };
 })();
 </script>
 </body>
