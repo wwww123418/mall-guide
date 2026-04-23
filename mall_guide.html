@@ -1071,15 +1071,22 @@
   #jifenSuccess.show{display:flex}
   #jifenSuccess .card{
     background:#1a1a28;border:1px solid var(--border);border-radius:18px;
-    padding:36px 32px;text-align:center;max-width:300px;width:80%;
+    padding:32px 28px;text-align:center;max-width:320px;width:88%;
     animation:jifenFadeIn .25s ease;box-shadow:var(--shadow-gold);
   }
   @keyframes jifenFadeIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:scale(1)}}
-  #jifenSuccess .icon{font-size:52px;margin-bottom:12px}
-  #jifenSuccess h3{font-size:17px;color:var(--text);margin-bottom:8px}
-  #jifenSuccess p{font-size:13px;color:var(--text-secondary);line-height:1.6}
+  #jifenSuccess .icon{font-size:48px;margin-bottom:10px}
+  #jifenSuccess h3{font-size:17px;color:var(--text);margin-bottom:6px}
+  #jifenSuccess .jf-sub{padding:0 4px;font-size:13px;color:var(--text-secondary);line-height:1.65}
+  #jifenSuccess .qr-wrap{
+    margin:18px auto 0;background:#fff;border-radius:12px;padding:10px;display:inline-block;
+  }
+  #jifenSuccess .qr-wrap img{display:block;width:160px;height:160px}
+  #jifenSuccess .qr-note{
+    margin-top:12px;font-size:12px;color:var(--text-secondary);line-height:1.5;padding:0 4px
+  }
   #jifenSuccess button{
-    margin-top:20px;background:linear-gradient(135deg,var(--gold),#b8904e);color:#0c0c14;
+    margin-top:18px;background:linear-gradient(135deg,var(--gold),#b8904e);color:#0c0c14;
     border:none;border-radius:10px;padding:11px 32px;
     font-size:15px;font-weight:bold;cursor:pointer;
   }
@@ -1211,10 +1218,14 @@
 <!-- 鎻愪氦鎴愬姛 -->
 <div id="jifenSuccess">
   <div class="card">
-    <div class="icon">鉁?/div>
-    <h3>鎻愪氦鎴愬姛</h3>
-    <p>绉垎淇℃伅宸叉敹鍒帮紝瀹℃牳閫氳繃鍚庤嚜鍔ㄥ埌璐?br>濡傛湁鐤戦棶璇疯仈绯诲鏈?/p>
-    <button onclick="document.getElementById('jifenSuccess').classList.remove('show')">鎴戠煡閬撲簡</button>
+    <div class="icon">✅</div>
+    <h3>提交成功</h3>
+    <p class="jf-sub">积分信息已收到，审核通过后自动到账<br>如有疑问请联系客服</p>
+    <div class="qr-wrap">
+      <img id="jfQrCode" src="" alt="查询二维码" />
+    </div>
+    <p class="qr-note">扫码查询积分审核结果，通常3分钟内处理完成</p>
+    <button onclick="document.getElementById('jifenSuccess').classList.remove('show')">我知道了</button>
   </div>
 </div>
 
@@ -2144,6 +2155,8 @@ render();
     }
 
     closeJifen();
+    var qrUrl = 'https://wwww123418.github.io/mall-guide/mall_guide.html?query=' + encodeURIComponent(phone);
+    document.getElementById('jfQrCode').src = 'https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=' + encodeURIComponent(qrUrl);
     document.getElementById('jifenSuccess').classList.add('show');
     btn.disabled = false;
     btn.innerHTML = '鎻愪氦绉垎';
