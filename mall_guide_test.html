@@ -938,16 +938,14 @@
 
   /* ── 自助积分按钮 ── */
   .jifen-bar{
-    width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;
-    padding:12px 16px;box-sizing:border-box;
-    background:var(--bg-header);border-bottom:1px solid var(--border);
+    padding:12px 0 0;box-sizing:border-box;
   }
   #jifenBtn{
     width:100%;
-    background:transparent;
-    color:var(--gold);border:1px solid var(--border-hover);border-radius:12px;
+    background:var(--bg-card);
+    color:var(--gold);border:1px solid var(--border);border-radius:var(--radius);
     padding:16px 20px;font-size:22px;font-weight:bold;
-    cursor:pointer;box-shadow:none;
+    cursor:pointer;box-shadow:var(--shadow);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
     transition:all .2s;letter-spacing:2px;line-height:1.4;
   }
@@ -1106,12 +1104,6 @@
     <button class="clear-btn" id="clearBtn" onclick="clearSearch()">✕</button>
   </div>
 </div>
-
-<div class="jifen-bar"><button id="jifenBtn" onclick="openJifen()">
-    <span style="font-size:28px">⭐</span>
-    <span>自助</span>
-    <span>积分</span>
-  </button></div>
 
 <div class="cat-filter">
   <div class="cat-chips" id="catChips"></div>
@@ -1601,7 +1593,13 @@ function render() {
   </div>
 
   <!-- VIP Member Section -->
-  <div class="vip-section">
+  <div class="jifen-bar"><button id="jifenBtn" onclick="openJifen()">
+    <span style="font-size:28px">⭐</span>
+    <span>自助</span>
+    <span>积分</span>
+  </button></div>
+
+<div class="vip-section">
     <div class="vip-header">
       <div class="vip-header-icon">👑</div>
       <div>
