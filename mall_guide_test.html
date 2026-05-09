@@ -938,17 +938,18 @@
 
   /* ── 自助积分按钮 ── */
   .jifen-bar{
-    width:100%;padding:0 0 10px;
+    width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;
+    padding:0 16px 12px;box-sizing:border-box;
   }
   #jifenBtn{
     width:100%;
     background:linear-gradient(135deg,var(--gold),#b8904e);color:#0c0c14;
     border:none;border-radius:12px;
-    padding:12px 20px;font-size:15px;font-weight:bold;
+    padding:16px 20px;font-size:17px;font-weight:bold;
     cursor:pointer;box-shadow:0 2px 12px rgba(201,169,110,0.4);
     display:flex;align-items:center;justify-content:center;gap:8px;
     transition:transform .15s,box-shadow .15s;
-    letter-spacing:1px;
+    letter-spacing:2px;
   }
   #jifenBtn:active{transform:scale(.95);box-shadow:0 1px 6px rgba(201,169,110,0.3)}
 
@@ -1107,7 +1108,7 @@
 </div>
 
 <div class="jifen-bar"><button id="jifenBtn" onclick="openJifen()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
     自助积分
   </button></div>
 
