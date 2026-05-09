@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <!-- v2026-04-23d: PWA + jifen card -->
-<title>KK MALL 瀵艰喘</title>
+<title>KK MALL 导购</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="KK MALL">
@@ -485,9 +485,9 @@
     margin-bottom: 3px;
   }
 
-  .v-card .vip-benefit li::before { content: '路'; position: absolute; left: 0; color: #5a5a6a; }
-  .s-card .vip-benefit li::before { content: '路'; position: absolute; left: 0; color: var(--gold); opacity: 0.6; }
-  .g-card .vip-benefit li::before { content: '路'; position: absolute; left: 0; color: #e8c84a; opacity: 0.6; }
+  .v-card .vip-benefit li::before { content: '·'; position: absolute; left: 0; color: #5a5a6a; }
+  .s-card .vip-benefit li::before { content: '·'; position: absolute; left: 0; color: var(--gold); opacity: 0.6; }
+  .g-card .vip-benefit li::before { content: '·'; position: absolute; left: 0; color: #e8c84a; opacity: 0.6; }
   .d-card .vip-benefit li::before { content: '鈽?; position: absolute; left: 0; color: #b8d4f0; font-size: 8px; top: 3px; }
 
   /* 鈹€鈹€ VIP Upgrade/Renewal Conditions 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
@@ -1000,7 +1000,7 @@
   .jf-stepDot{width:8px;height:8px;border-radius:50%;background:var(--text-dim);transition:background .3s}
   .jf-stepDot.active{background:var(--gold)}
 
-  /* 鎷嶇収鍖?*/
+  /* 拍照鍖?*/
   .jf-camWrap{
     position:relative;border-radius:14px;overflow:hidden;
     background:#0c0c14;aspect-ratio:4/3;
@@ -1062,7 +1062,7 @@
   .jf-field input:focus,.jf-field textarea:focus{border-color:var(--gold)}
   .jf-field textarea{resize:none;height:72px}
 
-  /* 鎻愪氦鎴愬姛 */
+  /* 提交成功 */
   #jifenSuccess{
     display:none;position:fixed;inset:0;z-index:10000;
     background:rgba(5,5,12,.6);backdrop-filter:blur(6px);
@@ -1097,7 +1097,7 @@
 <div class="header">
   <div class="header-inner">
     <div class="header-logo">
-      <div class="header-logo-icon">馃彫</div>
+      <div class="header-logo-icon">🏬</div>
       <div>
         <div class="header-title">KK MALL</div>
         <div class="header-subtitle">MALL GUIDE</div>
@@ -1118,7 +1118,7 @@
     </div>
     <div class="vip-hotline">
       <strong>鈽?/strong>
-      <span>浼氬憳涓績 路 绉垎鍏戞崲 路 涓撳睘绀奸亣</span>
+      <span>浼氬憳涓績 · 绉垎鍏戞崲 · ר属礼遇</span>
     </div>
   </div>
 </div>
@@ -1129,7 +1129,7 @@
     <div class="jifen-entry-icon">猸?/div>
     <div class="jifen-entry-text">
       <div class="jifen-entry-title">鑷姪绉垎</div>
-      <div class="jifen-entry-sub">鎷嶇収涓婁紶灏忕エ + 濉啓鎵嬫満鍙凤紝瀹℃牳閫氳繃鍚庣Н鍒嗚嚜鍔ㄥ埌璐?/div>
+      <div class="jifen-entry-sub">拍照上传СƱ + 濉啓鎵嬫満鍙凤紝瀹℃牳閫氳繃鍚庣Н鍒嗚嚜鍔ㄥ埌璐?/div>
     </div>
   </div>
 </div>
@@ -1139,7 +1139,7 @@
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
       <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
     </svg>
-    <input type="text" id="searchInput" placeholder="鎼滅储鍝佺墝銆佸搧绫绘垨浣嶇疆鈥?>
+    <input type="text" id="searchInput" placeholder="鎼滅储鍝佺墝銆佸搧绫绘垨λ置鈥?>
     <button class="clear-btn" id="clearBtn" onclick="clearSearch()">鉁?/button>
   </div>
 </div>
@@ -1159,18 +1159,18 @@
       <div class="jf-stepDot" id="jfdot2"></div>
     </div>
 
-    <!-- STEP 1: 鎷嶇収 -->
+    <!-- STEP 1: 拍照 -->
     <div id="jfStep1">
-      <div class="jifen-title">馃摲 鎷嶆憚灏忕エ</div>
+      <div class="jifen-title">📷 拍摄СƱ</div>
       <div class="jf-camWrap" id="jfCamWrap" onclick="openJfCamera()">
         <video id="jfVideo" autoplay playsinline muted style="display:none"></video>
         <img id="jfPreview" src="" alt="棰勮" style="display:none">
         <div class="jf-camOverlay" id="jfOverlay">
-          <div class="camIcon">馃摲</div>
-          <p>鐐瑰嚮寮€鍚浉鏈?br>瀵瑰噯灏忕エ鎷嶇収</p>
+          <div class="camIcon">📷</div>
+          <p>鐐瑰嚮寮€鍚浉鏈?br>瀵瑰噯灏忕エ拍照</p>
         </div>
         <button id="jfBtnFlip" onclick="event.stopPropagation();switchJfCamera()" title="鍒囨崲鎽勫儚澶?
-          style="position:absolute;top:10px;right:10px;z-index:10;background:rgba(0,0,0,.6);border:1px solid rgba(201,169,110,.3);border-radius:50%;width:36px;height:36px;color:var(--gold);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:15px;">馃攧</button>
+          style="position:absolute;top:10px;right:10px;z-index:10;background:rgba(0,0,0,.6);border:1px solid rgba(201,169,110,.3);border-radius:50%;width:36px;height:36px;color:var(--gold);cursor:pointer;display:none;align-items:center;justify-content:center;font-size:15px;">🔄</button>
       </div>
 
       <div class="jf-camBtnRow">
@@ -1180,28 +1180,28 @@
         </button>
         <button class="jf-camBtn jf-btnCapture" id="jfBtnTake" onclick="captureJfPhoto()" style="display:none">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="4"/><path d="M20 4h-3.17L15 2H9L7.17 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/></svg>
-          鎷嶇収
+          拍照
         </button>
 
         <button class="jf-camBtn jf-btnRetake" id="jfBtnRetake" onclick="openJfCamera()" style="display:none">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.54"/></svg>
-          閲嶆媿
+          重拍
         </button>
       </div>
 
       <div class="jf-btnRow">
-        <button class="jf-btnCancel" onclick="closeJifen()">鍙栨秷</button>
+        <button class="jf-btnCancel" onclick="closeJifen()">ȡ消</button>
         <button class="jf-btnNext" id="jfBtnNext" onclick="jfGoStep2()" disabled>涓嬩竴姝?鈫?/button>
       </div>
     </div>
 
     <!-- STEP 2: 鎵嬫満鍙?-->
     <div id="jfStep2" style="display:none">
-      <div class="jifen-title">馃摫 濉啓鎵嬫満鍙?/div>
+      <div class="jifen-title">📱 濉啓鎵嬫満鍙?/div>
       <img id="jfThumb" class="jf-previewThumb" src="" alt="灏忕エ棰勮">
       <div class="jf-field">
-        <label>鎵嬫満鍙风爜</label>
-        <input id="jfPhone" type="tel" maxlength="11" placeholder="璇疯緭鍏ユ墜鏈哄彿" inputmode="numeric">
+        <label>手机号码</label>
+        <input id="jfPhone" type="tel" maxlength="11" placeholder="请输入手机号" inputmode="numeric">
       </div>
       <div class="jf-field">
         <label>澶囨敞锛堥€夊～锛?/label>
@@ -1215,17 +1215,17 @@
   </div>
 </div>
 
-<!-- 鎻愪氦鎴愬姛 -->
+<!-- 提交成功 -->
 <div id="jifenSuccess">
   <div class="card">
     <div class="icon">✅</div>
     <h3>提交成功</h3>
-    <p class="jf-sub">积分信息已收到，审核通过后自动到账<br>如有疑问请联系客服</p>
+    <p class="jf-sub">积分信Ϣ已收到，审核ͨ过后自动到账<br>如有疑问请联ϵ客服</p>
     <div class="qr-wrap">
-      <img id="jfQrCode" src="" alt="查询二维码" />
+      <img id="jfQrCode" src="" alt="查ѯ二ά码" />
     </div>
-    <p class="qr-note">扫码查询积分审核结果，通常3分钟内处理完成</p>
-    <button onclick="document.getElementById('jifenSuccess').classList.remove('show')">我知道了</button>
+    <p class="qr-note">ɨ码查ѯ积分审核结果，ͨ常3分钟内处理完成</p>
+    <button onclick="document.getElementById('jifenSuccess').classList.remove('show')">我֪道了</button>
   </div>
 </div>
 
@@ -1242,11 +1242,11 @@
     </div>
     <div class="modal-divider"></div>
     <div class="modal-row">
-      <div class="modal-row-label">妤煎眰</div>
+      <div class="modal-row-label">¥层</div>
       <div class="modal-tags"><span class="modal-tag" id="modalFloor"></span></div>
     </div>
     <div class="modal-row">
-      <div class="modal-row-label">浣嶇疆</div>
+      <div class="modal-row-label">λ置</div>
       <div class="modal-tags"><span class="modal-tag" id="modalLoc"></span></div>
     </div>
     <div class="modal-row">
@@ -1267,16 +1267,16 @@ const DATA = {
       "鐢熸椿閰嶅": [
         { "code": "B101N1", "name": "鍗庢鼎涓囧BLT", "location": "B101N1", "brands": ["鍗庢鼎涓囧BLT"] },
         { "code": "B1154", "name": "WEKOME", "location": "B1154", "brands": ["WEKOME"] },
-        { "code": "B117N3", "name": "棰嗗厠", "location": "B117N3", "brands": ["棰嗗厠"] },
+        { "code": "B117N3", "name": "领克", "location": "B117N3", "brands": ["领克"] },
         { "code": "B118A2", "name": "NITORI", "location": "B118A2", "brands": ["NITORI"] },
         { "code": "B119N5", "name": "鐣寗鍙ｈ", "location": "B119N5", "brands": ["鐣寗鍙ｈ"] },
         { "code": "B119A3", "name": "闀垮煄鏅洪€?, "location": "B119A3", "brands": ["闀垮煄鏅洪€?] },
         { "code": "B127N2", "name": "闃跨淮濉?, "location": "B127N2", "brands": ["闃跨淮濉?] },
         { "code": "B127B", "name": "7-Eleven", "location": "B127B", "brands": ["7-Eleven"] }
       ],
-      "鏃跺皻缁煎悎": [
+      "ʱ尚综合": [
         { "code": "B101E1", "name": "Aape", "location": "B101E1", "brands": ["Aape"] },
-        { "code": "B109N3", "name": "Beneunder 钑変笅", "location": "B109N3", "brands": ["Beneunder 钑変笅"] },
+        { "code": "B109N3", "name": "Beneunder 蕉下", "location": "B109N3", "brands": ["Beneunder 蕉下"] },
         { "code": "B110N1", "name": "HOLLISTER+Gilly Hicks", "location": "B110N1", "brands": ["HOLLISTER", "Gilly Hicks"] },
         { "code": "B113N2", "name": "i.t", "location": "B113N2", "brands": ["i.t"] },
         { "code": "B116N1", "name": "UNIQLO浼樿。搴?, "location": "B116N1", "brands": ["UNIQLO浼樿。搴?] },
@@ -1285,30 +1285,30 @@ const DATA = {
         { "code": "B121N3", "name": "THE NORTH FACE", "location": "B121N3", "brands": ["THE NORTH FACE"] }
       ],
       "杞婚": [
-        { "code": "B101A5", "name": "闆鹃矞", "location": "B101A5", "brands": ["闆鹃矞"] },
+        { "code": "B101A5", "name": "雾鲜", "location": "B101A5", "brands": ["雾鲜"] },
         { "code": "B101B5", "name": "鐖风埛涓嶆场鑼?, "location": "B101B5", "brands": ["鐖风埛涓嶆场鑼?] },
         { "code": "B101C5", "name": "娓€€鍐板", "location": "B101C5", "brands": ["娓€€鍐板"] },
-        { "code": "B104N2", "name": "濂堥洩鐨勮尪", "location": "B104N2", "brands": ["濂堥洩鐨勮尪"] },
-        { "code": "B124N3", "name": "閲庝汉鍏堢敓", "location": "B124N3", "brands": ["閲庝汉鍏堢敓"] },
+        { "code": "B104N2", "name": "奈ѩ的茶", "location": "B104N2", "brands": ["奈ѩ的茶"] },
+        { "code": "B124N3", "name": "Ұ人先生", "location": "B124N3", "brands": ["Ұ人先生"] },
         { "code": "B126A3", "name": "Manner", "location": "B126A3", "brands": ["Manner"] },
         { "code": "B126B3", "name": "鍠滆崯钀?, "location": "B126B3", "brands": ["鍠滆崯钀?] }
       ],
       "姝ｉ": [
-        { "code": "B102A1", "name": "鑳栧摜淇╄倝锜圭叢", "location": "B102A1", "brands": ["鑳栧摜淇╄倝锜圭叢"] },
+        { "code": "B102A1", "name": "胖哥俩肉з煲", "location": "B102A1", "brands": ["胖哥俩肉з煲"] },
         { "code": "B102-03", "name": "澶簩閰歌彍楸?, "location": "B102-03", "brands": ["澶簩閰歌彍楸?] },
-        { "code": "B105N4", "name": "鏁忓崕鍐板巺", "location": "B105N4", "brands": ["鏁忓崕鍐板巺"] },
+        { "code": "B105N4", "name": "敏华冰厅", "location": "B105N4", "brands": ["敏华冰厅"] },
         { "code": "B106N5", "name": "鑲夌キ鐑ц倝涓€鐣?, "location": "B106N5", "brands": ["鑲夌キ鐑ц倝涓€鐣?] },
         { "code": "B108N3", "name": "鏄熺編涔?, "location": "B108N3", "brands": ["鏄熺編涔?] },
         { "code": "B125A1", "name": "楹﹀綋鍔?, "location": "B125A1", "brands": ["楹﹀綋鍔?] }
       ],
       "褰╁鎶よ偆": [
-        { "code": "B108A4", "name": "姣涙垐骞矼AOGEPING", "location": "B108A4", "brands": ["姣涙垐骞矼AOGEPING"] },
-        { "code": "B120A3", "name": "姗樻湹 Judydoll", "location": "B120A3", "brands": ["姗樻湹 Judydoll"] },
+        { "code": "B108A4", "name": "ë戈ƽMAOGEPING", "location": "B108A4", "brands": ["ë戈ƽMAOGEPING"] },
+        { "code": "B120A3", "name": "橘朵 Judydoll", "location": "B120A3", "brands": ["橘朵 Judydoll"] },
         { "code": "B127A3", "name": "瀹夋鼎閫?ANRUZ", "location": "B127A3", "brands": ["瀹夋鼎閫?ANRUZ"] }
       ],
-      "绮惧搧楗板搧": [
-        { "code": "B111N1", "name": "POP MART娉℃场鐜涚壒", "location": "B111N1", "brands": ["POP MART娉℃场鐜涚壒"] },
-        { "code": "B112N3", "name": "SIMPLEMILL鏈村潑", "location": "B112N3", "brands": ["SIMPLEMILL鏈村潑"] }
+      "精Ʒ饰Ʒ": [
+        { "code": "B111N1", "name": "POP MART泡泡玛特", "location": "B111N1", "brands": ["POP MART泡泡玛特"] },
+        { "code": "B112N3", "name": "SIMPLEMILL朴坊", "location": "B112N3", "brands": ["SIMPLEMILL朴坊"] }
       ]
     }
   },
@@ -1316,18 +1316,18 @@ const DATA = {
     "floorName": "L1灞?,
     "categories": {
       "鐢熸椿閰嶅": [
-        { "code": "L101A4", "name": "鏅哄繁", "location": "L101A4", "brands": ["鏅哄繁"] },
-        { "code": "L108N5", "name": "DJI澶х枂", "location": "L108N5", "brands": ["DJI澶х枂"] },
+        { "code": "L101A4", "name": "智己", "location": "L101A4", "brands": ["智己"] },
+        { "code": "L108N5", "name": "DJI大疆", "location": "L108N5", "brands": ["DJI大疆"] },
         { "code": "L112N5", "name": "鐗规柉鎷?, "location": "L112N5", "brands": ["鐗规柉鎷?] },
-        { "code": "L115N3", "name": "HUAWEI鍗庝负", "location": "L115N3", "brands": ["HUAWEI鍗庝负"] },
+        { "code": "L115N3", "name": "HUAWEI华Ϊ", "location": "L115N3", "brands": ["HUAWEI华Ϊ"] },
         { "code": "L115A2", "name": "灏忕背涔嬪", "location": "L115A2", "brands": ["灏忕背涔嬪"] },
-        { "code": "L1302", "name": "NESPRESSO锛堝鏂淳绱級", "location": "L1302", "brands": ["NESPRESSO濂堟柉娲剧储"] },
-        { "code": "L135A1", "name": "ZEEKR鏋佹蔼", "location": "L135A1", "brands": ["ZEEKR鏋佹蔼"] },
-        { "code": "L138N1", "name": "纰ф捣骞叉礂", "location": "L138N1", "brands": ["纰ф捣骞叉礂"] },
+        { "code": "L1302", "name": "NESPRESSO锛堝鏂淳绱級", "location": "L1302", "brands": ["NESPRESSO奈˹派索"] },
+        { "code": "L135A1", "name": "ZEEKR极氪", "location": "L135A1", "brands": ["ZEEKR极氪"] },
+        { "code": "L138N1", "name": "碧海干ϴ", "location": "L138N1", "brands": ["碧海干ϴ"] },
         { "code": "L139N4", "name": "鍏ㄥFamilyMart", "location": "L139N4", "brands": ["鍏ㄥFamilyMart"] },
         { "code": "L139A1", "name": "鏋滄灉鍥?, "location": "L139A1", "brands": ["鏋滄灉鍥?] }
       ],
-      "鏃跺皻缁煎悎": [
+      "ʱ尚综合": [
         { "code": "L101B2", "name": "lululemon", "location": "L101B2", "brands": ["lululemon"] },
         { "code": "L101D3", "name": "NIKE kicks lounge", "location": "L101D3", "brands": ["NIKE kicks lounge"] },
         { "code": "L103N3", "name": "BRAX", "location": "L103N3", "brands": ["BRAX"] },
@@ -1351,7 +1351,7 @@ const DATA = {
       "鐨瀷鐨叿": [
         { "code": "L106N3", "name": "COLE HAAN", "location": "L106N3", "brands": ["COLE HAAN"] }
       ],
-      "绮惧搧楗板搧": [
+      "精Ʒ饰Ʒ": [
         { "code": "L113N3", "name": "鍛ㄥぇ绂?, "location": "L113N3", "brands": ["鍛ㄥぇ绂?] },
         { "code": "L114N4", "name": "鍏鐝犲疂", "location": "L114N4", "brands": ["鍏鐝犲疂"] },
         { "code": "L126N2", "name": "apm monaco", "location": "L126N2", "brands": ["apm monaco"] },
@@ -1359,20 +1359,20 @@ const DATA = {
       ],
       "杞婚": [
         { "code": "L101G1", "name": "store by.jpg", "location": "L101G1", "brands": ["store by.jpg"] },
-        { "code": "L111N1", "name": "鏄熷反鍏嬶紙STARBUCKS锛?, "location": "L111N1", "brands": ["鏄熷反鍏?] },
+        { "code": "L111N1", "name": "星巴克（STARBUCKS锛?, "location": "L111N1", "brands": ["鏄熷反鍏?] },
         { "code": "L127A1", "name": "GAGA椴滆", "location": "L127A1", "brands": ["GAGA椴滆"] },
         { "code": "L128N4", "name": "Peet's Coffee", "location": "L128N4", "brands": ["Peet's Coffee"] },
         { "code": "L1402", "name": "KOI", "location": "L1402", "brands": ["KOI"] }
       ],
       "姝ｉ": [
-        { "code": "L119B2", "name": "鍘ㄦ洸路姘村煄缇婅倝绮?, "location": "L119B2", "brands": ["鍘ㄦ洸路姘村煄缇婅倝绮?] },
+        { "code": "L119B2", "name": "鍘ㄦ洸·姘村煄缇婅倝绮?, "location": "L119B2", "brands": ["鍘ㄦ洸·姘村煄缇婅倝绮?] },
         { "code": "L123A3", "name": "璐瑰ぇ鍘ㄨ荆妞掔倰鑲?, "location": "L123A3", "brands": ["璐瑰ぇ鍘ㄨ荆妞掔倰鑲?] },
         { "code": "L132A2", "name": "闄堥箯楣?, "location": "L132A2", "brands": ["闄堥箯楣?] },
         { "code": "L133A2", "name": "鍠滃寰疯櫨浠佹按楗?, "location": "L133A2", "brands": ["鍠滃寰疯櫨浠佹按楗?] }
       ],
       "缇庡缇庡彂": [
         { "code": "L119A4", "name": "蹇呯槮绔欏尰缇?, "location": "L119A4", "brands": ["蹇呯槮绔欏尰缇?] },
-        { "code": "L119C1", "name": "鎮熺┖", "location": "L119C1", "brands": ["鎮熺┖"] }
+        { "code": "L119C1", "name": "悟空", "location": "L119C1", "brands": ["悟空"] }
       ]
     }
   },
@@ -1380,14 +1380,14 @@ const DATA = {
     "floorName": "L2灞?,
     "categories": {
       "鐢熸椿閰嶅": [
-        { "code": "L209A5", "name": "绂忓埢", "location": "L209A5", "brands": ["绂忓埢"] },
+        { "code": "L209A5", "name": "福刻", "location": "L209A5", "brands": ["福刻"] },
         { "code": "L211N2", "name": "婧愭皬鏈ㄨ", "location": "L211N2", "brands": ["婧愭皬鏈ㄨ"] },
-        { "code": "L213N4", "name": "The Green Party锛堢豢鍏夋淳瀵癸級", "location": "L213N4", "brands": ["The Green Party"] },
+        { "code": "L213N4", "name": "The Green Party（绿光派对）", "location": "L213N4", "brands": ["The Green Party"] },
         { "code": "L222A2", "name": "鑴婄編鍋?, "location": "L222A2", "brands": ["鑴婄編鍋?] },
         { "code": "L226N4", "name": "Cheir 闆憺灏斿ご鐨瘺鍙戜笓涓氱鐞?, "location": "L226N4", "brands": ["闆憺灏?] },
         { "code": "L229N6", "name": "涓囦粺鍫?, "location": "L229N6", "brands": ["涓囦粺鍫?] }
       ],
-      "鏃跺皻缁煎悎": [
+      "ʱ尚综合": [
         { "code": "L201A2", "name": "BOSIDENG娉㈠徃鐧?, "location": "L201A2", "brands": ["娉㈠徃鐧?] },
         { "code": "L201B4", "name": "ANTA", "location": "L201B4", "brands": ["ANTA"] },
         { "code": "L201C2", "name": "LACOSTE", "location": "L201C2", "brands": ["LACOSTE"] },
@@ -1416,7 +1416,7 @@ const DATA = {
       ],
       "姝ｉ": [
         { "code": "L207N4", "name": "娓濇湀宸?, "location": "L207N4", "brands": ["娓濇湀宸?] },
-        { "code": "L210N1", "name": "缇插拰闆呰嫅", "location": "L210N1", "brands": ["缇插拰闆呰嫅"] }
+        { "code": "L210N1", "name": "羲和雅Է", "location": "L210N1", "brands": ["羲和雅Է"] }
       ]
     }
   },
@@ -1427,31 +1427,31 @@ const DATA = {
         { "code": "L301B1", "name": "DR.stretch", "location": "L301B1", "brands": ["DR.stretch"] },
         { "code": "L302N2", "name": "24/7 FITNESS", "location": "L302N2", "brands": ["24/7 FITNESS"] },
         { "code": "L302A1", "name": "PurCotton鍏ㄦ鏃朵唬", "location": "L302A1", "brands": ["鍏ㄦ鏃朵唬"] },
-        { "code": "L312N3", "name": "瓒呯骇鐚╃尒", "location": "L312N3", "brands": ["瓒呯骇鐚╃尒"] },
-        { "code": "L319N2", "name": "瑗胯タ寮椾功搴?鐭㈤噺鍜栧暋", "location": "L319N2", "brands": ["瑗胯タ寮椾功搴?] }
+        { "code": "L312N3", "name": "超级猩猩", "location": "L312N3", "brands": ["超级猩猩"] },
+        { "code": "L319N2", "name": "瑗胯タ寮椾功搴?ʸ量咖啡", "location": "L319N2", "brands": ["瑗胯タ寮椾功搴?] }
       ],
-      "鏃跺皻缁煎悎": [
+      "ʱ尚综合": [
         { "code": "L309N3", "name": "鏇煎Ξ鑺€丮W1", "location": "L309N3", "brands": ["鏇煎Ξ鑺?, "MW1"] },
-        { "code": "L316N1", "name": "闆呮垐灏擸OUNGOR銆丠ART MARX銆丮AYOR銆丠ANP", "location": "L316N1", "brands": ["闆呮垐灏?, "HART MARX", "MAYOR", "HANP"] },
+        { "code": "L316N1", "name": "雅戈尔YOUNGOR、HART MARX、MAYOR、HANP", "location": "L316N1", "brands": ["闆呮垐灏?, "HART MARX", "MAYOR", "HANP"] },
         { "code": "L319A3", "name": "MO&Co.union", "location": "L319A3", "brands": ["MO&Co.union"] }
       ],
       "濂宠": [
         { "code": "L301N3", "name": "SUPIN", "location": "L301N3", "brands": ["SUPIN"] },
-        { "code": "L302B1", "name": "鐢熸椿鍦ㄥ乏", "location": "L302B1", "brands": ["鐢熸椿鍦ㄥ乏"] },
+        { "code": "L302B1", "name": "生活在左", "location": "L302B1", "brands": ["生活在左"] },
         { "code": "L303N5", "name": "MAXRIENY", "location": "L303N5", "brands": ["MAXRIENY"] },
         { "code": "L3锛堣淇級", "name": "COVERINS", "location": "L3锛堣淇級", "brands": ["COVERINS"], "renovating": true },
         { "code": "L306N4", "name": "JNBY", "location": "L306N4", "brands": ["JNBY"] },
-        { "code": "L307N4", "name": "MIIDII 璋滃簳", "location": "L307N4", "brands": ["MIIDII 璋滃簳"] },
-        { "code": "L308N6", "name": "UPINSPIRED 闃呬笂", "location": "L308N6", "brands": ["闃呬笂"] },
+        { "code": "L307N4", "name": "MIIDII 谜底", "location": "L307N4", "brands": ["MIIDII 谜底"] },
+        { "code": "L308N6", "name": "UPINSPIRED 阅上", "location": "L308N6", "brands": ["阅上"] },
         { "code": "L311N5", "name": "鏈壓", "location": "L311N5", "brands": ["鏈壓"] },
         { "code": "L312A3", "name": "鍗庢瓕灏?, "location": "L312A3", "brands": ["鍗庢瓕灏?] },
-        { "code": "L314N6", "name": "鍒濇儫HATSUSIZU", "location": "L314N6", "brands": ["鍒濇儫HATSUSIZU"] },
+        { "code": "L314N6", "name": "初ΩHATSUSIZU", "location": "L314N6", "brands": ["初ΩHATSUSIZU"] },
         { "code": "L315N4", "name": "RE-BLUE", "location": "L315N4", "brands": ["RE-BLUE"] },
-        { "code": "L318N5", "name": "SETIROM 瑗跨敽鏉戝眿", "location": "L318N5", "brands": ["瑗跨敽鏉戝眿"] },
+        { "code": "L318N5", "name": "SETIROM 西町村屋", "location": "L318N5", "brands": ["西町村屋"] },
         { "code": "L321N3", "name": "ochirly", "location": "L321N3", "brands": ["ochirly"] },
         { "code": "L3224", "name": "AMON AVIS 渚濇垜涔嬭", "location": "L3224", "brands": ["渚濇垜涔嬭"] },
         { "code": "L323N5", "name": "Pan&Pitys", "location": "L323N5", "brands": ["Pan&Pitys"] },
-        { "code": "L327N5", "name": "鏅掗亾", "location": "L327N5", "brands": ["鏅掗亾"] },
+        { "code": "L327N5", "name": "ɹ道", "location": "L327N5", "brands": ["ɹ道"] },
         { "code": "L328N3", "name": "Embry Form", "location": "L328N3", "brands": ["Embry Form"] }
       ],
       "鐨瀷鐨叿": [
@@ -1478,13 +1478,13 @@ const DATA = {
     "categories": {
       "鐢熸椿閰嶅": [
         { "code": "L401E3", "name": "榛戠櫧璋?, "location": "L401E3", "brands": ["榛戠櫧璋?] },
-        { "code": "L402N4", "name": "鑱旀兂", "location": "L402N4", "brands": ["鑱旀兂"] },
-        { "code": "L403N4", "name": "瑗挎槉瀹跺叿", "location": "L403N4", "brands": ["瑗挎槉瀹跺叿"] },
+        { "code": "L402N4", "name": "联想", "location": "L402N4", "brands": ["联想"] },
+        { "code": "L403N4", "name": "西昊家具", "location": "L403N4", "brands": ["西昊家具"] },
         { "code": "L401D3", "name": "鑽ｈ€€", "location": "L401D3", "brands": ["鑽ｈ€€"] },
         { "code": "L408N4", "name": "鍒╂矁璇?, "location": "L408N4", "brands": ["鍒╂矁璇?] },
         { "code": "L410B6", "name": "璋湪鍖?, "location": "L410B6", "brands": ["璋湪鍖?] },
         { "code": "L418A1", "name": "閰蜂箰娼帺", "location": "L418A1", "brands": ["閰蜂箰娼帺"] },
-        { "code": "L419N5", "name": "甯镐箰鎺ㄦ嬁", "location": "L419N5", "brands": ["甯镐箰鎺ㄦ嬁"] },
+        { "code": "L419N5", "name": "常乐推拿", "location": "L419N5", "brands": ["常乐推拿"] },
         { "code": "L421A4", "name": "娴烽┈浣撶収鐩搁", "location": "L421A4", "brands": ["娴烽┈浣撶収鐩搁"] },
         { "code": "L423A4", "name": "鏄熻仛浼?, "location": "L423A4", "brands": ["鏄熻仛浼?] },
         { "code": "L424N4", "name": "绉戝ぇ璁", "location": "L424N4", "brands": ["绉戝ぇ璁"] },
@@ -1494,33 +1494,33 @@ const DATA = {
         { "code": "L428N8", "name": "鑼勪笘绾?, "location": "L428N8", "brands": ["鑼勪笘绾?] }
       ],
       "涓诲姏搴?: [
-        { "code": "L427N1", "name": "UA闄㈢嚎", "location": "L427N1", "brands": ["UA闄㈢嚎"] }
+        { "code": "L427N1", "name": "UAԺ线", "location": "L427N1", "brands": ["UAԺ线"] }
       ],
-      "绮惧搧楗板搧": [
+      "精Ʒ饰Ʒ": [
         { "code": "L415N7", "name": "涔濇湪鏉傜墿绀?, "location": "L415N7", "brands": ["涔濇湪鏉傜墿绀?] },
         { "code": "L420N3", "name": "zele", "location": "L420N3", "brands": ["zele"] }
       ],
       "杞婚": [
         { "code": "L412A5", "name": "鐓茬彔鍏?, "location": "L412A5", "brands": ["鐓茬彔鍏?] },
         { "code": "L413N5", "name": "DQ", "location": "L413N5", "brands": ["DQ"] },
-        { "code": "L413A1", "name": "鐟炲垢鍜栧暋", "location": "L413A1", "brands": ["鐟炲垢鍜栧暋"] },
-        { "code": "L414N5", "name": "鍙よ寳", "location": "L414N5", "brands": ["鍙よ寳"] },
-        { "code": "L414A1", "name": "鑼舵晳鏄熺悆", "location": "L414A1", "brands": ["鑼舵晳鏄熺悆"] },
+        { "code": "L413A1", "name": "瑞幸咖啡", "location": "L413A1", "brands": ["瑞幸咖啡"] },
+        { "code": "L414N5", "name": "古茗", "location": "L414N5", "brands": ["古茗"] },
+        { "code": "L414A1", "name": "茶救星球", "location": "L414A1", "brands": ["茶救星球"] },
         { "code": "L418F2", "name": "浜戦樋铔?, "location": "L418F2", "brands": ["浜戦樋铔?] },
         { "code": "L418J1", "name": "鍠滀箰鏌犳鑼?, "location": "L418J1", "brands": ["鍠滀箰鏌犳鑼?] },
         { "code": "L418M3", "name": "澶忛兘鏉?, "location": "L418M3", "brands": ["澶忛兘鏉?] },
         { "code": "L418P2", "name": "鍠滆瘑绯栬懌鑺?, "location": "L418P2", "brands": ["鍠滆瘑绯栬懌鑺?] }
       ],
       "姝ｉ": [
-        { "code": "L401A1", "name": "澶栧﹩瀹躲€佺倝楸?, "location": "L401A1", "brands": ["澶栧﹩瀹?, "鐐夐奔"] },
+        { "code": "L401A1", "name": "澶栧﹩瀹躲€佺倝楸?, "location": "L401A1", "brands": ["澶栧﹩瀹?, "¯鱼"] },
         { "code": "L401B2", "name": "娴烽棬楸间粩搴?, "location": "L401B2", "brands": ["娴烽棬楸间粩搴?] },
         { "code": "L4锛堣淇級", "name": "娼彂娼睍鐗涜倝搴?, "location": "L4锛堣淇級", "brands": ["娼彂娼睍鐗涜倝搴?], "renovating": true },
         { "code": "L405N6", "name": "鎬?閲嶅簡鐏攨鍘?, "location": "L405N6", "brands": ["鎬?閲嶅簡鐏攨鍘?] },
-        { "code": "L409N2", "name": "鍏冩皵瀵垮徃", "location": "L409N2", "brands": ["鍏冩皵瀵垮徃"] },
+        { "code": "L409N2", "name": "Ԫ气寿˾", "location": "L409N2", "brands": ["Ԫ气寿˾"] },
         { "code": "L410N3", "name": "鑴嗛矞鐢?, "location": "L410N3", "brands": ["鑴嗛矞鐢?] },
         { "code": "L412N6", "name": "妫灄瀛?, "location": "L412N6", "brands": ["妫灄瀛?] },
-        { "code": "L417N2", "name": "鎷惧彿鐗涙帓", "location": "L417N2", "brands": ["鎷惧彿鐗涙帓"] },
-        { "code": "L418B3", "name": "涓橀樋濠嗗共钂歌彍", "location": "L418B3", "brands": ["涓橀樋濠嗗共钂歌彍"] },
+        { "code": "L417N2", "name": "ʰ号ţ排", "location": "L417N2", "brands": ["ʰ号ţ排"] },
+        { "code": "L418B3", "name": "丘阿婆干蒸菜", "location": "L418B3", "brands": ["丘阿婆干蒸菜"] },
         { "code": "L418D3", "name": "楹哄眿鐚竴", "location": "L418D3", "brands": ["楹哄眿鐚竴"] },
         { "code": "L418E2", "name": "闊╂鍠?, "location": "L418E2", "brands": ["闊╂鍠?] },
         { "code": "L418G2", "name": "绉嬫敹閲?, "location": "L418G2", "brands": ["绉嬫敹閲?] },
@@ -1528,18 +1528,18 @@ const DATA = {
         { "code": "L418I3", "name": "鐓蹭粩鍗?, "location": "L418I3", "brands": ["鐓蹭粩鍗?] },
         { "code": "L418K3", "name": "鑰佺浼?, "location": "L418K3", "brands": ["鑰佺浼?] },
         { "code": "L418O2", "name": "瑗垮皬鎺?, "location": "L418O2", "brands": ["瑗垮皬鎺?] },
-        { "code": "L422N2", "name": "绮よ彍鐜嬪簻", "location": "L422N2", "brands": ["绮よ彍鐜嬪簻"] }
+        { "code": "L422N2", "name": "粤菜王府", "location": "L422N2", "brands": ["粤菜王府"] }
       ],
       "缇庡缇庡彂": [
         { "code": "L411N3", "name": "IN STYLE", "location": "L411N3", "brands": ["IN STYLE"] },
-        { "code": "L424A3", "name": "鎸囧吀鑹烘湳", "location": "L424A3", "brands": ["鎸囧吀鑹烘湳"] }
+        { "code": "L424A3", "name": "ָ典艺术", "location": "L424A3", "brands": ["ָ典艺术"] }
       ]
     }
   }
 };
 
 let currentFloor = 'B1';
-let currentCat = '鍏ㄩ儴';
+let currentCat = 'ȫ部';
 let searchQuery = '';
 
 function initFloorTabs() {
@@ -1558,7 +1558,7 @@ function initCatChips() {
   const container = document.getElementById('catChips');
   const allCats = new Set();
   Object.values(DATA).forEach(f => Object.keys(f.categories).forEach(c => allCats.add(c)));
-  const cats = ['鍏ㄩ儴', ...Array.from(allCats)];
+  const cats = ['ȫ部', ...Array.from(allCats)];
   container.innerHTML = '';
   cats.forEach(cat => {
     const chip = document.createElement('div');
@@ -1571,7 +1571,7 @@ function initCatChips() {
 
 function switchFloor(floor) {
   currentFloor = floor;
-  currentCat = '鍏ㄩ儴';
+  currentCat = 'ȫ部';
   document.querySelectorAll('.floor-tab').forEach((t, i) => t.classList.toggle('active', Object.keys(DATA)[i] === floor));
   document.querySelectorAll('.cat-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
   render();
@@ -1580,7 +1580,7 @@ function switchFloor(floor) {
 function switchCat(cat) {
   currentCat = cat;
   const chips = document.querySelectorAll('.cat-chip');
-  const catIndex = cat === '鍏ㄩ儴' ? 0 : Array.from(chips).findIndex(c => c.textContent === cat);
+  const catIndex = cat === 'ȫ部' ? 0 : Array.from(chips).findIndex(c => c.textContent === cat);
   chips.forEach((c, i) => c.classList.toggle('active', i === catIndex));
   render();
 }
@@ -1605,7 +1605,7 @@ function render() {
 
   const cats = Object.entries(floor.categories);
   cats.forEach(([catName, shops]) => {
-    if (currentCat !== '鍏ㄩ儴' && catName !== currentCat) return;
+    if (currentCat !== 'ȫ部' && catName !== currentCat) return;
     totalBrands += shops.length;
   });
 
@@ -1613,7 +1613,7 @@ function render() {
   <div class="stats-bar">
     <div class="stat-item">
       <div class="stat-num">${floor.floorName}</div>
-      <div class="stat-label">褰撳墠妤煎眰</div>
+      <div class="stat-label">褰撳墠¥层</div>
     </div>
     <div class="stat-item">
       <div class="stat-num">${Object.keys(floor.categories).length}</div>
@@ -1621,16 +1621,16 @@ function render() {
     </div>
     <div class="stat-item">
       <div class="stat-num">${totalBrands}</div>
-      <div class="stat-label">鍝佺墝鏁伴噺</div>
+      <div class="stat-label">Ʒ牌数量</div>
     </div>
   </div>
 
   <!-- VIP Member Section -->
   <div class="vip-section">
     <div class="vip-header">
-      <div class="vip-header-icon">馃憫</div>
+      <div class="vip-header-icon">👑</div>
       <div>
-        <div class="vip-header-text">浼氬憳鏉冪泭</div>
+        <div class="vip-header-text">会ԱȨ益</div>
         <div class="vip-header-sub">VIP MEMBERSHIP BENEFITS</div>
       </div>
       <div class="vip-header-line"></div>
@@ -1645,8 +1645,8 @@ function render() {
           <li>绉垎鍏戠ぜ</li>
         </ul>
         <div class="vip-cond">
-          <div class="vip-cond-row"><span>鍗囩骇鏉′欢</span><span>鎵爜娉ㄥ唽</span></div>
-          <div class="vip-cond-row"><span>鏈夋晥鏈?/span><span class="vip-tag-forever">姘镐箙鏈夋晥</span></div>
+          <div class="vip-cond-row"><span>升级条件</span><span>鎵爜娉ㄥ唽</span></div>
+          <div class="vip-cond-row"><span>鏈夋晥鏈?/span><span class="vip-tag-forever">永久有Ч</span></div>
         </div>
       </div>
       <div class="vip-card s-card">
@@ -1655,13 +1655,13 @@ function render() {
         <ul class="vip-benefit">
           <li>V鍗″叏閮ㄦ潈鐩?/li>
           <li>鍙屽€嶇Н鍒嗘棩</li>
-          <li>鍏嶈垂鍋滆溅2h</li>
+          <li>免费ͣ车2h</li>
           <li>绉垎鍏戠ぜ</li>
-          <li>鍏嶈垂绀煎搧鍖呰脳1</li>
+          <li>鍏嶈垂绀煎搧鍖呰×1</li>
         </ul>
         <div class="vip-cond">
-          <div class="vip-cond-row"><span>鍗囩骇鏉′欢</span><span>鏃ユ秷璐规弧楼1k / 骞存秷璐规弧楼3k</span></div>
-          <div class="vip-cond-row"><span>淇濈骇鏉′欢</span><span>骞存秷璐规弧楼3k</span></div>
+          <div class="vip-cond-row"><span>升级条件</span><span>日消费满¥1k / 年消费满¥3k</span></div>
+          <div class="vip-cond-row"><span>保级条件</span><span>年消费满¥3k</span></div>
           <div class="vip-cond-row"><span>鏈夋晥鏈?/span><span>1骞?/span></div>
         </div>
       </div>
@@ -1669,16 +1669,16 @@ function render() {
         <div class="vip-tier">閲?鍗?/div>
         <div class="vip-divider"></div>
         <ul class="vip-benefit">
-          <li>閾跺崱鍏ㄩ儴鏉冪泭</li>
-          <li>鍏嶈垂鍋滆溅2h</li>
+          <li>閾跺崱ȫ部鏉冪泭</li>
+          <li>免费ͣ车2h</li>
           <li>楂樼娲诲姩閭€璇?/li>
-          <li>鐢熸棩绀奸亣锛堝€掓帹1骞存弧1w锛?/li>
+          <li>鐢熸棩绀奸亣锛堝€掓帹1年满1w锛?/li>
           <li>绉垎鍏戠ぜ</li>
-          <li>鍏嶈垂绀煎搧鍖呰脳3</li>
+          <li>鍏嶈垂绀煎搧鍖呰×3</li>
         </ul>
         <div class="vip-cond">
-          <div class="vip-cond-row"><span>鍗囩骇鏉′欢</span><span>鏃ユ秷璐规弧楼1w / 骞存秷璐规弧楼3w</span></div>
-          <div class="vip-cond-row"><span>淇濈骇鏉′欢</span><span>骞存秷璐规弧楼3w</span></div>
+          <div class="vip-cond-row"><span>升级条件</span><span>日消费满¥1w / 年消费满¥3w</span></div>
+          <div class="vip-cond-row"><span>保级条件</span><span>年消费满¥3w</span></div>
           <div class="vip-cond-row"><span>鏈夋晥鏈?/span><span>1骞?/span></div>
         </div>
       </div>
@@ -1686,18 +1686,18 @@ function render() {
         <div class="vip-tier">閽荤煶鍗?/div>
         <div class="vip-divider"></div>
         <ul class="vip-benefit">
-          <li>閲戝崱鍏ㄩ儴鏉冪泭</li>
-          <li>鍏嶈垂鍋滆溅锛堝崟搴楁秷璐规弧8w锛?/li>
+          <li>閲戝崱ȫ部鏉冪泭</li>
+          <li>免费ͣ车锛堝崟搴楁秷璐规弧8w锛?/li>
           <li>楂樼娲诲姩閭€璇?/li>
           <li>涓€瀵逛竴瀹氬埗鏈嶅姟</li>
-          <li>LED澶у睆浣跨敤</li>
-          <li>鐢熸棩绀奸亣锛堝€掓帹1骞存弧3w锛?/li>
+          <li>LED大屏ʹ用</li>
+          <li>鐢熸棩绀奸亣锛堝€掓帹1年满3w锛?/li>
           <li>绉垎鍏戠ぜ</li>
-          <li>鍏嶈垂绀煎搧鍖呰脳5</li>
+          <li>鍏嶈垂绀煎搧鍖呰×5</li>
         </ul>
         <div class="vip-cond">
-          <div class="vip-cond-row"><span>鍗囩骇鏉′欢</span><span>鏃ユ秷璐规弧楼5w / 骞存秷璐规弧楼10w</span></div>
-          <div class="vip-cond-row"><span>淇濈骇鏉′欢</span><span>骞存秷璐规弧楼8w</span></div>
+          <div class="vip-cond-row"><span>升级条件</span><span>日消费满¥5w / 年消费满¥10w</span></div>
+          <div class="vip-cond-row"><span>保级条件</span><span>年消费满¥8w</span></div>
           <div class="vip-cond-row"><span>鏈夋晥鏈?/span><span>1骞?/span></div>
         </div>
       </div>
@@ -1705,7 +1705,7 @@ function render() {
   </div>`;
 
   cats.forEach(([catName, shops]) => {
-    if (currentCat !== '鍏ㄩ儴' && catName !== currentCat) return;
+    if (currentCat !== 'ȫ部' && catName !== currentCat) return;
 
     const filtered = searchQuery
       ? shops.filter(s =>
@@ -1728,7 +1728,7 @@ function render() {
       html += `<div class="brand-card${isHighlight ? ' highlight' : ''}" onclick="openModal(${JSON.stringify(shop).replace(/"/g, '&quot;')}, '${floor.floorName}', '${catName.replace(/'/g, "\\'")}')">
         <div class="brand-name">${shop.name}${isRenovating ? '<span class="badge-reno">瑁呬慨涓?/span>' : ''}</div>
         <div class="brand-code">${shop.code}</div>
-        <div class="brand-location">馃搷 ${shop.location}</div>
+        <div class="brand-location">📍 ${shop.location}</div>
       </div>`;
     });
 
@@ -1737,7 +1737,7 @@ function render() {
 
   if (html.split('brand-card').length <= 1) {
     html += `<div class="empty-state">
-      <div class="icon">馃攳</div>
+      <div class="icon">🔍</div>
       <p>鏈壘鍒板尮閰嶇殑鍝佺墝</p>
     </div>`;
   }
@@ -1754,7 +1754,7 @@ function openModal(shop, floorName, catName) {
   document.getElementById('modalCat').textContent = catName;
   document.getElementById('modalIcon').textContent = shop.name.charAt(0);
   const brandsInfo = shop.brands.length > 1 ? '闆嗗悎鍝佺墝鍖呮嫭锛? + shop.brands.join('銆?) + '銆? : '';
-  document.getElementById('modalDesc').innerHTML = `${shop.name} 浣嶄簬 ${floorName} ${shop.location}锛屽睘浜?${catName} 涓氭€併€?{brandsInfo}`;
+  document.getElementById('modalDesc').innerHTML = `${shop.name} λ于 ${floorName} ${shop.location}锛屽睘浜?${catName} 涓氭€併€?{brandsInfo}`;
   document.getElementById('modalOverlay').classList.add('show');
   document.body.style.overflow = 'hidden';
 }
@@ -1771,24 +1771,19 @@ render();
 
 /* 鈹€鈹€ Activity Carousel 鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€鈹€ */
 (function() {
-  // 鏍煎紡: { src, expires: 'YYYY-MM-DD' }  expires 杩囨湡鍚庤嚜鍔ㄤ粠杞挱绉婚櫎
-  const slides = [    'activity2.jpg',
+  // 格ʽ: { src, expires: 'YYYY-MM-DD' }  expires 杩囨湡鍚庤嚜鍔ㄤ粠杞挱绉婚櫎
+  const slides = [
+    'activity2.jpg',
     'activity3.jpg'
   ];
-  // 杩囨湡杩囨护
-  const today = new Date().toISOString().slice(0,10);
-  const activeSlides = slides.filter(function(s) {
-    if (typeof s === 'string') return true;
-    return s.expires > today;
-  }).map(function(s) {
-    return typeof s === 'string' ? s : s.src;
-  });
+  // 有效活动图
+  const activeSlides = slides;
   if (activeSlides.length === 0) return; // 鏃犳椿鍔ㄥ浘鍒欎笉娓叉煋杞挱
-  // 鐢?activeSlides 鏇夸唬 slides
+  // 鐢?activeSlides 替代 slides
   const total = activeSlides.length;
   let idx = 0;
   let timer = null;
-  let idleTimer = null; // 绌洪棽璁℃椂鍣細鐢ㄦ埛鏃犳搷浣?0绉掑悗寮圭獥
+  let idleTimer = null; // 绌洪棽璁℃椂鍣細鐢ㄦ埛鏃犳搷浣?0秒后弹窗
   const INTERVAL = 4000;
   const IDLE_DELAY = 10000; // 10绉掓棤鎿嶄綔鍚庡脊鍑?
 
@@ -1871,7 +1866,7 @@ render();
 
   function goHome() {
     currentFloor = 'B1';
-    currentCat = '鍏ㄩ儴';
+    currentCat = 'ȫ部';
     searchQuery = '';
     var si = document.getElementById('searchInput');
     if (si) si.value = '';
@@ -2123,8 +2118,8 @@ render();
   window.submitJfJifen = async function() {
     const phone = document.getElementById('jfPhone').value.trim();
     const note = document.getElementById('jfNote').value.trim();
-    if (!/^1\d{10}$/.test(phone)) { alert('璇疯緭鍏ユ纭殑11浣嶆墜鏈哄彿'); return; }
-    if (!capturedData) { alert('璇峰厛鎷嶆憚灏忕エ'); return; }
+    if (!/^1\d{10}$/.test(phone)) { alert('璇疯緭鍏ユ纭殑11λ手机号'); return; }
+    if (!capturedData) { alert('璇峰厛拍摄СƱ'); return; }
 
     const btn = document.getElementById('jfBtnSubmit');
     btn.disabled = true;
@@ -2139,11 +2134,11 @@ render();
         .insert({ phone, note: note || null, image_base64: broadcastImage, mall: 'KK MALL', status: 'pending' });
       if (dbErr) {
         console.error('Supabase insert error:', dbErr);
-        alert('鎻愪氦澶辫触: ' + (dbErr.message || JSON.stringify(dbErr)));
+        alert('提交ʧ败: ' + (dbErr.message || JSON.stringify(dbErr)));
       } else { submitOk = true; }
     } catch (err) {
       console.error('Supabase submit failed:', err);
-      alert('鎻愪氦寮傚父: ' + err.message);
+      alert('提交异常: ' + err.message);
     }
 
     if (!submitOk) {
