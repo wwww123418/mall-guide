@@ -937,16 +937,19 @@
   }
 
   /* ── 自助积分按钮 ── */
-  #jifenBtn{
-    position:fixed;top:14px;right:14px;z-index:9000;
-    background:linear-gradient(135deg,var(--gold),#b8904e);color:#0c0c14;
-    border:none;border-radius:22px;
-    padding:8px 14px;font-size:12px;font-weight:bold;
-    cursor:pointer;box-shadow:0 2px 12px rgba(201,169,110,0.4);
-    display:flex;align-items:center;gap:5px;
-    transition:transform .15s,box-shadow .15s;
+  .jifen-bar{
+    padding:0;margin-bottom:24px;box-sizing:border-box;
   }
-  #jifenBtn:active{transform:scale(.95);box-shadow:0 1px 6px rgba(201,169,110,0.3)}
+  #jifenBtn{
+    width:100%;
+    background:var(--bg-card);
+    color:var(--gold);border:1px solid var(--border);border-radius:var(--radius);
+    padding:16px 20px;font-size:22px;font-weight:bold;
+    cursor:pointer;box-shadow:var(--shadow);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    transition:all .2s;letter-spacing:2px;line-height:1.4;
+  }
+  #jifenBtn:active{background:var(--gold-dim);border-color:var(--gold);transform:scale(.98)}
 
   /* ── 积分表单弹窗 ── */
   #jifenModal{
@@ -1108,11 +1111,7 @@
 
 <div class="content" id="content"></div>
 
-<!-- 自助积分按钮 -->
-<button id="jifenBtn" onclick="openJifen()">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-  自助积分
-</button>
+
 
 <!-- 积分提交表单 -->
 <div id="jifenModal" onclick="if(event.target===this)closeJifen()">
@@ -1594,7 +1593,13 @@ function render() {
   </div>
 
   <!-- VIP Member Section -->
-  <div class="vip-section">
+  <div class="jifen-bar"><button id="jifenBtn" onclick="openJifen()">
+    <span style="font-size:28px">⭐</span>
+    <span>自助</span>
+    <span>积分</span>
+  </button></div>
+
+<div class="vip-section">
     <div class="vip-header">
       <div class="vip-header-icon">👑</div>
       <div>
