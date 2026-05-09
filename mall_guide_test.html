@@ -948,8 +948,8 @@
     color:var(--gold);border:1px solid var(--border-hover);border-radius:12px;
     padding:14px 20px;font-size:16px;font-weight:bold;
     cursor:pointer;box-shadow:none;
-    display:flex;align-items:center;justify-content:center;gap:8px;
-    transition:all .2s;letter-spacing:1px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+    transition:all .2s;letter-spacing:2px;line-height:1.4;
   }
   #jifenBtn:active{background:var(--gold-dim);border-color:var(--gold);transform:scale(.98)}
 
@@ -1108,8 +1108,9 @@
 </div>
 
 <div class="jifen-bar"><button id="jifenBtn" onclick="openJifen()">
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    自助积分
+    <span style="font-size:20px">⭐</span>
+    <span>自助</span>
+    <span>积分</span>
   </button></div>
 
 <div class="cat-filter">
